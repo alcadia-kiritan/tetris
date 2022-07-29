@@ -22,9 +22,9 @@ programstart:
     stra,r0 CRTCVPR
 
     ;高解像度モードへ切り替え
-    lodi,r0 01000000b
+    lodi,r0 01000000b       ;ノーマルモード&高解像度
     stra,r0 RESOLUTION
-    lodi,r0 10000000b
+    lodi,r0 10000011b       ;高解像度&背景緑
     stra,r0 BGCOLOUR
     
     ;-------------------
@@ -44,7 +44,6 @@ load_blocks:
 
 set_upper_screen:
     subi,r0 1
-    ;lodi,r0 090h ;       0x10('0') + 0x80(色指定)
     stra,r0 SCRUPDATA,r1-
     brnr,r1 set_upper_screen
     
@@ -55,7 +54,6 @@ set_upper_screen:
 
 set_lower_screen:
     subi,r0 1
-    ;lodi,r0 0D1h ;       0x11('1') + 0xC0(色指定)
     stra,r0 SCRLODATA,r1-
     brnr,r1 set_lower_screen
 
