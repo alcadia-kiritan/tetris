@@ -32,22 +32,27 @@ def main():
         except:
             return str(bstr)[2:-1]
 
+    def print_line():
+        print()
+        prev = normalize(lst_file[index-1][0:-1])
+        if '  -->' in prev:  
+            #制御文字が混じってると余分な行が混じるのでそれを含めて表示
+            print(normalize(lst_file[index-2][0:-1]))
+        print(prev)
+        print(normalize(line[0:-1]))
+
     for index in range(len(lst_file)):
         line = lst_file[index]
 
         if b'Error(s) in ' in line:
             print(normalize(line[0:-1]))
-            has_error = True
         
         if b'** ERROR **' in line:
-            print()
-            prev = normalize(lst_file[index-1][0:-1])
-            if '  -->' in prev:  
-                #制御文字が混じってると余分な行が混じるのでそれを含めて表示
-                print(normalize(lst_file[index-2][0:-1]))
-            print(prev)
-            print(normalize(line[0:-1]))
+            print_line()
             has_error = True
+
+        if b'** WARNING **' in line:
+            print_line()
         
         if b'Errors,' in line and b'Warnings.' in line:
             print(normalize(line[0:-1]))
