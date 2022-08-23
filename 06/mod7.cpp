@@ -316,19 +316,11 @@ uint8_t Mod7_FromNet(uint8_t n)
 	return mod;
 }
 
-//オーバーフローするまで７を引き続ける
+//７未満になるまで７を引き続ける
 uint8_t Mod7_SubLoop(uint8_t x)
 {
-	uint8_t y;
-
-	do
-	{
-		y = x;
+	while( x >= 7 )
 		x -= 7;
-	} 	
-	while (y > x);
-
-	x += 7;
 	return x;
 }
 
