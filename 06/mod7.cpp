@@ -316,6 +316,22 @@ uint8_t Mod7_FromNet(uint8_t n)
 	return mod;
 }
 
+//オーバーフローするまで７を引き続ける
+uint8_t Mod7_SubLoop(uint8_t x)
+{
+	uint8_t y;
+
+	do
+	{
+		y = x;
+		x -= 7;
+	} 	
+	while (y > x);
+
+	x += 7;
+	return x;
+}
+
 //アルカディアの画面に表示される奴と同じ並びを表示する用
 void PrintArcadiaMod7()
 {
@@ -367,6 +383,7 @@ int main()
 	Mod7Test(Mod7_SubOnly);
 	Mod7Test(Mod7_Shift);
 	Mod7Test(Mod7_FromNet);
-
+	Mod7Test(Mod7_SubLoop);
+	
 	return 0;
 }
