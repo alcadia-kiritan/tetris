@@ -316,10 +316,32 @@ uint8_t Mod7_FromNet(uint8_t n)
 	return mod;
 }
 
+uint8_t Mod7_FromNet2(uint8_t n)
+{
+	uint8_t t;
+
+	t = n & 7;
+	n >>= 3;
+	n += t;
+
+	t = n & 7;
+	n >>= 3;
+	n += t;
+
+	t = n & 7;
+	n >>= 3;
+	n += t;
+
+	if (n == 7)
+		n = 0;
+
+	return n;
+}
+
 //７未満になるまで７を引き続ける
 uint8_t Mod7_SubLoop(uint8_t x)
 {
-	while( x >= 7 )
+	while (x >= 7)
 		x -= 7;
 	return x;
 }
@@ -375,7 +397,8 @@ int main()
 	Mod7Test(Mod7_SubOnly);
 	Mod7Test(Mod7_Shift);
 	Mod7Test(Mod7_FromNet);
+	Mod7Test(Mod7_FromNet2);
 	Mod7Test(Mod7_SubLoop);
-	
+
 	return 0;
 }
