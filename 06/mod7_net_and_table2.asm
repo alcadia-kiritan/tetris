@@ -16,7 +16,6 @@ programstart:
                              ; wrote infers that Inter-
                              ; rupts aren't used
     
-
     ;画面をmod7で埋める用
     ;bcta,un gen_mod7_to_upper_screen
 
@@ -92,27 +91,13 @@ mod7:
     rrr,r0
     andi,r0 01Fh    
     addz r1     ; r0 += r1
-
-    strz r1
-    andi,r1 7
-    rrr,r0
-    rrr,r0
-    rrr,r0
-    andi,r0 01Fh
-    addz r1
-
-    strz r1
-    andi,r1 7
-    rrr,r0
-    rrr,r0
-    rrr,r0
-    andi,r0 01Fh
-    addz r1
-
-    comi,r0 7
-    bcfr,eq _mod7_end
-    eorz r0
-_mod7_end:
+    comi,r0 21
+    bctr,lt _mod7
+    subi,r0 21
+_mod7:
+    loda,r0 mod7_table21,r0 ; 21 = max(39 - 21, 21)
     retc,un
+
+    include "inc\mod7_table21.h"
 
 end ; End of assembly

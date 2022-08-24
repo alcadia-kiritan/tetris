@@ -1,0 +1,22 @@
+mod7_table21:
+    db 00h
+    db 01h
+    db 02h
+    db 03h
+    db 04h
+    db 05h
+    db 06h
+    db 00h
+    db 01h
+    db 02h
+    db 03h
+    db 04h
+    db 05h
+    db 06h
+    db 00h
+    db 01h
+    db 02h
+    db 03h
+    db 04h
+    db 05h
+    db 06h
