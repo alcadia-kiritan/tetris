@@ -28,9 +28,11 @@ def main():
             return bstr.decode('utf-8').rstrip()
         except UnicodeDecodeError as e:
             bstr = bstr[:e.start] + bstr[e.end:]
-            return bstr.decode('utf-8').rstrip()
-        except:
-            return str(bstr)[2:-1]
+            try:
+                return bstr.decode('utf-8').rstrip()
+            except:
+                pass
+        return str(bstr)[2:-1]
 
     def print_line():
         print()
