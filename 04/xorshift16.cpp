@@ -238,6 +238,28 @@ struct GetRandomTetriminoAnd7
 };
 
 
+////RandomGeneratorで返された乱数の下位3bitが、６以下であればそれを返し、７であれば再抽選。 FromニコニココメントThx
+template< typename RandomGenerator >
+struct GetRandomTetriminoAnd7Re
+{
+	GetRandomTetriminoAnd7Re(RandomGenerator generator) : generator(generator)
+	{}
+
+	RandomGenerator generator;
+
+	int operator()()
+	{
+		while (true)
+		{
+			uint8_t random = (uint8_t)generator() & 7;
+
+			if (random <= 6)
+				return random;
+		}
+	}
+};
+
+
 //標準偏差と平均を計算するクラス
 struct StdCalculator
 {
@@ -376,6 +398,8 @@ void TestTetris(RandomGenerator generator)
 	TestTetriminoGenerator(CreateGenerator<GetRandomTetriminoUniformedMod7>(generator));
 	std::cout << "And7" << std::endl;
 	TestTetriminoGenerator(CreateGenerator<GetRandomTetriminoAnd7>(generator));
+	std::cout << "And7Re" << std::endl;
+	TestTetriminoGenerator(CreateGenerator<GetRandomTetriminoAnd7Re>(generator));
 }
 
 void TestTetris()
