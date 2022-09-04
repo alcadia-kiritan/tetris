@@ -1,9 +1,41 @@
 import sys
 import subprocess
 import os
+import re
 
 win_arcadia_exe_path = 'WinArcadia.exe'
 asm32_exe_path = 'asm32.exe'
+
+def check_asm_file( asm_file_path ):
+    asm_file = open(asm_file_path,'rb').readlines()
+
+    def remove_comment( line ):
+        semicolon = line.find(b';')
+        if semicolon >= 0:
+            return line[0:semicolon].strip()
+        return line
+
+    for index in range(len(asm_file)):
+        line = asm_file[index]
+
+        code = remove_comment(line.strip().lower())
+        if len(code) <= 0:
+            continue
+        
+        mnemonics = [ x.strip() for x in re.split(b'[,\s]', code) ]
+        mnemonics = [ x for x in mnemonics if len(x) > 0 ]
+
+        #命令本体とパラメータが３つ以上(オフセットの指定がある)
+        #命令の末尾がa (=メモリアクセスを伴う)
+        #パラメータの１個目がr0以外
+        #equを使った定数定義ではない
+        if len(mnemonics) >= 4 and mnemonics[0][-1:] == b'a' and mnemonics[1] != b'r0' and \
+            mnemonics[1] != b'equ':
+
+            print(F'WARNING line:{index+1} オフセット付きのメモリアクセス命令の第1引数がr0以外です.')
+            print('>>' + line.decode('utf-8'))
+    
+    return
 
 def main():
     if len(sys.argv) <= 1:
@@ -16,7 +48,9 @@ def main():
         print(f'Not found {asm_file_path}')
         exit(-1)
 
-    subprocess.run([asm32_exe_path, sys.argv[1], '-qer'], stdout=subprocess.PIPE )
+    check_asm_file(asm_file_path)
+
+    subprocess.run([asm32_exe_path, asm_file_path, '-qer'], stdout=subprocess.PIPE )
 
     lst_file_path = os.path.splitext(os.path.basename(asm_file_path))[0] + ".lst"
     lst_file = open(lst_file_path,'rb').readlines()
