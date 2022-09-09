@@ -32,8 +32,21 @@ def check_asm_file( asm_file_path ):
         if len(mnemonics) >= 4 and mnemonics[0][-1:] == b'a' and mnemonics[1] != b'r0' and \
             mnemonics[1] != b'equ':
 
-            print(F'WARNING line:{index+1} オフセット付きのメモリアクセス命令の第1引数がr0以外です.')
+            print(F'WARNING file:{asm_file_path} line:{index+1} オフセット付きのメモリアクセス命令の第1引数がr0以外です.')
             print('>>' + line.decode('utf-8'))
+        
+        #includeで存在しないファイルを指定していないかチェック.
+        elif len(mnemonics) >= 2 and mnemonics[0] == b'include':
+            
+            include_path = mnemonics[1][1:-1]
+            
+            if os.path.exists(include_path):
+                #再帰的にチェック
+                check_asm_file(include_path)
+            else:
+                #ファイルが存在しない. 警告表示
+                print(F'WARNING file:{asm_file_path} line:{index+1} include対象のファイルがありません.')
+                print('>>' + line.decode('utf-8'))
     
     return
 
