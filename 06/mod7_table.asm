@@ -89,6 +89,6 @@ mod7:
     cpsl 02h  ;COMをリセット
     retc,un
 
-    include "inc\mod7_table.h"
+    include "06\mod7_table.h"
 
 end ; End of assembly

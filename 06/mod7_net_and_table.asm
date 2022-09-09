@@ -95,6 +95,6 @@ mod7:
     loda,r0 mod7_table39,r0 ; 39 = 1+255/8+7
     retc,un
 
-    include "inc\mod7_table39.h"
+    include "06\mod7_table39.h"
 
 end ; End of assembly

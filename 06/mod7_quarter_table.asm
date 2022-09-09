@@ -97,6 +97,6 @@ _mod7_skip_9:
     cpsl 02h  ;COMをリセット
     retc,un
 
-    include "inc\mod7_quarter_table.h"
+    include "06\mod7_quarter_table.h"
 
 end ; End of assembly

@@ -98,6 +98,6 @@ _mod7:
     loda,r0 mod7_table21,r0 ; 21 = max(39 - 21, 21)
     retc,un
 
-    include "inc\mod7_table21.h"
+    include "06\mod7_table21.h"
 
 end ; End of assembly

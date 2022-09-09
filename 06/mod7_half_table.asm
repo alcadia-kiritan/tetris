@@ -93,6 +93,6 @@ _mod7_skip_sub:
     cpsl 02h  ;COMをリセット
     retc,un
 
-    include "inc\mod7_half_table.h"
+    include "06\mod7_half_table.h"
 
 end ; End of assembly
