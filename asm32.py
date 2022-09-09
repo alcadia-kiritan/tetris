@@ -22,7 +22,7 @@ def check_asm_file( asm_file_path ):
         if len(code) <= 0:
             continue
         
-        mnemonics = [ x.strip() for x in re.split(b'[,\s]', code) ]
+        mnemonics = [ x.strip() for x in re.split(b'[,\s\t]', code) ]
         mnemonics = [ x for x in mnemonics if len(x) > 0 ]
 
         #命令本体とパラメータが３つ以上(オフセットの指定がある)
