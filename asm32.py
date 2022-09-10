@@ -47,6 +47,11 @@ def check_asm_file( asm_file_path ):
                 #ファイルが存在しない. 警告表示
                 print(F'WARNING file:{asm_file_path} line:{index+1} include対象のファイルがありません.')
                 print('>>' + line.decode('utf-8'))
+
+        #bsxa/bxa命令のパラメータ省略に対して警告を出す
+        elif len(mnemonics) == 2 and ( mnemonics[0] == b'bsxa' or mnemonics[0] == b'bxa' ):
+            print(F'WARNING file:{asm_file_path} line:{index+1} bsxa/bxa命令にオフセット指定がありません. r3が使われます.')
+            print('>>' + line.decode('utf-8'))
     
     return
 
