@@ -25,6 +25,8 @@ def check_asm_file( asm_file_path ):
         mnemonics = [ x.strip() for x in re.split(b'[,\s\t]', code) ]
         mnemonics = [ x for x in mnemonics if len(x) > 0 ]
 
+        position = F'** WARNING ** file: {asm_file_path} line:{index+1} '
+
         #命令本体とパラメータが３つ以上(オフセットの指定がある)
         #命令の末尾がa (=メモリアクセスを伴う)
         #パラメータの１個目がr0以外
@@ -32,7 +34,7 @@ def check_asm_file( asm_file_path ):
         if len(mnemonics) >= 4 and mnemonics[0][-1:] == b'a' and mnemonics[1] != b'r0' and \
             mnemonics[1] != b'equ':
 
-            print(F'WARNING file:{asm_file_path} line:{index+1} オフセット付きのメモリアクセス命令の第1引数がr0以外です.')
+            print(position + 'オフセット付きのメモリアクセス命令の第1引数がr0以外です.')
             print('>>' + line.decode('utf-8'))
         
         #includeで存在しないファイルを指定していないかチェック.
@@ -45,12 +47,12 @@ def check_asm_file( asm_file_path ):
                 check_asm_file(include_path)
             else:
                 #ファイルが存在しない. 警告表示
-                print(F'WARNING file:{asm_file_path} line:{index+1} include対象のファイルがありません.')
+                print(position + 'include対象のファイルがありません.')
                 print('>>' + line.decode('utf-8'))
 
         #bsxa/bxa命令のパラメータ省略に対して警告を出す
         elif len(mnemonics) == 2 and ( mnemonics[0] == b'bsxa' or mnemonics[0] == b'bxa' ):
-            print(F'WARNING file:{asm_file_path} line:{index+1} bsxa/bxa命令にオフセット指定がありません. r3が使われます.')
+            print(position + 'bsxa/bxa命令にオフセット指定がありません. r3が使われます.')
             print('>>' + line.decode('utf-8'))
     
     return
