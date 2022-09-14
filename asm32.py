@@ -117,9 +117,21 @@ def main():
         exit(-1)
 
     print('Build completed!')
+
+    bin_file_path = os.path.splitext(os.path.basename(asm_file_path))[0] + ".bin"
+    bin_file_size = os.path.getsize(bin_file_path)
+
+    #8K(2000h)超えてたら0x1000-0x1FFF区間を消す
+    if bin_file_size >= 8*1024:
+        bin = open(bin_file_path,'rb').read(bin_file_size)
+        with open(bin_file_path,mode='wb') as file:
+            file.write(bin[0:4*1024])
+            file.write(bin[8*1024:]) 
+        
+        if any(bin[4*1024:8*1024]):
+            print('**WARNING** ROMの0x1000-0x1FFFの区間に0以外のデータがあります.')
     
     if len(sys.argv) <= 2:
-        bin_file_path = os.path.splitext(os.path.basename(asm_file_path))[0] + ".bin"
         print(f'Run {win_arcadia_exe_path} {bin_file_path}')
         subprocess.Popen([win_arcadia_exe_path, bin_file_path], stdout=subprocess.PIPE )
     
