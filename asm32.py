@@ -124,7 +124,7 @@ def main():
     #8K(2000h)超えてたら0x1000-0x1FFF区間を消す
     if bin_file_size >= 8*1024:
         bin = open(bin_file_path,'rb').read(bin_file_size)
-        with open(bin_file_path,mode='wb') as file:
+        with open(bin_file_path,'wb') as file:
             file.write(bin[0:4*1024])
             file.write(bin[8*1024:]) 
         
