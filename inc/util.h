@@ -7,17 +7,17 @@ clear_ram:
 
     lodi,r1 32 
 _clear_ram_ram1:
-    stra,r0 18D0h,r1-
+    stra,r0 38D0h,r1-
     brnr,r1 _clear_ram_ram1
 
     lodi,r1 4
 _clear_ram_ram2:
-    stra,r0 18F8h,r1-
+    stra,r0 38F8h,r1-
     brnr,r1 _clear_ram_ram2
     
     lodi,r1 48
 _clear_ram_ram3:
-    stra,r0 1AD0h,r1-
+    stra,r0 3AD0h,r1-
     brnr,r1 _clear_ram_ram3
 
     retc,un ; return
