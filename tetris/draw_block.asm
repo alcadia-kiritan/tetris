@@ -297,12 +297,22 @@ set_user_sprites:
     bsta,un init_random_tetromino
     ;bsta,un wait_vsync
 
-    ;bcta,un skiptest
+    lodi,r1 1
+    lodi,r0 EMPTY_2BLOCK+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+3
+    lodi,r0 EMPTY_2BLOCK+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+4
+
+    bcta,un skiptest
 
     lodi,r3 2
     ;lodi,r3 16
+    ;lodi,r3 13
 test_init:
-    lodi,r0 01Ah
+    lodi,r0 010h
     lodi,r1 FIELD_HEIGHT_ON_LOWER_SCREEN
     lodi,r2 (FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h
 setscreen_lower:
@@ -320,6 +330,7 @@ setscreen_lower:
     addi,r0 1
     bdrr,r1 setscreen_lower
     
+    ;lodi,r0 010h
     lodi,r1 FIELD_HEIGHT_ON_UPPER_SCREEN+1
     lodi,r2 (HALF_SCREEN_CHARA_HEIGHT-1)*10h
 setscreen_upper:
@@ -359,7 +370,9 @@ testloop:
     ;bsta,un fall_lines_3
     ;bsta,un fall_lines_4
     ;bsta,un fall_lines_1_1_1
-    bsta,un fall_lines_1_1_2
+    ;bsta,un fall_lines_1_1_2
+    bsta,un fall_lines_1_2_1
+    ;bsta,un fall_lines_2_1_1
     addi,r3 1
 
     lodi,r1 30

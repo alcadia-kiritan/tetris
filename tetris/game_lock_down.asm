@@ -234,8 +234,9 @@ game_lock_down_after_vsync:
     stra,r0 SPRITE2Y+PAGE1
     stra,r0 SPRITE3X+PAGE1
     stra,r0 SPRITE3Y+PAGE1
-
+    
     ;落下処理を呼び出して、呼び出し元に直接return
+    loda,r1 FallLineIndex+PAGE1
     bxa fall_process_table-3,r3 
 
     ;---------------
@@ -257,11 +258,9 @@ fall_process_table:
     bcta,un fall_lines_4
     bcta,un fall_lines_1_1_1
     bcta,un fall_lines_1_1_2
-    bcta,un fall_lines_1_1_1
-    bcta,un fall_lines_1_1_1
-    ;bcta,un fall_lines_1_2_1
-    ;bcta,un fall_lines_2_1_1
-
+    bcta,un fall_lines_1_2_1
+    bcta,un fall_lines_2_1_1
+    
     ;-------------------
     ;fall_lines_1
     ;Y=r1の行へ1行上から行を落下させる
@@ -811,7 +810,18 @@ fall_lines_1_1_1:
     rrl,r0
     strz r1
 
-    bcta,un _fall_lines_1_1_1_uu
+    ;上画面から上画面への転送
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+0,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+0,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+1,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+1,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+2,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+2,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+3,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+3,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+4,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+4,r1
+    bcta,un _fall_lines_2_uu_loop_end   ;2行落下処理に移動
     
 _fall_lines_1_1_1_lower:
     ;r1が12未満,下画面が転送開始行
@@ -861,20 +871,6 @@ _fall_lines_1_1_1_lu:
     loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+4
     stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
     bcta,un _fall_lines_2_uu   ;2行落下処理に移動
-
-    ;上画面から上画面への転送
-_fall_lines_1_1_1_uu:
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+0,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+0,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+1,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+1,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+2,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+2,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+3,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+3,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+4,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+4,r1
-    bcta,un _fall_lines_2_uu_loop_end   ;2行落下処理に移動
     
 
     ;-------------------
@@ -901,7 +897,18 @@ fall_lines_1_1_2:
     rrl,r0
     strz r1
 
-    bcta,un _fall_lines_1_1_2_uu
+    ;上画面から上画面への転送
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+0,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+0,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+1,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+1,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+2,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+2,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+3,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+3,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+4,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+4,r1
+    bcta,un _fall_lines_3_uu_loop_end   ;3行落下処理に移動
     
 _fall_lines_1_1_2_lower:
     ;r1が12未満,下画面が転送開始行
@@ -953,20 +960,258 @@ _fall_lines_1_1_2_lu:
     stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
     bcta,un _fall_lines_3_uu   ;3行落下処理に移動
 
-    ;上画面から上画面への転送
-_fall_lines_1_1_2_uu:
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+0,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+0,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+1,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+1,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+2,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+2,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+3,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+3,r1
-    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+4,r1
-    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+4,r1
-    bcta,un _fall_lines_3_uu_loop_end   ;3行落下処理に移動
+    ;-------------------
+    ;fall_lines_1_2_1
+    ;Y=r1の行へ1行上から２行、４行上以降から行を落下させる
+    ;r0,r1,r2を使用
+fall_lines_1_2_1:
+
+    comi,r1 HALF_SCREEN_CHARA_HEIGHT-2
+    bcta,lt _fall_lines_1_2_1_lower
+    bcta,eq _fall_lines_1_2_1_lu     ;上画面と下画面の境目から転送開始
+    comi,r1 HALF_SCREEN_CHARA_HEIGHT-1
+    bcta,eq _fall_lines_1_2_1_lu2     ;上画面と下画面の境目から転送開始
+
+    ;上画面から転送
+    lodi,r0 FIELD_HEIGHT_ON_UPPER_SCREEN+HALF_SCREEN_CHARA_HEIGHT-1-2
+    subz r1
+    strz r2
     
+    ; オフセット/10h = SCREEN_CHARA_HEIGHT-2 - r1
+    lodi,r0 SCREEN_CHARA_HEIGHT-2
+    subz r1 
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    strz r1
+
+    ;上画面から上画面への転送
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+0,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h+0,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+1,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h+1,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+2,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h+2,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+3,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h+3,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+4,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h+4,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+0,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+0,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+1,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+1,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+2,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+2,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+3,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+3,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-10h+4,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-00h+4,r1
+
+    bcta,un _fall_lines_2_uu_loop_end   ;2行落下処理に移動
+    
+_fall_lines_1_2_1_lower:
+    ;r1が11未満,下画面が転送開始行
+    
+    ;転送行数r2 = 12-r1
+    lodi,r0 HALF_SCREEN_CHARA_HEIGHT-1
+    subz r1
+    strz r2
+
+    ;r0をVRAM上のオフセットに変換
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    strz r1
+
+_fall_lines_1_2_1_ll:
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+0,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+0,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+1,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+1,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+2,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+2,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+3,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+3,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+4,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-20h*1+0,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+0,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-20h*1+1,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+1,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-20h*1+2,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+2,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-20h*1+3,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+3,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-20h*1+4,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*1+4,r1
+
+    subi,r1 20h
+    subi,r2 2
+    bcta,eq _fall_lines_2_lu_1
+    comi,r2 1
+    bcta,eq _fall_lines_2_lu_2
+    subi,r2 1
+    bcta,un _fall_lines_2_ll
+    
+
+    ;下画面の１行目から２行目へ転送＆上画面の最下段から下画面の１段目への転送
+_fall_lines_1_2_1_lu:
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+0
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+2
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+3
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+4
+
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+0
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+2
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+3
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
+    bcta,un _fall_lines_2_uu   ;2行落下処理に移動
+
+    ;上画面の最下段から下画面の１段目への転送＆上画面の最下段-１行目から最下段へ転送
+_fall_lines_1_2_1_lu2:
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+0
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+2
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+3
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
+    
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+0
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+0
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+2
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+2
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+3
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+3
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+4
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+4
+    
+    lodi,r1 (HALF_SCREEN_CHARA_HEIGHT-2)*10h
+    lodi,r2 FIELD_HEIGHT_ON_UPPER_SCREEN-3
+    bcta,un _fall_lines_2_uu_loop
+
+    ;-------------------
+    ;fall_lines_2_1_1
+    ;Y=r1の行へ２行上と４行上以降から行を落下させる
+    ;r0,r1,r2を使用
+fall_lines_2_1_1:
+
+    comi,r1 HALF_SCREEN_CHARA_HEIGHT-2
+    bctr,lt _fall_lines_2_1_1_lower
+    bcta,eq _fall_lines_2_1_1_lu1     ;上画面と下画面の境目から転送開始
+    comi,r1 HALF_SCREEN_CHARA_HEIGHT-1
+    bcta,eq _fall_lines_2_1_1_lu2     ;上画面と下画面の境目から転送開始
+
+    ;上画面から転送
+    lodi,r0 FIELD_HEIGHT_ON_UPPER_SCREEN+HALF_SCREEN_CHARA_HEIGHT-1-2
+    subz r1
+    strz r2
+    
+    ; オフセット/10h = SCREEN_CHARA_HEIGHT-1 - r1
+    lodi,r0 SCREEN_CHARA_HEIGHT-1
+    subz r1 
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    strz r1
+
+    ;上画面から上画面への転送
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-20h+0,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+0,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-20h+1,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+1,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-20h+2,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+2,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-20h+3,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+3,r1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1-20h+4,r1
+    stra,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+00h+4,r1
+    bcta,un _fall_lines_3_uu_loop_end   ;2行落下処理に移動
+    
+_fall_lines_2_1_1_lower:
+    ;r1が11未満,下画面が転送開始行
+    
+    ;転送行数r2 = 12-r1
+    lodi,r0 HALF_SCREEN_CHARA_HEIGHT-1
+    subz r1
+    strz r2
+
+    ;r0をVRAM上のオフセットに変換
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    rrl,r0
+    strz r1
+
+_fall_lines_2_1_1_ll:
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*2+0,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+0,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*2+1,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+1,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*2+2,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+2,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*2+3,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+3,r1
+    loda,r0 SCRLODATA+FIELD_START_X/2+PAGE1-10h*2+4,r1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4,r1
+    subi,r1 10h
+    comi,r2 2
+    bcta,eq _fall_lines_3_lu_2
+    comi,r2 3
+    bcta,eq _fall_lines_3_lu_3
+    subi,r2 1
+    bcta,un _fall_lines_3_ll
+    
+
+    ;上画面の最下段から下画面の最上段+1への転送
+_fall_lines_2_1_1_lu1:
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+0
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+2
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+3
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-1)+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*1+4
+    bcta,un _fall_lines_3_lu_1   ;3行落下処理に移動
+    
+    ;上画面の最下段+1から下画面の最上段への転送
+_fall_lines_2_1_1_lu2:
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+0
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+1
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+2
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+3
+    loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
+    bcta,un _fall_lines_3_uu   ;3行落下処理に移動
+
+
 CLEAR_CHECK_Y_OFFSETS: ;テトリミノを消すときにチェックするYオフセット. 1テトロミノに付きチェックを開始するY座標オフセットとチェックする行数の2byte.
 CCYO_I0:
     db          0
