@@ -125,15 +125,21 @@ programstart:
     ShuffleTetromino6           equ ShuffleTetromino+6
     ShuffleIndex                equ ShuffleTetromino+7   ;現在シャッフルの何番目か
 
+    ;音系
+    SoundData                   equ ShuffleTetromino+8 -PAGE1
+    SoundFrameCount             equ SoundData+0         ;音節を何フレーム回すか
+    SoundDataAddress0           equ SoundData+1         ;次に鳴らす音データのアドレス,01は並んでいること
+    SoundDataAddress1           equ SoundData+2
+
     ;デバッグ用, 都度適当に使う
-    Debug                       equ ShuffleTetromino+8
+    Debug                       equ SoundData+3
     Debug0                      equ Debug + 0
     Debug1                      equ Debug + 1
     Debug2                      equ Debug + 2
     Debug3                      equ Debug + 3
 
     ;領域超過チェック用！　最後の変数の変更に注意！
-    EndRAM3                     equ Debug3 -PAGE1
+    EndRAM3                     equ Debug3
 
     IF EndRAM3 > 1AFFh
         error RAM3がオーバーしてるよ
@@ -296,6 +302,10 @@ set_user_sprites:
 
     bsta,un init_random_tetromino
     ;bsta,un wait_vsync
+    
+    ;ボリューム
+    lodi,r0 0001011b
+    stra,r0 VOLUMESCROLL
 
     lodi,r1 1
     lodi,r0 EMPTY_2BLOCK+3
@@ -406,6 +416,9 @@ loopforever:
     ;垂直帰線期間を待つ
     bsta,un wait_vsync
 
+    ;音処理
+    bsta,un sound_process
+
     ;bsta,un store_charline_debug2       ;負荷を見るためのデバッグ用コード
 
     ;垂直同期後の処理, ここからタイミングが限られてる系の処理（主に描画
@@ -466,7 +479,7 @@ game_main_after_vsync:
     ;r0,r1, r4,r5,r6を使用
 hold_operation_tetromino:
     loda,r0 EnabledHoldTetromino
-    retc,eq ;ホールド出来ない
+    bcta,eq play_se2    ;ホールド出来ない. 効果音鳴らして終了
 
     loda,r0 HoldTetrominoType
     comi,r0 EMPTY_HOLD_TETROMINO_TYPE
@@ -705,9 +718,12 @@ move_tetromino:
     ;パッド操作, カーソルの左右でテトロミノの回転をする
     loda,r0 P1Pad
     lodi,r1 PrevP1Pad - KeyData
-    bsta,un button_process    
+    bsta,un button_process
+    bcta,eq _move_tetromino_skip_rotate     ;何も押されてない、スキップ
     tmi,r0 11b
     bcta,eq _move_tetromino_skip_rotate     ;右左両方押されてる. スキップ
+
+    bsta,un play_se1
     
     tmi,r0 01b
     bcfr,eq _move_tetromino_right_key      ;左は押されてない.
@@ -813,6 +829,7 @@ _move_tetromino_skip_S_key:
     tmi,r0 0100b
     bcfr,eq _move_tetromino_skip_W_key
     stra,r0 DoHardDrop  ;ハードドロップ. 0以外なら何でもいい
+    bsta,un play_se5
     bctr,un _move_tetromino_moved2
 _move_tetromino_skip_W_key:
 
@@ -829,6 +846,7 @@ _move_tetromino_moved:
     stra,r0 NextTetrominoX
     loda,r0 Temporary1
     stra,r0 NextTetrominoY
+    bsta,un play_se10
 
 _move_tetromino_moved2:
     lodi,r0 1
@@ -1789,6 +1807,10 @@ _reset_tetromino_field_down:
 
     ;テトロミノ
     include "tetris\tetromino.h"
+
+    ;音系
+    include "tetris\sound.asm"
+    include "tetris\se.asm"
     
 _PAGE0END_:
 
@@ -1828,17 +1850,17 @@ _PAGE1END_:
     ;r0を使用
 store_charline_debug0:
     loda,r0 CHARLINE + PAGE1
-    stra,r0 Debug0
+    stra,r0 Debug0+PAGE1
     retc,un ; return
 
 store_charline_debug1:
     loda,r0 CHARLINE + PAGE1
-    stra,r0 Debug1
+    stra,r0 Debug1+PAGE1
     retc,un ; return
 
 store_charline_debug2:
     loda,r0 CHARLINE + PAGE1
-    stra,r0 Debug2
+    stra,r0 Debug2+PAGE1
     retc,un ; return
 
 end ; End of assembly

@@ -41,7 +41,7 @@ _gld_check_line_1:
     ;落下処理をしないフラグを立てておく
     lodi,r0 GLD_NOT_FALL
     stra,r0 FallFuncionIndex+PAGE1
-    retc,un
+    bcta,un play_se9        ;効果音鳴らしてreturn
     
 _gld_clear_1:
     ;1行消えた
@@ -151,7 +151,7 @@ _gld_clear_4:
     ;４行消えた. パターンは1個だけ
     lodi,r0 GLD_FALL_LINES_4
     stra,r0 FallFuncionIndex+PAGE1
-    retc,un
+    bcta,un play_se8    ;音鳴らして直return
 
     ;-------------------
     ;check_cleared
