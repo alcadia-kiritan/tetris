@@ -6,6 +6,19 @@
     ;r0,r1,r2,r3, Temporary0, Temporary1, Temporary2を使用
 game_lock_down:
 
+    ;ゲームオーバー判定
+    bsta,un is_game_over
+    bctr,eq _gld_no_game_over
+
+    ;ゲームオーバーになった
+    ;落下処理はしない. ゲームオーバーシーンに移動
+    eorz r0
+    stra,r0 FallFuncionIndex+PAGE1
+    lodi,r0 SCENE_GAME_OVER
+    stra,r0 NextSceneIndex+PAGE1
+    retc,un
+
+_gld_no_game_over:
     ;次は新テトロミノ生成に行く
     lodi,r0 SCENE_GAME_NEW_TETROMINO
     stra,r0 NextSceneIndex+PAGE1

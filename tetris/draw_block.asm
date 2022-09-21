@@ -87,11 +87,16 @@ programstart:
     ;----
     ;RAM3 $1AD0..$1AFF
 
-    ;消す行の情報 or 操作テトロミノのブロックの座標
+    ;消す行の情報 
+    ;  or ゲームオーバー系の変数 
+    ;  or 操作テトロミノのブロックの座標
     ;時系列で同時に使うことが無いので被せる
     TetrominoData3             equ 1AD0h
     FallLineIndex              equ TetrominoData3+0    ;行をずらし始める行
     FallFuncionIndex           equ TetrominoData3+1    ;どういうずらし方をするか
+
+    GameOverFrameCount          equ TetrominoData3+0    ;ゲームオーバの描画用のカウンタ
+    GameOverFillLineIndex       equ TetrominoData3+1
 
     OperationTetrominoX0        equ TetrominoData3+0    ;操作テトロミノのブロック座標郡
     OperationTetrominoY0        equ TetrominoData3+1
@@ -283,8 +288,12 @@ set_user_sprites:
     lodi,r0 1
     stra,r0 FallDistance
 
-    lodi,r0 SCENE_GAME_NEW_TETROMINO
+    ;lodi,r0 SCENE_GAME_NEW_TETROMINO
+    lodi,r0 SCENE_GAME_TIELE
     stra,r0 NextSceneIndex
+
+    eorz r0 
+    stra,r0 SceneIndex
 
     lodi,r0 0
     stra,r0 NextOperationTetrominoType0
@@ -343,6 +352,8 @@ set_user_sprites:
     ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+2
     stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+3
     ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+3
+
+    stra,r0 SCRUPDATA+FIELD_START_X/2+(14-FIELD_HEIGHT_ON_UPPER_SCREEN)*10h+3
 
     bcta,un skiptest
 
@@ -432,26 +443,34 @@ loopforever:
     ;bsta,un store_charline_debug0       ;負荷を見るためのデバッグ用コード
 
     ;シーンのインデックスを読み込み
-    loda,r0 NextSceneIndex
-    stra,r0 SceneIndex
-    strz r3
+    loda,r3 NextSceneIndex
+    coma,r3 SceneIndex
+    bctr,eq _lf_no_change   ;シーンに変更があったか？
+
+    ;シーンに変更があった. シーン開始時の処理を呼び出す
+    stra,r3 SceneIndex
+    bsxa scene_table+0,r3
+    loda,r3 SceneIndex
+
+_lf_no_change:
 
     ;メイン処理
-    bsxa scene_table,r3
+    bsxa scene_table+3,r3
 
     ;bsta,un store_charline_debug1       ;負荷を見るためのデバッグ用コード
 
     ;垂直帰線期間を待つ
     bsta,un wait_vsync
 
+    ;bsta,un store_charline_debug2       ;負荷を見るためのデバッグ用コード
+
     ;音処理
     bsta,un sound_process
 
-    ;bsta,un store_charline_debug2       ;負荷を見るためのデバッグ用コード
 
     ;垂直同期後の処理, ここからタイミングが限られてる系の処理（主に描画
     loda,r3 SceneIndex
-    bsxa scene_table+3,r3
+    bsxa scene_table+6,r3
     
     
     bctr,un loopforever  ; Loop forever
@@ -459,19 +478,38 @@ loopforever:
 
     ;============
     ;シーンテーブル
-    ;垂直同期前に実行されるサブルーチンと、垂直同期後に実行されるサブルーチンのペア
+    ;垂直同期前に実行されるサブルーチンと、垂直同期後に実行されるサブルーチンのペア、のbctaが並んでる
     
-    SCENE_GAME_MAIN                 equ     0 * 6       ;6=bcta命令2個分  
-    SCENE_GAME_NEW_TETROMINO        equ     1 * 6
-    SCENE_GAME_LOCK_DOWN            equ     2 * 6
+    SCENE_GAME_MAIN                 equ     0 * 9       ;9=bcta命令3個分  
+    SCENE_GAME_NEW_TETROMINO        equ     1 * 9
+    SCENE_GAME_LOCK_DOWN            equ     2 * 9
+    SCENE_GAME_OVER                 equ     3 * 9
+    SCENE_GAME_TIELE                equ     4 * 9
 
 scene_table:
+    ;---    
+    bcta,un empty_subroutine
     bcta,un game_main
     bcta,un game_main_after_vsync
+    ;---
+    bcta,un empty_subroutine
     bcta,un game_new_tetromino
     bcta,un game_new_tetromino_after_vsync
+    ;---
+    bcta,un empty_subroutine
     bcta,un game_lock_down
     bcta,un game_lock_down_after_vsync
+    ;---
+    bcta,un game_over_start
+    bcta,un game_over
+    bcta,un game_over_after_vsync
+    ;---
+    bcta,un game_title_start
+    bcta,un game_title
+    bcta,un game_title_after_vsync
+
+empty_subroutine:
+    retc,un
 
     ;///////////////////////////////////////////////////////////
     ;ゲームのメイン処理
@@ -493,10 +531,7 @@ game_main_after_vsync:
 
     bsta,un draw_hold_tetromino         ;ホールドテトロミノの描画
 
-    ;bsta,un bake_operation_tetromino
     bsta,un update_operation_tetromino      ;操作テトリミノの更新
-
-    
 
     retc,un
     ;///////////////////////////////////////////////////////////
@@ -622,7 +657,7 @@ _hot_empty:
     ;-------------------
     ;draw_hold_tetromino
     ;ホールドテトロミノを描画する
-    ;r0,r1,r2,r3を使用
+    ;r0,r1,r2,r3,Temporary1を使用
 draw_hold_tetromino:
     loda,r0 DrawHoldTetromino
     retc,eq
@@ -740,7 +775,7 @@ _uot_remove_only:
     ;move_tetromino
     ;- キー入力(WASD)に応じてNextTetrominoX,NextTetrominoYを増減させる
     ;- キー入力(カーソル左右,パッド)に応じてNextTetrominoRotateを変化させる
-    ;r0,r1,r2,r3,r4,r5,r6, Temporary0, Temporary1を使用
+    ;r0,r1,r2,r3,r4,r5,r6, Temporary0を使用
 move_tetromino:
 
     ;---
@@ -752,7 +787,6 @@ move_tetromino:
     tmi,r0 11b
     bcta,eq _move_tetromino_skip_rotate     ;右左両方押されてる. スキップ
 
-    bsta,un play_se1
     
     tmi,r0 01b
     bcfr,eq _move_tetromino_right_key      ;左は押されてない.
@@ -764,6 +798,7 @@ move_tetromino:
     ;左に回せた
     lodi,r0 1
     stra,r0 UpdatedTetrominoSprites
+    bsta,un play_se1
     bctr,un _move_tetromino_skip_rotate
 
 _move_tetromino_right_key:
@@ -777,16 +812,14 @@ _move_tetromino_right_key:
     ;右に回せた
     lodi,r0 1
     stra,r0 UpdatedTetrominoSprites
-    bctr,un _move_tetromino_skip_rotate
+    bsta,un play_se1
 
 _move_tetromino_skip_rotate:
 
     ;---
-    ;X,Yの位置を退避
+    ;Xの位置を退避
     loda,r0 NextTetrominoX
     stra,r0 Temporary0
-    loda,r0 NextTetrominoY
-    stra,r0 Temporary1
 
     ;---
     ;1,q,a,zキー
@@ -796,10 +829,8 @@ _move_tetromino_skip_rotate:
 
     ;Qキー, ホールド
     tmi,r0 0100b
-    bcfr,eq _move_tetromino_skip_Q_key
-    ;ホールドは複数回の判定を行って重くなる可能性があるので他のカーソル操作はスキップする
-    bcta,un hold_operation_tetromino
-_move_tetromino_skip_Q_key:
+    ;ホールドは複数回の判定を行って重くなる可能性があるので他のカーソル操作はスキップ(直return)する
+    bcta,eq hold_operation_tetromino
 
     ;Aキー左移動, Temporary0を-1
     tmi,r0 0010b
@@ -854,24 +885,30 @@ _move_tetromino_skip_S_key:
     bcfr,eq _move_tetromino_skip_W_key
     stra,r0 DoHardDrop  ;ハードドロップ. 0以外なら何でもいい
     bsta,un play_se5
-    bctr,un _move_tetromino_moved2
+    bctr,un _move_tetromino_moved
 _move_tetromino_skip_W_key:
 
     loda,r0 TetrominoX
     coma,r0 Temporary0
-    bcfr,eq _move_tetromino_moved       ;移動があった
-
-    loda,r0 TetrominoY
-    coma,r0 Temporary1
     retc,eq ;移動が無かった終了
+    
+    ;移動があった, Temporary0とNextTetrominoXを交換
+    ;NextTetrominoXの座標はチェックに使う
+    ;現NextTetrominoXは回転で既に初期値から変化してる可能性があるので残しておく必要がある
+    loda,r0 Temporary0
+    loda,r1 NextTetrominoX
+    stra,r1 Temporary0
+    stra,r0 NextTetrominoX
+    
+    bsta,un can_block_moved
+    bctr,eq _move_tetromino_moved   ;移動できたら飛ぶ
 
-_move_tetromino_moved:
+    ;移動できなかった. NextTetrominoXを元に戻して終了
     loda,r0 Temporary0
     stra,r0 NextTetrominoX
-    loda,r0 Temporary1
-    stra,r0 NextTetrominoY
+    retc,un
 
-_move_tetromino_moved2:
+_move_tetromino_moved:
     lodi,r0 1
     stra,r0 UpdatedTetrominoSprites
     retc,un
@@ -1828,6 +1865,9 @@ _reset_tetromino_field_down:
     ;新しいテトリス生成するときの処理
     include "tetris\game_new_tetromino.asm"
 
+    ;タイトル画面
+    include "tetris\game_title.asm"
+
     ;テトロミノ
     include "tetris\tetromino.h"
 
@@ -1847,6 +1887,9 @@ _PAGE0END_:
     
     ;テトリスを固定する処理
     include "tetris\game_lock_down.asm"
+
+    ;ゲームオーバー関連
+    include "tetris\game_over.asm"
 
     ;汎用処理
     include "inc\util.h"

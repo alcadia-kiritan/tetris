@@ -202,4 +202,49 @@ se11_data:
     db 09h   ;ピッチ
     db 0     ;終端
 
+    ;--------------
+    ;play_se12      ;ゲームオーバー
+    ;r0,r1,r2を使用
+    ;ピペツ
+play_se12:
+    lodi,r0 se12_data>>8
+    lodi,r1 se12_data&0ffh
+    lodi,r2 20
+    bcta,un play_sound_with_priority
+se12_data:
+    db 04h   ;鳴らすフレーム数
+    db 30h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 34h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 38h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 3Ch   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 40h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 44h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 48h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 4Ch   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 50h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 54h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 58h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 5Ch   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 60h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 64h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 68h   ;ピッチ
+    db 30h   ;鳴らすフレーム数
+    db 6Ch   ;ピッチ
+    db 0     ;終端
+
+
 end
