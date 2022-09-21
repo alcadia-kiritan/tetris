@@ -97,7 +97,7 @@ sound_process:
     comi,r0 2
     bcfr,lt _sp_skip_inc
     ;オーバーフローが起きた. 上位byteをインクリメント
-    stra,r1 SoundDataAddress0
+    loda,r1 SoundDataAddress0
     addi,r1 1
     stra,r1 SoundDataAddress0
 _sp_skip_inc:
