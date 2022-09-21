@@ -60,7 +60,7 @@ _gld_check_line_2_end:
     ;１行だけ消えた
     lodi,r0 GLD_FALL_LINES_1
     stra,r0 FallFuncionIndex+PAGE1
-    retc,un
+    bcta,un play_se4    ;音鳴らす, 直return
 
 _gld_clear_2:
     ;2行目が消えた
@@ -77,6 +77,7 @@ _gld_check_line_3:
 
 _gld_check_line_3_end:
     ;２行だけ消えた. 1+1+1+1の２パターン. 1+2+1の２パターン. 2+2の２パターン
+    bsta,un play_se6    ;音鳴らす
     loda,r1 FallLineIndex+PAGE1
     loda,r0 Temporary1+PAGE1
     subi,r0 1
@@ -88,7 +89,7 @@ _gld_check_line_3_end:
     ;1+1+1ならr1が1, 1+2+1ならr1が2になる
     subz r1                    ;１つ目の行でずらす行数(r0) ＝ ２つ目の行-1 - １つ目の行
     lodi,r2 GLD_FALL_LINES_1_1_1
-    comi,r1 1
+    comi,r0 1
     bctr,eq _gld_check_line_3_end2
     lodi,r2 GLD_FALL_LINES_1_2_1
 _gld_check_line_3_end2:
@@ -116,6 +117,7 @@ _gld_clear_3:
 
 _gld_check_line_4_end:
     ;３行だけ消えた. 1+1+2パターン. 2+1+1パターン. 1+3パターン. 3+1パターン.の４通りがありうる
+    bsta,un play_se7    ;音鳴らす
     loda,r1 FallLineIndex+PAGE1
     loda,r0 Temporary1+PAGE1
     subi,r0 1
@@ -133,7 +135,7 @@ _gld_serial3:
     ;2+1+1パターンか1+3パターンか3+1パターン
     loda,r2 Temporary2+PAGE1
     subi,r2 2
-    comz r1                 ;消えた１～３行目が連続しているか？
+    comz r2                 ;消えた１～３行目が連続しているか？
     bctr,eq _gld_serial4
     ;３行目は連続してない. 2+1+1パターン確定
     lodi,r0 GLD_FALL_LINES_2_1_1

@@ -128,11 +128,13 @@ programstart:
     ;音系
     SoundData                   equ ShuffleTetromino+8 -PAGE1
     SoundFrameCount             equ SoundData+0         ;音節を何フレーム回すか
-    SoundDataAddress0           equ SoundData+1         ;次に鳴らす音データのアドレス,01は並んでいること
-    SoundDataAddress1           equ SoundData+2
+    SoundPriority               equ SoundData+1
+    SoundDataAddress0           equ SoundData+2         ;次に鳴らす音データのアドレス,01は並んでいること
+    SoundDataAddress1           equ SoundData+3
+    
 
     ;デバッグ用, 都度適当に使う
-    Debug                       equ SoundData+3
+    Debug                       equ SoundData+4
     Debug0                      equ Debug + 0
     Debug1                      equ Debug + 1
     Debug2                      equ Debug + 2
@@ -284,11 +286,11 @@ set_user_sprites:
     lodi,r0 SCENE_GAME_NEW_TETROMINO
     stra,r0 NextSceneIndex
 
-    lodi,r0 6
+    lodi,r0 0
     stra,r0 NextOperationTetrominoType0
-    lodi,r0 5
+    lodi,r0 0
     stra,r0 NextOperationTetrominoType1
-    lodi,r0 4
+    lodi,r0 0
     stra,r0 NextOperationTetrominoType2
 
     lodi,r0 1
@@ -309,12 +311,38 @@ set_user_sprites:
 
     lodi,r1 1
     lodi,r0 EMPTY_2BLOCK+3
-    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+0
-    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+3
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+0
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+1
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+3
     lodi,r0 EMPTY_2BLOCK+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+FIELD_HEIGHT_ON_LOWER_SCREEN*10h+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+4
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+4
+
+    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+0
+    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+1
+    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+2
+    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+3
+    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+3
 
     bcta,un skiptest
 
@@ -381,8 +409,8 @@ testloop:
     ;bsta,un fall_lines_4
     ;bsta,un fall_lines_1_1_1
     ;bsta,un fall_lines_1_1_2
-    bsta,un fall_lines_1_2_1
-    ;bsta,un fall_lines_2_1_1
+    ;bsta,un fall_lines_1_2_1
+    bsta,un fall_lines_2_1_1
     addi,r3 1
 
     lodi,r1 30
@@ -476,7 +504,7 @@ game_main_after_vsync:
     ;-------------------
     ;hold_operation_tetromino
     ;操作テトロミノをホールドする
-    ;r0,r1, r4,r5,r6を使用
+    ;r0,r1,r2 r4,r5,r6を使用
 hold_operation_tetromino:
     loda,r0 EnabledHoldTetromino
     bcta,eq play_se2    ;ホールド出来ない. 効果音鳴らして終了
@@ -554,7 +582,7 @@ hold_operation_tetromino:
     lodi,r0 1
     stra,r0 DrawHoldTetromino
 
-    retc,un
+    bcta,un play_se2    ;ホールド出来なかった. 効果音鳴らして終了
 
 _hot_movable:
     ;交換可能
@@ -572,7 +600,7 @@ _hot_movable:
     eorz r0
     stra,r0 EnabledHoldTetromino
 
-    retc,un
+    bcta,un play_se3    ;ホールド出来た. 効果音鳴らして終了
     
 _hot_empty:
     ;ホールドが空
@@ -588,7 +616,8 @@ _hot_empty:
     ;新しいテトロミノを生成する.
     lodi,r0 SCENE_GAME_NEW_TETROMINO
     stra,r0 NextSceneIndex
-    retc,un
+    
+    bcta,un play_se3    ;ホールド出来た. 効果音鳴らして終了
 
     ;-------------------
     ;draw_hold_tetromino
@@ -778,6 +807,9 @@ _move_tetromino_skip_Q_key:
     loda,r1 Temporary0
     addi,r1 -1
     stra,r1 Temporary0
+    strz r3
+    bsta,un play_se11
+    lodz r3
 _move_tetromino_skip_A_key:
 
     tmi,r0 0001b
@@ -796,18 +828,10 @@ _move_tetromino_skip_Z_key:
     loda,r1 Temporary0
     addi,r1 1
     stra,r1 Temporary0
+    strz r3
+    bsta,un play_se10
+    lodz r3
 _move_tetromino_skip_D_key:
-
-    tmi,r0 0100b
-    bcfr,eq _move_tetromino_skip_E_key
-    loda,r1 TetrominoType
-    addi,r1 1
-    comi,r1 7
-    bctr,lt _move_tetromino_skip_E_key_
-    lodi,r1 0
-_move_tetromino_skip_E_key_:
-    stra,r1 TetrominoType
-_move_tetromino_skip_E_key:
 
     ;2,w,s,xキー
     loda,r0 P1MIDDLEKEYS
@@ -846,7 +870,6 @@ _move_tetromino_moved:
     stra,r0 NextTetrominoX
     loda,r0 Temporary1
     stra,r0 NextTetrominoY
-    bsta,un play_se10
 
 _move_tetromino_moved2:
     lodi,r0 1
