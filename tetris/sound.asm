@@ -3,13 +3,15 @@
     ;-------------------------------------------------------------------------
     ;定義が必要な変数
     ;SoundFrameCount        ;音節を何フレーム回すか
+    ;SoundPriority          ;鳴らしてる音の優先度
     ;SoundDataAddress0      ;次に鳴らす音データのアドレス,01は並んでいること
     ;SoundDataAddress1
 
     ;-------------------------------------------------------------------------
     ;サブルーチン
-    ;play_sound     [r0:r1]にある音データを再生. 
-    ;sound_process  PITCHへの処理をやるサブルーチン. 垂直帰線直後などの定期的に同じタイミングで通る場所で呼ぶことを推奨
+    ;play_sound                 [r0:r1]にある音データを再生. 優先度は0
+    ;play_sound_with_priority   [r0:r1]にある音データをr2の優先度で再生. 優先度が大きい音は、優先度が低い音に邪魔されない.
+    ;sound_process              PITCHへの処理をやるサブルーチン. 垂直帰線直後などの定期的に同じタイミングで通る場所で呼ぶことを推奨
 
     ;-------------------------------------------------------------------------
     ;音データ仕様. @の後ろはbyte数
@@ -27,9 +29,32 @@
 
     ;-------------------
     ;play_sound
-    ;[r0:r1]に入ってる音データを鳴らす
-    ;r0,r1を使用
+    ;[r0:r1]に入ってる音データを鳴らす. 優先度は0
+    ;r0,r1,r2を使用
 play_sound:
+    loda,r2 SoundPriority
+    retc,gt                 ;今再生してる優先度が０より大きい.ので再生しない
+
+    ;音データのアドレスをSoundDataAddress0/1に保存
+    stra,r0 SoundDataAddress0
+    stra,r1 SoundDataAddress1
+
+    ;現在鳴らしてる音を打ち切り（最終フレーム扱いにする
+    lodi,r0 1
+    stra,r0 SoundFrameCount
+
+    retc,un
+
+    ;-------------------
+    ;play_sound_with_priority
+    ;[r0:r1]に入ってる音データを鳴らす. [r0:r1]にある音データをr2の優先度で再生. 優先度が大きい音は、優先度が低い音に邪魔されない.
+    ;r0,r1を使用
+play_sound_with_priority:
+    coma,r2 SoundPriority
+    retc,lt                 ;再生中の音の優先度のが高い. ので再生しない.
+
+    stra,r2 SoundPriority
+
     ;音データのアドレスをSoundDataAddress0/1に保存
     stra,r0 SoundDataAddress0
     stra,r1 SoundDataAddress1
@@ -81,11 +106,13 @@ _sp_skip_inc:
 
     ;音止める
 _sp_stop:
+
     loda,r0 PITCH
     andi,r0 80h
     stra,r0 PITCH
 
     eorz r0
+    stra,r0 SoundPriority
     stra,r0 SoundFrameCount
     retc,un
 
