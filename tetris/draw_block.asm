@@ -89,6 +89,7 @@ programstart:
 
     ;消す行の情報 
     ;  or ゲームオーバー系の変数 
+    ;  or タイトル画面の変数
     ;  or 操作テトロミノのブロックの座標
     ;時系列で同時に使うことが無いので被せる
     TetrominoData3             equ 1AD0h
@@ -97,6 +98,8 @@ programstart:
 
     GameOverFrameCount          equ TetrominoData3+0    ;ゲームオーバの描画用のカウンタ
     GameOverFillLineIndex       equ TetrominoData3+1
+
+    GameTitleFrameCount         equ TetrominoData3+0
 
     OperationTetrominoX0        equ TetrominoData3+0    ;操作テトロミノのブロック座標郡
     OperationTetrominoY0        equ TetrominoData3+1
@@ -136,10 +139,13 @@ programstart:
     SoundPriority               equ SoundData+1
     SoundDataAddress0           equ SoundData+2         ;次に鳴らす音データのアドレス,01は並んでいること
     SoundDataAddress1           equ SoundData+3
-    
 
+    ;その他
+    Other                       equ SoundData+4
+    GameMode                    equ Other+0             ;ゲームモード
+    
     ;デバッグ用, 都度適当に使う
-    Debug                       equ SoundData+4
+    Debug                       equ Other+10
     Debug0                      equ Debug + 0
     Debug1                      equ Debug + 1
     Debug2                      equ Debug + 2
@@ -228,6 +234,8 @@ programstart:
     CHAR_0_OFFSET   equ 10h - '0'       ; CHAR_0_OFFSET+'0' を描画すると0が出る
     CHAR_A          equ 1Ah
     CHAR_A_OFFSET   equ 1Ah - 'A'
+    ASCII_OFFSET    equ 1Ah - 'A'
+    DIGIT_OFFSET    equ 10h - '0'
 
     PAGE1    equ 2000h
 
@@ -457,6 +465,9 @@ _lf_no_change:
     ;メイン処理
     bsxa scene_table+3,r3
 
+    ;現フレームのキー情報を退避
+    bsta,un post_key_process        
+
     ;bsta,un store_charline_debug1       ;負荷を見るためのデバッグ用コード
 
     ;垂直帰線期間を待つ
@@ -464,14 +475,15 @@ _lf_no_change:
 
     ;bsta,un store_charline_debug2       ;負荷を見るためのデバッグ用コード
 
+    ;パッドの状態を取得しておく
+    bsta,un get_padd_status_player1     
+
     ;音処理
     bsta,un sound_process
 
-
     ;垂直同期後の処理, ここからタイミングが限られてる系の処理（主に描画
     loda,r3 SceneIndex
-    bsxa scene_table+6,r3
-    
+    bsxa scene_table+6,r3    
     
     bctr,un loopforever  ; Loop forever
     ;============================================================================
@@ -485,6 +497,7 @@ _lf_no_change:
     SCENE_GAME_LOCK_DOWN            equ     2 * 9
     SCENE_GAME_OVER                 equ     3 * 9
     SCENE_GAME_TIELE                equ     4 * 9
+    SCENE_GAME_START                equ     5 * 9
 
 scene_table:
     ;---    
@@ -507,6 +520,10 @@ scene_table:
     bcta,un game_title_start
     bcta,un game_title
     bcta,un game_title_after_vsync
+    ;---
+    bcta,un game_start_start
+    bcta,un game_start
+    bcta,un game_start_after_vsync
 
 empty_subroutine:
     retc,un
@@ -520,13 +537,11 @@ game_main:
     bsta,un set_ghost_tetromino_y
     bsta,un fall_operation_tetromino
 
-    bsta,un post_key_process        ;現フレームのキー情報を退避
     retc,un
 
     ;ゲームのメイン処理のうち垂直同期後にやる処理
 game_main_after_vsync:
 
-    bsta,un get_padd_status_player1     ;パッドの状態を取得しておく
     bsta,un draw_ghost_tetromino            ;ゴーストの描画, スプライト更新があるので優先度高め
 
     bsta,un draw_hold_tetromino         ;ホールドテトロミノの描画
@@ -1867,6 +1882,9 @@ _reset_tetromino_field_down:
 
     ;タイトル画面
     include "tetris\game_title.asm"
+
+    ;ゲームスタート
+    include "tetris\game_start.asm"
 
     ;テトロミノ
     include "tetris\tetromino.h"

@@ -246,5 +246,32 @@ se12_data:
     db 6Ch   ;ピッチ
     db 0     ;終端
 
+    ;--------------
+    ;play_se13      ;ゲームスタート
+    ;r0,r1,r2を使用
+    ;
+play_se13:
+    lodi,r0 se13_data>>8
+    lodi,r1 se13_data&0ffh
+    lodi,r2 20
+    bcta,un play_sound_with_priority
+se13_data:
+    db 04h   ;鳴らすフレーム数
+    db 20h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 1Ch   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 18h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 14h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 10h   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 0Ch   ;ピッチ
+    db 04h   ;鳴らすフレーム数
+    db 0Ah   ;ピッチ
+    db 14h   ;鳴らすフレーム数
+    db 09h   ;ピッチ
+    db 0     ;終端
 
 end
