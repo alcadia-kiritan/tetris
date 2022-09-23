@@ -342,11 +342,14 @@ IF 1
     ;stra,r0 SCRUPDATA+FIELD_START_X/2+(14-FIELD_HEIGHT_ON_UPPER_SCREEN)*10h+3
 
     
-    lodi,r0 5
+    ;lodi,r0 5  ;T型
+    lodi,r0 0
     stra,r0 NextOperationTetrominoType0
-    lodi,r0 5
+    ;lodi,r0 5  ;T型
+    lodi,r0 0
     stra,r0 NextOperationTetrominoType1
-    lodi,r0 5
+    ;lodi,r0 5  ;T型
+    lodi,r0 0
     stra,r0 NextOperationTetrominoType2
 
 ENDIF

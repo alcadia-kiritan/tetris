@@ -19,13 +19,20 @@ game_new_tetromino:
     stra,r0 TetrominoRotate
     stra,r0 NextTetrominoRotate
 
+    ;次に落すテトロミノをずらす
     loda,r0 NextOperationTetrominoType0
     stra,r0 TetrominoType
     stra,r0 NextTetrominoType
 
+    loda,r0 NextOperationTetrominoType1
+    stra,r0 NextOperationTetrominoType0
+
+    loda,r0 NextOperationTetrominoType2
+    stra,r0 NextOperationTetrominoType1
+
     ;ランダムなテトリミノを設定
     bsta,un get_random_tetromino_index
-    stra,r0 Temporary2
+    stra,r0 NextOperationTetrominoType2
 
     ;次のフレームではメインに戻る
     lodi,r0 SCENE_GAME_MAIN
@@ -77,8 +84,7 @@ draw_next_tetromino:
     stra,r0 NEXT_TETROMINO_DATA + (NEXT_TETROMINO_Y_STEP*0 + 0)*10h + 0
     stra,r0 NEXT_TETROMINO_DATA + (NEXT_TETROMINO_Y_STEP*0 + 0)*10h + 1
     
-    loda,r3 NextOperationTetrominoType1
-    stra,r3 NextOperationTetrominoType0
+    loda,r3 NextOperationTetrominoType0
     lodi,r0 NEXT_TETROMINO_X
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*0 - 1
@@ -92,8 +98,7 @@ draw_next_tetromino:
     stra,r0 NEXT_TETROMINO_DATA + (NEXT_TETROMINO_Y_STEP*1 + 0)*10h + 0
     stra,r0 NEXT_TETROMINO_DATA + (NEXT_TETROMINO_Y_STEP*1 + 0)*10h + 1
     
-    loda,r3 NextOperationTetrominoType2
-    stra,r3 NextOperationTetrominoType1
+    loda,r3 NextOperationTetrominoType1
     lodi,r0 NEXT_TETROMINO_X
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*1 - 1
@@ -107,8 +112,7 @@ draw_next_tetromino:
     stra,r0 NEXT_TETROMINO_DATA + (NEXT_TETROMINO_Y_STEP*2 + 0)*10h + 0
     stra,r0 NEXT_TETROMINO_DATA + (NEXT_TETROMINO_Y_STEP*2 + 0)*10h + 1
 
-    loda,r3 Temporary2
-    stra,r3 NextOperationTetrominoType2
+    loda,r3 NextOperationTetrominoType2
     lodi,r0 NEXT_TETROMINO_X
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*2 - 1

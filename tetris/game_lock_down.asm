@@ -3,7 +3,7 @@
     ;-------------------
     ;game_lock_down
     ;操作テトリミノをフィールドに設置するシーン
-    ;r0,r1,r2,r3, Temporary0, Temporary1, Temporary2を使用
+    ;r0,r1,r2,r3を使用
 game_lock_down:
 
     ;ゲームオーバー判定
@@ -86,7 +86,7 @@ _gld_check_line_2_end:
 
 _gld_clear_2:
     ;2行目が消えた
-    stra,r2 Temporary1+PAGE1
+    stra,r2 FallTempLine1+PAGE1
     subi,r3 1
     bctr,eq _gld_check_line_3_end
 
@@ -102,7 +102,7 @@ _gld_check_line_3_end:
     bsta,un add_line2_score
     bsta,un play_se6    ;音鳴らす
     loda,r1 FallLineIndex+PAGE1
-    loda,r0 Temporary1+PAGE1
+    loda,r0 FallTempLine1+PAGE1
     subi,r0 1
     comz r1
     bctr,eq _gld_serial2
@@ -120,7 +120,7 @@ _gld_check_line_3_end2:
     retc,un
 
 _gld_serial2:
-    ;消えた２行は連続している(FallLineIndex == Temporary1-1)
+    ;消えた２行は連続している(FallLineIndex == FallTempLine1-1)
     ;1+2+1, 2+2のどのパターンでも２マスずらす
     lodi,r0 GLD_FALL_LINES_2
     stra,r0 FallFuncionIndex+PAGE1    
@@ -128,7 +128,7 @@ _gld_serial2:
 
 _gld_clear_3:
     ;3行目が消えた
-    stra,r2 Temporary2+PAGE1
+    stra,r2 FallTempLine0+PAGE1
     subi,r3 1
     bctr,eq _gld_check_line_4_end
 
@@ -143,7 +143,7 @@ _gld_check_line_4_end:
     bsta,un add_line3_score
     bsta,un play_se7    ;音鳴らす
     loda,r1 FallLineIndex+PAGE1
-    loda,r0 Temporary1+PAGE1
+    loda,r0 FallTempLine1+PAGE1
     subi,r0 1
     comz r1         ;消えた1行目と2行目が連続しているか？
     bctr,eq _gld_serial3
@@ -157,7 +157,7 @@ _gld_check_line_4_end:
 _gld_serial3:
     ;消えた1行目と2行目が連続している
     ;2+1+1パターンか1+3パターンか3+1パターン
-    loda,r2 Temporary2+PAGE1
+    loda,r2 FallTempLine0+PAGE1
     subi,r2 2
     comz r2                 ;消えた１～３行目が連続しているか？
     bctr,eq _gld_serial4

@@ -64,10 +64,17 @@ programstart:
     PrevP1Pad                   equ KeyData+6           ;１フレーム前のP1PADDLEの値を0,1(左),2(右)にした値
     CountRepeatedP1Pad          equ KeyData+7    
     P1Pad                       equ KeyData+8           ;現フレームのP1PADDLEの値を0,1(左),2(右)にした値
-            
+
+    ;ベストスコア系
+    BestData                    equ KeyData+9
+    BestNormalModeLv            equ BestData+0
+    BestTGM20GModeLv            equ BestData+1
+    BestTimer1ms                equ BestData+2
+    BestTimer1s                 equ BestData+3
+    BestTimer1m                 equ BestData+4
 
     ;シーン制御系
-    GameManagedData             equ KeyData+9
+    GameManagedData             equ BestData+1
     SceneIndex                  equ GameManagedData+0     ;現在処理中のシーンのインデックス（の３倍の値）
     NextSceneIndex              equ GameManagedData+1     ;次に処理するシーンのインデックス（の３倍の値）
 
@@ -80,11 +87,12 @@ programstart:
 
     ;----
     ;RAM2 $18F8..$18FB
+    
     ;なんかの引数や退避領域として使う
     Temporary0 equ 18F8h       ;汎用領域
     Temporary1 equ 18F9h       ;汎用領域
-    Temporary2 equ 18FAh       ;汎用領域
-    Temporary3 equ 18FBh       ;汎用領域
+    
+    GameMode   equ 18FBh       ;ゲームモード
 
     ;----
     ;RAM3 $1AD0..$1AFF
@@ -94,9 +102,11 @@ programstart:
     ;  or タイトル画面の変数
     ;  or 操作テトロミノのブロックの座標
     ;時系列で同時に使うことが無いので被せる
-    TetrominoData3             equ 1AD0h
-    FallLineIndex              equ TetrominoData3+0    ;行をずらし始める行
-    FallFuncionIndex           equ TetrominoData3+1    ;どういうずらし方をするか
+    TetrominoData3              equ 1AD0h
+    FallLineIndex               equ TetrominoData3+0    ;行をずらし始める行
+    FallFuncionIndex            equ TetrominoData3+1    ;どういうずらし方をするか
+    FallTempLine0               equ TetrominoData3+2
+    FallTempLine1               equ TetrominoData3+3
 
     GameOverFrameCount          equ TetrominoData3+0    ;ゲームオーバの描画用のカウンタ
     GameOverFillLineIndex       equ TetrominoData3+1
@@ -158,13 +168,9 @@ programstart:
     Timer1s                     equ ScoreData+11
     Timer1m                     equ ScoreData+12
     LastScoreValue              equ ScoreData+13 ;最後のマーカ. 変数としては使ってない
-
-    ;その他
-    Other                       equ LastScoreValue -PAGE1
-    GameMode                    equ Other+0             ;ゲームモード
     
     ;デバッグ用, 都度適当に使う
-    Debug                       equ Other+1
+    Debug                       equ LastScoreValue -PAGE1
     Debug0                      equ Debug + 0
     Debug1                      equ Debug + 1
     Debug2                      equ Debug + 2
