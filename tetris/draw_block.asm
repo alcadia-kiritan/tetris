@@ -38,7 +38,9 @@ programstart:
     UpdatedTetrominoSprites     equ TetrominoData+8        ;操作テトリミノの位置を更新するかどうか,0:更新しない 1:更新, 2:削除
     GhostTetrominoY             equ TetrominoData+9        ;ゴーストテトリミノのY座標
 
-    TetrominoData2              equ TetrominoData+10
+    LastOperationIsRotated      equ TetrominoData+10        ;最後の操作が回転か
+
+    TetrominoData2              equ TetrominoData+11
     FallFrame                   equ TetrominoData2+0        ;操作テトリミノが落下するまでのフレーム数.固定値.
     FallFrameCounter            equ TetrominoData2+1        ;操作テトリミノが落下するまでのフレーム数のカウント
     FallDistance                equ TetrominoData2+2        ;操作テトリミノが落下する量.固定値.
@@ -140,12 +142,29 @@ programstart:
     SoundDataAddress0           equ SoundData+2         ;次に鳴らす音データのアドレス,01は並んでいること
     SoundDataAddress1           equ SoundData+3
 
+    ;スコア系
+    ScoreData                   equ SoundData+4 +PAGE1
+    TspinCountBCD0              equ ScoreData+0
+    TspinCountBCD1              equ ScoreData+1
+    LineCountBCD0               equ ScoreData+2
+    LineCountBCD1               equ ScoreData+3
+    TetrisCountBCD0             equ ScoreData+4
+    TetrisCountBCD1             equ ScoreData+5
+    ScoreCountBCD0              equ ScoreData+6
+    ScoreCountBCD1              equ ScoreData+7
+    ScoreCountBCD2              equ ScoreData+8
+    UpdateScoreText             equ ScoreData+9
+    Timer10ms                   equ ScoreData+10
+    Timer1s                     equ ScoreData+11
+    Timer1m                     equ ScoreData+12
+    LastScoreValue              equ ScoreData+13 ;最後のマーカ. 変数としては使ってない
+
     ;その他
-    Other                       equ SoundData+4
+    Other                       equ LastScoreValue -PAGE1
     GameMode                    equ Other+0             ;ゲームモード
     
     ;デバッグ用, 都度適当に使う
-    Debug                       equ Other+10
+    Debug                       equ Other+1
     Debug0                      equ Debug + 0
     Debug1                      equ Debug + 1
     Debug2                      equ Debug + 2
@@ -225,6 +244,16 @@ programstart:
     ;新規テトロミノの位置
     NEW_TETROMINO_X        equ FIELD_START_X + FIELD_WIDTH / 2
     NEW_TETROMINO_Y        equ FIELD_START_Y + FIELD_HEIGHT
+    
+    SCORE_TEXT_X           equ 11
+    SCORE_TEXT_Y           equ 1
+    LINE_TEXT_X            equ 11
+    LINE_TEXT_Y            equ 4
+    TETRIS_TEXT_X          equ 11
+    TETRIS_TEXT_Y          equ 7
+    TSPIN_TEXT_X           equ 11
+    TSPIN_TEXT_Y           equ 10
+    
 
     ;-----
     ;テトリスに関係ない系
@@ -243,6 +272,7 @@ programstart:
 
     ;ramをクリア
     bsta,un clear_ram
+
     
     ;変数初期化
     lodi,r0 FIELD_START_X + 3
@@ -265,59 +295,22 @@ programstart:
     lodi,r0 11000111b       ;高解像度&背景緑    ,取得するパッド軸を横方向
     stra,r0 BGCOLOUR
 
-    ;-------------------
-    ;ブロックのデータをユーザー定義のキャラ領域(UDC[0-4]DATA)へ転送
-    lodi,r1 32                ;転送サイズ
-set_user_characters:
-    loda,r0 BLOCK00a,r1-
-    stra,r0 UDC0DATA,r1
-    brnr,r1 set_user_characters       ;r1が0でなければset_user_charactersへ分岐
-
-    ;-------------------
-    ;１ブロックだけ描く用のデータを、ユーザー定義のスプライト領域(SPRITE[0-4]DATA)へ転送
-    lodi,r1 8                ;転送サイズ
-set_user_sprites:
-    loda,r0 BLOCK10a,r1-
-    stra,r0 SPRITE0DATA,r1
-    stra,r0 SPRITE1DATA,r1
-    stra,r0 SPRITE2DATA,r1
-    stra,r0 SPRITE3DATA,r1
-    brnr,r1 set_user_sprites       ;r1が0でなければset_user_spritesへ分岐
-
     ;スプライトの設定を書き込み
     lodi,r0 11110110b           ;スプライトをdoubleheightの青色に設定
     stra,r0 SPRITES01CTRL
     stra,r0 SPRITES23CTRL
 
     bsta,un wait_vsync
-    bsta,un reset_tetromino_field
-    lodi,r0 40
-    stra,r0 FallFrame
-    lodi,r0 1
-    stra,r0 FallDistance
 
     ;lodi,r0 SCENE_GAME_NEW_TETROMINO
-    lodi,r0 SCENE_GAME_TIELE
+    ;lodi,r0 SCENE_GAME_TIELE
+    lodi,r0 SCENE_GAME_START
     stra,r0 NextSceneIndex
 
     eorz r0 
     stra,r0 SceneIndex
 
-    lodi,r0 0
-    stra,r0 NextOperationTetrominoType0
-    lodi,r0 0
-    stra,r0 NextOperationTetrominoType1
-    lodi,r0 0
-    stra,r0 NextOperationTetrominoType2
 
-    lodi,r0 1
-    stra,r0 EnabledHoldTetromino
-
-    lodi,r0 EMPTY_HOLD_TETROMINO_TYPE
-    stra,r0 HoldTetrominoType
-
-    lodi,r0 30
-    stra,r0 LockDownFrames
 
     bsta,un init_random_tetromino
     ;bsta,un wait_vsync
@@ -325,44 +318,6 @@ set_user_sprites:
     ;ボリューム
     lodi,r0 0001011b
     stra,r0 VOLUMESCROLL
-
-    lodi,r1 1
-    lodi,r0 EMPTY_2BLOCK+3
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+0
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+3
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+0
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+3
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+0
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+3
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+0
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+3
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+0
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+3
-    lodi,r0 EMPTY_2BLOCK+1
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-1)*10h+4
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+4
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-3)*10h+4
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+4
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+4
-
-    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-5)*10h+0
-    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+1
-    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+2
-    stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-2)*10h+3
-    ;stra,r0 SCRLODATA+FIELD_START_X/2+(FIELD_HEIGHT_ON_LOWER_SCREEN-4)*10h+3
-
-    stra,r0 SCRUPDATA+FIELD_START_X/2+(14-FIELD_HEIGHT_ON_UPPER_SCREEN)*10h+3
-
     bcta,un skiptest
 
     lodi,r3 2
@@ -478,7 +433,7 @@ _lf_no_change:
     ;パッドの状態を取得しておく
     bsta,un get_padd_status_player1     
 
-    ;音処理
+    ;音処理. 垂直同期からここまでタイミングがずれるような重い処理をしないように注意
     bsta,un sound_process
 
     ;垂直同期後の処理, ここからタイミングが限られてる系の処理（主に描画
@@ -813,6 +768,7 @@ move_tetromino:
     ;左に回せた
     lodi,r0 1
     stra,r0 UpdatedTetrominoSprites
+    stra,r0 LastOperationIsRotated
     bsta,un play_se1
     bctr,un _move_tetromino_skip_rotate
 
@@ -827,6 +783,7 @@ _move_tetromino_right_key:
     ;右に回せた
     lodi,r0 1
     stra,r0 UpdatedTetrominoSprites
+    stra,r0 LastOperationIsRotated
     bsta,un play_se1
 
 _move_tetromino_skip_rotate:
@@ -856,6 +813,8 @@ _move_tetromino_skip_rotate:
     strz r3
     bsta,un play_se11
     lodz r3
+    lodi,r3 0
+    stra,r3 LastOperationIsRotated
 _move_tetromino_skip_A_key:
 
     tmi,r0 0001b
@@ -874,9 +833,9 @@ _move_tetromino_skip_Z_key:
     loda,r1 Temporary0
     addi,r1 1
     stra,r1 Temporary0
-    strz r3
     bsta,un play_se10
-    lodz r3
+    eorz r0
+    stra,r0 LastOperationIsRotated
 _move_tetromino_skip_D_key:
 
     ;2,w,s,xキー
@@ -1259,9 +1218,10 @@ fall_operation_tetromino:
 
     ;非接地状態
     
-    ;ロックダウンカウントをリセット
+    ;ロックダウンカウントをリセット. ついでに最終操作をリセット(落ちるか操作しないと接地しないのが確定してる)
     eorz r0
     stra,r0 LockDownCounter
+    stra,r0 LastOperationIsRotated
 
     ;落下カウンターをインクリメント
     loda,r0 FallFrameCounter
@@ -1313,6 +1273,7 @@ _fot_hard_drop:
     ;フラグ戻す
     eorz r0
     stra,r0 DoHardDrop
+    stra,r0 LastOperationIsRotated
 
     retc,un
 
@@ -1747,130 +1708,6 @@ draw_ghost_tetromino:
 
     retc,un ; return
 
-    ;-------------------
-    ;reset_tetromino_field
-    ;テトリスのフィールドをリセットする
-    ;r0,r1,r2使用
-reset_tetromino_field:
-
-    ;上下画面を空ブロックで埋める
-    lodi,r0 EMPTY_2BLOCK
-    lodi,r1 SCREEN_CHARA_WIDTH * HALF_SCREEN_CHARA_HEIGHT
-
-_reset_tetromino_field_fill:
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    brnr,r1 _reset_tetromino_field_fill
-
-    ;HOLD
-    lodi,r0 CHAR_A_OFFSET+'H'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2-1
-    lodi,r0 CHAR_A_OFFSET+'O'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2+0
-    lodi,r0 CHAR_A_OFFSET+'L'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2+1
-    lodi,r0 CHAR_A_OFFSET+'D'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2+2
-    
-    ;NEXT
-    lodi,r0 CHAR_A_OFFSET+'N'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2-1
-    lodi,r0 CHAR_A_OFFSET+'E'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2+0
-    lodi,r0 CHAR_A_OFFSET+'X'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2+1
-    lodi,r0 CHAR_A_OFFSET+'T'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2+2
-
-    ;下画面の左側の線
-    lodi,r0 EDGE_COLOR + 03h   ;塗りつぶしマス
-    lodi,r1 FIELD_HEIGHT_ON_LOWER_SCREEN
-    lodi,r2 0
-_reset_tetromino_field_lo_left:
-    stra,r0 SCRLODATA+FIELD_START_X/2-1,r2
-    addi,r2 10h
-    bdrr,r1 _reset_tetromino_field_lo_left
-
-    ;上画面の左側の線
-    lodi,r1 FIELD_HEIGHT_ON_UPPER_SCREEN
-    lodi,r2 0    
-_reset_tetromino_field_up_left:
-    stra,r0 SCRUPDATA+FIELD_START_X/2+(HALF_SCREEN_CHARA_HEIGHT - FIELD_HEIGHT_ON_UPPER_SCREEN)*10h-1,r2
-    addi,r2 10h
-    bdrr,r1 _reset_tetromino_field_up_left
-
-    ;下画面の右側の線
-    lodi,r0 EDGE_COLOR + 03h   ;塗りつぶしマス
-    lodi,r1 FIELD_HEIGHT_ON_LOWER_SCREEN
-    lodi,r2 0
-_reset_tetromino_field_lo_right:
-    stra,r0 SCRLODATA+FIELD_START_X/2 + FIELD_WIDTH/2, r2
-    addi,r2 10h
-    bdrr,r1 _reset_tetromino_field_lo_right
-
-    ;上画面の右側の線
-    lodi,r1 FIELD_HEIGHT_ON_UPPER_SCREEN
-    lodi,r2 0    
-_reset_tetromino_field_hi_right:
-    stra,r0 SCRUPDATA+FIELD_START_X/2+(HALF_SCREEN_CHARA_HEIGHT - FIELD_HEIGHT_ON_UPPER_SCREEN)*10h + FIELD_WIDTH/2,r2
-    addi,r2 10h
-    bdrr,r1 _reset_tetromino_field_hi_right
-
-    ;下画面の左下隅
-    lodi,r0 EDGE_COLOR + 03h
-    IF FIELD_START_Y > 0
-        stra,r0 SCRLODATA + FIELD_HEIGHT_ON_LOWER_SCREEN*10h + FIELD_START_X/2 - 1
-    ENDIF
-    IF FIELD_START_Y > 1
-        stra,r0 SCRLODATA + FIELD_HEIGHT_ON_LOWER_SCREEN*10h + FIELD_START_X/2 + 10h - 1
-    ENDIF
-
-    ;下画面の右下隅
-    lodi,r0 EDGE_COLOR + 03h
-    IF FIELD_START_Y > 0
-        stra,r0 SCRLODATA + FIELD_HEIGHT_ON_LOWER_SCREEN*10h + FIELD_START_X/2 + FIELD_WIDTH/2
-    ENDIF
-    IF FIELD_START_Y > 1
-        stra,r0 SCRLODATA + FIELD_HEIGHT_ON_LOWER_SCREEN*10h + FIELD_START_X/2 + FIELD_WIDTH/2 + 10h
-    ENDIF
-
-    ;下側の線
-    lodi,r0 EDGE_COLOR + 03h   ;塗りつぶしマス
-    lodi,r1 FIELD_WIDTH/2
-_reset_tetromino_field_down:
-    IF FIELD_START_Y > 0
-        stra,r0 SCRLODATA+FIELD_START_X/2 + FIELD_HEIGHT_ON_LOWER_SCREEN*10h,r1-
-    ENDIF
-    IF FIELD_START_Y > 1
-        stra,r0 SCRLODATA+FIELD_START_X/2 + FIELD_HEIGHT_ON_LOWER_SCREEN*10h + 10h,r1
-    ENDIF
-    brnr,r1 _reset_tetromino_field_down
-
-    retc,un ; return
-
-    IF FIELD_START_X-FIELD_START_X/2*2 > 0
-        error FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
-    ENDIF
-
-    IF FIELD_WIDTH-FIELD_WIDTH/2*2 > 0
-        error FIELD_WIDTHが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
-    ENDIF
-
-
 
     ;/////////////////////////
 
@@ -1891,7 +1728,6 @@ _reset_tetromino_field_down:
 
     ;音系
     include "tetris\sound.asm"
-    include "tetris\se.asm"
     
 _PAGE0END_:
 
@@ -1917,6 +1753,12 @@ _PAGE0END_:
 
     ;シャッフル関係
     include "tetris\shuffle.asm"
+
+    ;音系2
+    include "tetris\se.asm"
+
+    ;スコア系
+    include "tetris\score.asm"
 
     ;/////////////////////////
 

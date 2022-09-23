@@ -37,6 +37,7 @@ game_new_tetromino:
     stra,r0 LockDownCounter
     stra,r0 LockDownOperationCount
     stra,r0 DoHardDrop
+    stra,r0 LastOperationIsRotated
 
     retc,un
 

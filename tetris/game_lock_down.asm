@@ -23,6 +23,14 @@ _gld_no_game_over:
     lodi,r0 SCENE_GAME_NEW_TETROMINO
     stra,r0 NextSceneIndex+PAGE1
 
+    ;t-spinチェック. 
+    loda,r0 LastOperationIsRotated+PAGE1
+    bctr,eq _gld_skip_check_tspin
+    lodi,r0 T_TETROMINO_INDEX
+    coma,r0 TetrominoType+PAGE1
+    bsta,eq check_tspin
+_gld_skip_check_tspin:
+
     ;チェックするY座標データ(CLEAR_CHECK_Y_OFFSETS)へのオフセット作ってr1に入れる
     loda,r1 TetrominoType+PAGE1
     loda,r0 TetrominoRotate+PAGE1
@@ -73,6 +81,7 @@ _gld_check_line_2_end:
     ;１行だけ消えた
     lodi,r0 GLD_FALL_LINES_1
     stra,r0 FallFuncionIndex+PAGE1
+    bsta,un add_line1_score
     bcta,un play_se4    ;音鳴らす, 直return
 
 _gld_clear_2:
@@ -90,6 +99,7 @@ _gld_check_line_3:
 
 _gld_check_line_3_end:
     ;２行だけ消えた. 1+1+1+1の２パターン. 1+2+1の２パターン. 2+2の２パターン
+    bsta,un add_line2_score
     bsta,un play_se6    ;音鳴らす
     loda,r1 FallLineIndex+PAGE1
     loda,r0 Temporary1+PAGE1
@@ -130,6 +140,7 @@ _gld_clear_3:
 
 _gld_check_line_4_end:
     ;３行だけ消えた. 1+1+2パターン. 2+1+1パターン. 1+3パターン. 3+1パターン.の４通りがありうる
+    bsta,un add_line3_score
     bsta,un play_se7    ;音鳴らす
     loda,r1 FallLineIndex+PAGE1
     loda,r0 Temporary1+PAGE1
@@ -166,6 +177,7 @@ _gld_clear_4:
     ;４行消えた. パターンは1個だけ
     lodi,r0 GLD_FALL_LINES_4
     stra,r0 FallFuncionIndex+PAGE1
+    bsta,un add_line4_score
     bcta,un play_se8    ;音鳴らして直return
 
     ;-------------------
@@ -234,9 +246,9 @@ _cc_lower_screen:
     ;r0,r1,r2,r3を使用
 game_lock_down_after_vsync:
 
-    ;落下処理がないなら終了
+    ;落下処理がないなら,スコアテキスト更新して終了
     loda,r3 FallFuncionIndex+PAGE1
-    retc,eq
+    bcta,eq update_score_text
 
     ;-------
     ;ゴーストスプライトを画面領域外に飛ばして見えなくする
@@ -250,9 +262,12 @@ game_lock_down_after_vsync:
     stra,r0 SPRITE3X+PAGE1
     stra,r0 SPRITE3Y+PAGE1
     
-    ;落下処理を呼び出して、呼び出し元に直接return
+    ;落下処理を呼び出し
     loda,r1 FallLineIndex+PAGE1
-    bxa fall_process_table-3,r3 
+    bsxa fall_process_table-3,r3 
+
+    ;スコア更新
+    bcta,un update_score_text
 
     ;---------------
     ;落下処理のテーブルのインデックス
@@ -1225,6 +1240,100 @@ _fall_lines_2_1_1_lu2:
     loda,r0 SCRUPDATA+FIELD_START_X/2+PAGE1+10h*(HALF_SCREEN_CHARA_HEIGHT-2)+4
     stra,r0 SCRLODATA+FIELD_START_X/2+PAGE1+10h*0+4
     bcta,un _fall_lines_3_uu   ;3行落下処理に移動
+
+    ;-------------------
+    ;check_tspin
+    ;tspinが発生したかどうかをチェック.
+    ;r0,r1,r2,r3を使用
+check_tspin:
+
+    lodi,r3 0
+    lodi,r2 1
+    bsta,un check_tspin_line
+
+    lodi,r2 -1
+    bsta,un check_tspin_line
+
+    comi,r3 3
+    retc,lt ;3未満終了
+
+    bsta,un play_se3
+
+    ;スコア加算して直return
+    bcta,un add_tspin_score 
+
+    ;-------------------
+    ;check_tspin_line
+    ;t-spin発生チェック用にX=TetrominoX±1, Y=TetrominoY+r2にあるブロック数をr3に加算
+    ;r0,r1,r2,r3を使用
+check_tspin_line:
+
+    ;TetrominoX-1の座標をr0に格納
+    lodi,r0 -1
+    adda,r0 TetrominoX+PAGE1
+    
+    ;X座標の下位1bitをr2へ抽出し、0ならr1=1、1ならr1=2をいれておく。 1or2はandzで使うやつ
+    strz r1
+    andi,r1 1
+    addi,r1 1
+
+    ;X座標の下位1bitを除いた値を抽出
+    rrr,r0
+    andi,r0 0Fh
+
+    adda,r2 TetrominoY+PAGE1
+    comi,r2 12
+    bcfr,gt _ctl_lower
+
+    ;上画面
+    ;r2 = 25 - r2 = 25 + (r2^0xFF) + 1 = 26 + (r2^0xFF)
+
+    ;Yを画面バッファでのオフセットに変換
+    eori,r2 0FFh
+    addi,r2 26
+    rrl,r2      
+    rrl,r2 
+    rrl,r2 
+    rrl,r2 
+    addz r2     ;X(オフセットの下位4bit)を加算し、r0を画面バッファのオフセットにする
+    strz r2
+
+    loda,r0 SCRUPDATA+PAGE1+0,r2
+    andz r1
+    bctr,eq _ctl_skip0
+    addi,r3 1
+_ctl_skip0:
+
+    loda,r0 SCRUPDATA+PAGE1+1,r2
+    andz r1
+    retc,eq
+    
+    addi,r3 1
+    retc,un
+
+_ctl_lower:
+    ;下画面
+    eori,r2 0FFh
+    addi,r2 13
+    rrl,r2      ;Yを画面バッファでのオフセットに変換
+    rrl,r2 
+    rrl,r2 
+    rrl,r2 
+    addz r2     ;X(オフセットの下位4bit)を加算し、r0を画面バッファのオフセットにする
+    strz r2
+
+    loda,r0 SCRLODATA+PAGE1+0,r2
+    andz r1
+    bctr,eq _ctl_skip1
+    addi,r3 1
+_ctl_skip1:
+
+    loda,r0 SCRLODATA+PAGE1+1,r2
+    andz r1
+    retc,eq
+
+    addi,r3 1
+    retc,un
 
 
 CLEAR_CHECK_Y_OFFSETS: ;テトリミノを消すときにチェックするYオフセット. 1テトロミノに付きチェックを開始するY座標オフセットとチェックする行数の2byte.

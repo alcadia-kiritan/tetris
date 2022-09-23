@@ -67,7 +67,7 @@ _goav_draw_text:
     brnr,r1 _goav_draw_text
 
     ;適当に待機
-    lodi,r3 90
+    lodi,r3 120
 _goav_wait:
     bsta,un wait_vsync
     bsta,un sound_process

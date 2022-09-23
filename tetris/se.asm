@@ -30,18 +30,21 @@ se2_data:
     db 0     ;終端
 
     ;--------------
-    ;play_se3
+    ;play_se3       ;t-spin
     ;r0,r1,r2を使用
-    ;ｷﾋﾟｯ（電子音っぽい高い音
+    ;キポッ
 play_se3:
     lodi,r0 se3_data>>8
     lodi,r1 se3_data&0ffh
-    bcta,un play_sound
+    lodi,r2 6
+    bcta,un play_sound_with_priority
 se3_data:
+    db 03h   ;鳴らすフレーム数
+    db 09h   ;ピッチ
+    db 02h   ;鳴らすフレーム数
+    db 19h   ;ピッチ
     db 02h   ;鳴らすフレーム数
     db 06h   ;ピッチ
-    db 01h   ;鳴らすフレーム数
-    db 08h   ;ピッチ
     db 0     ;終端
 
     ;--------------

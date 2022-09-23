@@ -166,7 +166,24 @@ tgm_20g_text:
     db ASCII_OFFSET+'G'
     db 0
 
-
+select_game_mode_text:
+    SGMT_COLOR equ 40h
+    db ASCII_OFFSET+'S'+SGMT_COLOR
+    db ASCII_OFFSET+'E'+SGMT_COLOR
+    db ASCII_OFFSET+'L'+SGMT_COLOR
+    db ASCII_OFFSET+'E'+SGMT_COLOR
+    db ASCII_OFFSET+'C'+SGMT_COLOR
+    db ASCII_OFFSET+'T'+SGMT_COLOR
+    db 0
+    db ASCII_OFFSET+'G'+SGMT_COLOR
+    db ASCII_OFFSET+'A'+SGMT_COLOR
+    db ASCII_OFFSET+'M'+SGMT_COLOR
+    db ASCII_OFFSET+'E'+SGMT_COLOR
+    db 0
+    db ASCII_OFFSET+'M'+SGMT_COLOR
+    db ASCII_OFFSET+'O'+SGMT_COLOR
+    db ASCII_OFFSET+'D'+SGMT_COLOR
+    db ASCII_OFFSET+'E'+SGMT_COLOR
 
     ;-------------------
     ;game_title
@@ -324,6 +341,12 @@ _gtav_blink_draw_mode_text:
     loda,r0 tgm_20g_text,r1
     stra,r0 SCRLODATA+10h*5+4,r1
     brnr,r1 _gtav_blink_draw_mode_text
+
+    lodi,r1 16
+_gtav_blink_draw_sgm_text:
+    loda,r0 select_game_mode_text,r1-
+    stra,r0 SCRUPDATA+10h*11,r1
+    brnr,r1 _gtav_blink_draw_sgm_text
 
     ;音鳴らして直returnして終了
     bcta,un play_se8
