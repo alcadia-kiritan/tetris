@@ -65,16 +65,8 @@ programstart:
     CountRepeatedP1Pad          equ KeyData+7    
     P1Pad                       equ KeyData+8           ;現フレームのP1PADDLEの値を0,1(左),2(右)にした値
 
-    ;ベストスコア系
-    BestData                    equ KeyData+9
-    BestNormalModeLv            equ BestData+0
-    BestTGM20GModeLv            equ BestData+1
-    BestTimer1ms                equ BestData+2
-    BestTimer1s                 equ BestData+3
-    BestTimer1m                 equ BestData+4
-
     ;シーン制御系
-    GameManagedData             equ BestData+1
+    GameManagedData             equ KeyData+9
     SceneIndex                  equ GameManagedData+0     ;現在処理中のシーンのインデックス（の３倍の値）
     NextSceneIndex              equ GameManagedData+1     ;次に処理するシーンのインデックス（の３倍の値）
 
@@ -145,15 +137,8 @@ programstart:
     ShuffleTetromino6           equ ShuffleTetromino+6
     ShuffleIndex                equ ShuffleTetromino+7   ;現在シャッフルの何番目か
 
-    ;音系
-    SoundData                   equ ShuffleTetromino+8 -PAGE1
-    SoundFrameCount             equ SoundData+0         ;音節を何フレーム回すか
-    SoundPriority               equ SoundData+1
-    SoundDataAddress0           equ SoundData+2         ;次に鳴らす音データのアドレス,01は並んでいること
-    SoundDataAddress1           equ SoundData+3
-
     ;スコア系
-    ScoreData                   equ SoundData+4 +PAGE1
+    ScoreData                   equ ShuffleTetromino+8
     TspinCountBCD0              equ ScoreData+0
     TspinCountBCD1              equ ScoreData+1
     LineCountBCD0               equ ScoreData+2
@@ -164,20 +149,34 @@ programstart:
     ScoreCountBCD1              equ ScoreData+7
     ScoreCountBCD2              equ ScoreData+8
     UpdateScoreText             equ ScoreData+9
-    Timer10ms                   equ ScoreData+10
-    Timer1s                     equ ScoreData+11
-    Timer1m                     equ ScoreData+12
+    Timer1ms                    equ ScoreData+10
+    Timer100ms                  equ ScoreData+11
+    Timer10s                    equ ScoreData+12
     LastScoreValue              equ ScoreData+13 ;最後のマーカ. 変数としては使ってない
     
-    ;デバッグ用, 都度適当に使う
-    Debug                       equ LastScoreValue -PAGE1
-    Debug0                      equ Debug + 0
-    Debug1                      equ Debug + 1
-    Debug2                      equ Debug + 2
-    Debug3                      equ Debug + 3
+    ;ハイスコア系
+    HighScoreData               equ LastScoreValue+0
+    BestNormalScoreBCD0         equ HighScoreData+0
+    BestNormalScoreBCD1         equ HighScoreData+1
+    BestNormalScoreBCD2         equ HighScoreData+2
+
+    BestTGM20GScoreBCD0         equ HighScoreData+3
+    BestTGM20GScoreBCD1         equ HighScoreData+4
+    BestTGM20GScoreBCD2         equ HighScoreData+5
+
+    BestTimer1ms                equ HighScoreData+6
+    BestTimer100ms              equ HighScoreData+7
+    BestTimer10s                equ HighScoreData+8
+    
+    ;音系
+    SoundData                   equ HighScoreData+9 -PAGE1
+    SoundFrameCount             equ SoundData+0         ;音節を何フレーム回すか
+    SoundPriority               equ SoundData+1
+    SoundDataAddress0           equ SoundData+2         ;次に鳴らす音データのアドレス,01は並んでいること
+    SoundDataAddress1           equ SoundData+3
 
     ;領域超過チェック用！　最後の変数の変更に注意！
-    EndRAM3                     equ Debug3
+    EndRAM3                     equ SoundDataAddress1
 
     IF EndRAM3 > 1AFFh
         error RAM3がオーバーしてるよ
@@ -1773,26 +1772,5 @@ _PAGE1END_:
     IF _PAGE1END_ >= PAGE1 + 1000h
         WARNING "1ページ目の末端が4K超えてる"
     ENDIF
-    
-
-
-    ;-------------------
-    ;store_charline_debug0
-    ;18FFhの垂直帰線位置をDebug0に書き込む
-    ;r0を使用
-store_charline_debug0:
-    loda,r0 CHARLINE + PAGE1
-    stra,r0 Debug0+PAGE1
-    retc,un ; return
-
-store_charline_debug1:
-    loda,r0 CHARLINE + PAGE1
-    stra,r0 Debug1+PAGE1
-    retc,un ; return
-
-store_charline_debug2:
-    loda,r0 CHARLINE + PAGE1
-    stra,r0 Debug2+PAGE1
-    retc,un ; return
 
 end ; End of assembly
