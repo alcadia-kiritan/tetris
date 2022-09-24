@@ -60,10 +60,8 @@ game_new_tetromino_after_vsync:
     ;ホールドテトロミノを有効に戻す
     bsta,un set_enabled_hold_tetromino
 
-    ;NEXTテトロミノを描画
-    bsta,un draw_next_tetromino
-
-    retc,un
+    ;NEXTテトロミノを描画, 直return
+    bcta,un draw_next_tetromino
 
     ;-------------------
     ;draw_next_tetromino
@@ -165,10 +163,8 @@ set_tetromino:
     strz r1 
     loda,r0 TETROMINOS-1,r3+
     adda,r0 Temporary0
-    bsta,un flip_block
+    bcta,un flip_block  ;直return
 
-    retc,un
-    
     ;-------------------
     ;set_enabled_hold_tetromino
     ;r0を使用

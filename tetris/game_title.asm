@@ -3,7 +3,7 @@
     ;-------------------
     ;fill_screen
     ;r0の値で画面を埋める
-    ;r0,r1,r2,r3を使用
+    ;r0,r1を使用
 fill_screen:
     lodi,r1 HALF_SCREEN_CHARA_HEIGHT*SCREEN_CHARA_WIDTH
 _fsloop:
@@ -28,6 +28,9 @@ arrow_sprite:
     ;r0,r1,r2,r3を使用
 game_title_start:
 
+    ;垂直同期待ち
+    bsta,un wait_vsync
+
     ;スクロール位置を最下段にリセット
     eorz r0
     stra,r0 CRTCVPR
@@ -38,11 +41,7 @@ _gts_reset_spritepos:
     stra,r0 SPRITE0Y,r1-
     brnr,r1 _gts_reset_spritepos
 
-    ;垂直同期待ち
-    bsta,un wait_vsync
-
     ;画面を0クリア
-    eorz r0
     bstr,un fill_screen
 
     ;変数初期化
@@ -90,8 +89,8 @@ _gts_set_sprite3:
     stra,r0 UDC3DATA,r1-
     brnr,r1 _gts_set_sprite3
 
+    ;ロゴを描画
     LOGO_Y          equ 3
-    LOGO_COLOR      equ 000h
     SCRUP           equ SCRUPDATA+LOGO_Y*10h
 
     lodi,r3 -1
@@ -104,16 +103,18 @@ _gts_write_logo:
     rrl,r2
     lodz r2
     andi,r0 3
-    addi,r0 LOGO_COLOR+BLOCK_SPRITE_INDEX
+    addi,r0 BLOCK_SPRITE_INDEX
+    
+_gts_draw:
     stra,r0 SCRUP,r3+
     tmi,r3 3
     bcfr,eq _gts_write_logo
 
-    comi,r1 20-1
+    comi,r1 4*5-1
     bcfr,eq _gts_write_logo2
 
-    retc,un
-    
+    retc,un    
+
 tetris_logo:
     dd 01111101111011111011110010011110b
     dd 00010001000000100010001000100000b
@@ -146,7 +147,7 @@ normal_text:
     db ASCII_OFFSET+'L'
     db 0
 
-sprint_40_text:
+sprint_text:
     db ASCII_OFFSET+'S'
     db ASCII_OFFSET+'P'
     db ASCII_OFFSET+'R'
@@ -265,7 +266,7 @@ _gtav_skip_w_key:
     bsta,un button_process  
     
     tmi,r0 00100b
-    bcfr,eq _gtav_skip_e_key
+    bcfa,eq _gtav_skip_e_key
 
     ;ゲーム開始シーンに遷移
     lodi,r0 SCENE_GAME_START
@@ -303,6 +304,21 @@ _gtav_clear_mode2:
     brnr,r1 _gtav_clear_mode2
 _gtav_skip_clear_mode2:
 
+    ;インデックスをゲームモードに変更
+    eorz r0  ; r0 = GAME_MODE_SPRINT
+
+    comi,r3 0
+    bcfr,eq _gtav_gmode0
+    lodi,r0 GAME_MODE_NORMAL
+_gtav_gmode0:
+
+    comi,r3 2
+    bcfr,eq _gtav_gmode1
+    lodi,r0 GAME_MODE_TGM20G
+_gtav_gmode1:
+
+    stra,r0 GameMode
+
     ;決定ボタンが押された, 音鳴らしてreturn
     bcta,un play_se13
 
@@ -336,7 +352,7 @@ _gtav_blink_clear_text:
 _gtav_blink_draw_mode_text:
     loda,r0 normal_text,r1-
     stra,r0 SCRLODATA+10h*1+4,r1
-    loda,r0 sprint_40_text,r1
+    loda,r0 sprint_text,r1
     stra,r0 SCRLODATA+10h*3+4,r1
     loda,r0 tgm_20g_text,r1
     stra,r0 SCRLODATA+10h*5+4,r1
@@ -380,7 +396,12 @@ _gtav_skip_c0:
     ;----
     ;画面最下部から規定位置にスクロール
 _gtav_scroll:
+    IF DEBUG_MODE = 0
     addi,r0 1
+    ELSE
+    addi,r0 8
+    ENDIF
+
     stra,r0 CRTCVPR
     retc,un
     

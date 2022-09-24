@@ -11,43 +11,24 @@ game_start_start:
 
 IF DEBUG_MODE = 0
 
-    ;0.33s待機
-    lodi,r3 20
-_gss_wait:
-    bsta,un wait_vsync
-    bsta,un sound_process
-    bdrr,r3 _gss_wait
+    ;0.5s待機
+    lodi,r2 30
+    bsta,un wait_for_frame
 
 ENDIF
-
-    loda,r2 SPRITE0Y
-    lodi,r3 SCROLL_Y
     
-    ;現画面を下にスクロール
-_gss:
-
 IF DEBUG_MODE = 0
     GAME_START_SCROLL equ 3
 ELSE
     GAME_START_SCROLL equ 10
 ENDIF
+    ;現画面を下にスクロール
+    lodi,r2 GAME_START_SCROLL
+    bsta,un scroll_to_bottom
 
-    subi,r2 GAME_START_SCROLL
-    subi,r3 GAME_START_SCROLL
-
-    bsta,un wait_vsync
-    
-    comi,r3 GAME_START_SCROLL
-    bctr,lt _gss_start          ;下までスクロールした
-
-    stra,r2 SPRITE0Y
-    stra,r3 CRTCVPR
-
-    bsta,un sound_process
-    bctr,un _gss
-
-    ;---------
+    ;-------
     ;諸々の初期化処理を開始
+    ;画面が下がり切ってるのでVRAMもタイミングを考えずアクセスする
 _gss_start:
 
     eorz r0
@@ -63,7 +44,7 @@ _gss_start:
     ;１ブロックだけ描く用のデータを、ユーザー定義のスプライト領域(SPRITE[0-4]DATA)へ転送
     lodi,r1 8                ;転送サイズ
 _gss_set_user_sprites:
-    loda,r0 BLOCK10a,r1-
+    loda,r0 GHOST_BLOCK,r1-
     stra,r0 SPRITE0DATA,r1
     stra,r0 SPRITE1DATA,r1
     stra,r0 SPRITE2DATA,r1
@@ -86,7 +67,7 @@ _gss_set_user_characters:
     lodi,r0 EMPTY_HOLD_TETROMINO_TYPE
     stra,r0 HoldTetrominoType
 
-    lodi,r0 30
+    lodi,r0 30  ;0.5[s]
     stra,r0 LockDownFrames
 
     lodi,r0 40
@@ -122,6 +103,7 @@ _gss_set_user_characters:
 
     lodi,r1 SCROLL_Y
 
+    ;上画面にスクロール
 _gss_scroll_up:
     addi,r0 GAME_START_SCROLL
     bsta,un wait_vsync
@@ -131,22 +113,39 @@ _gss_scroll_up:
 
 _gss_scroll_end:
     stra,r1 CRTCVPR
-    retc,un
 
-    ;-------------------
-    ;game_start
-    ;ゲーム開始シーン
-    ;r0を使用
-game_start:
-    retc,un
+    loda,r0 GameMode
+    retc,gt             ;スプリント以外なら終了
 
-    ;-------------------
-    ;game_start_after_vsync
-    ;ゲーム開始シーン（垂直同期後
-    ;r0,r1,r2,r3を使用
-game_start_after_vsync:
-    retc,un
+    IF GAME_MODE_SPRINT <> 0
+        warning GAME_MODE_SPRINTが0以外になってる. eqで判定ができない
+    ENDIF
+
+    ;タイマー描画
+    bsta,un update_timer_text
+
+    ;0.5s待機
+    lodi,r2 30
+    bsta,un wait_for_frame
+
+    ;スプリントならカウントダウン開始
+    lodi,r3 3
+_gss_sprint_countdown:
+    bsta,un play_se15
+    lodi,r0 10h
+    addz r3 
+    stra,r0 SCRUPDATA+12*10h+7
+    lodi,r2 59
+    bsta,un wait_for_frame
+    bdrr,r3 _gss_sprint_countdown
     
+    ;開始音鳴らして、書き換えてたブロックを元に戻してタイマー起動
+    bsta,un play_se16
+    lodi,r0 EMPTY_2BLOCK
+    stra,r0 SCRUPDATA+12*10h+7
+    stra,r0 EnabledTimer-PAGE1
+
+    retc,un
     
     ;-------------------
     ;reset_tetromino_field
@@ -264,26 +263,26 @@ _reset_tetromino_field_down:
     ;---
     ;SCORE or TIMER, LINE, TSPIN, TETRISの描画
 
-    ;SCORE or TIMER(SPRINT40)
+    ;SCORE or TIMER(SPRINT)
     lodi,r2 game_start_time_text-game_start_texts
-    lodi,r0 GAME_MODE_SPRINT40
+    lodi,r0 GAME_MODE_SPRINT
     coma,r0 GameMode
     bctr,eq _rtf_sprint
     lodi,r2 game_start_score_text-game_start_texts
 _rtf_sprint:
-    bsta,un draw_text5
+    bsta,un draw_text5_lo
 
     ;TETRIS
     lodi,r2 game_start_tetrs_text-game_start_texts
-    bsta,un draw_text5
+    bsta,un draw_text5_lo
 
     ;LINE
     lodi,r2 game_start_line_text-game_start_texts
-    bsta,un draw_text5
+    bsta,un draw_text5_lo
 
     ;TSPIN
     lodi,r2 game_start_tspin_text-game_start_texts
-    bsta,un draw_text5
+    bsta,un draw_text5_lo
 
 
 IF 1
@@ -350,10 +349,10 @@ ENDIF
     retc,un ; return
 
     ;-------------------
-    ;draw_text_lo
+    ;draw_text5_lo
     ;[SCRLODATA+[game_start_texts+r2]]へ[game_start_texts+r2+1~5]から５文字書き込む
     ;r0,r1,r2,r3使用
-draw_text5:
+draw_text5_lo:
     lodi,r3 5
     loda,r0 game_start_texts,r2
     strz r1
@@ -403,7 +402,6 @@ game_start_tetrs_text:
     db ASCII_OFFSET+'T'
     db ASCII_OFFSET+'R'
     db ASCII_OFFSET+'S'
-    
 
     IF FIELD_START_X-FIELD_START_X/2*2 > 0
         error FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます

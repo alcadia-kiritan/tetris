@@ -75,6 +75,7 @@
     ;消す行の情報 
     ;  or ゲームオーバー系の変数 
     ;  or タイトル画面の変数
+    ;  or クリア画面の変数
     ;  or 操作テトロミノのブロックの座標
     ;時系列的に同時に使うことが無いので被せる
     TetrominoData3              equ 1AD0h
@@ -87,6 +88,8 @@
     GameOverFillLineIndex       equ TetrominoData3+1
 
     GameTitleFrameCount         equ TetrominoData3+0
+
+    GameClearFrameCount         equ TetrominoData3+0
 
     OperationTetrominoX0        equ TetrominoData3+0    ;操作テトロミノのブロック座標郡
     OperationTetrominoY0        equ TetrominoData3+1
@@ -138,7 +141,8 @@
     Timer1msBCD                 equ ScoreData+8
     
     UpdateScoreText             equ ScoreData+9
-    LastScoreValue              equ ScoreData+10 ;最後のマーカ. 変数としては使ってない
+    EnabledTimer                equ ScoreData+10
+    LastScoreValue              equ ScoreData+11 ;最後のマーカ. 変数としては使ってない
     
     ;ハイスコア系
     HighScoreData               equ LastScoreValue+0
@@ -150,9 +154,9 @@
     HighTGM20GScoreBCD1         equ HighScoreData+4
     HighTGM20GScoreBCD2         equ HighScoreData+5
 
-    HighTimer1msBCD             equ HighScoreData+6
-    HighTimer100msBCD           equ HighScoreData+7
-    HighTimer10sBCD             equ HighScoreData+8
+    BestTimer10sBCD             equ HighScoreData+6
+    BestTimer100msBCD           equ HighScoreData+7
+    BestTimer1msBCD             equ HighScoreData+8
     
     
     ;音系
@@ -176,8 +180,10 @@
     ;ゲーム関係
     MAX_LOCK_DOWN_OPERATION equ 15          ;接地状態で最大何回操作可能か
 
+    SPRINT_CLEAR_LINES_BCD  equ 40h         ;スプリントモードのクリア行数のBCD表記
+
     GAME_MODE_NORMAL        equ 1
-    GAME_MODE_SPRINT40      equ 0
+    GAME_MODE_SPRINT        equ 0
     GAME_MODE_TGM20G        equ 2
 
     ;------
@@ -202,7 +208,7 @@
     ;------
     ;ここから下画面関係
 
-    SCROLL_Y            equ 208                             ;スクロール位置
+    SCROLL_Y            equ 222                             ;スクロール位置
     SPRITE_OFFSET_Y     equ (SCROLL_Y*3+42-624+24-39)/3     ;描画領域の一番下の行に合う位置
     SPRITE_OFFSET_X     equ (156+102)/6                     ;描画領域の一番左の列に合う位置
 
@@ -238,7 +244,7 @@
     NEXT_TETROMINO_DATA     equ SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y)*10h+NEXT_TETROMINO_X/2
 
     ;新規テトロミノの位置
-    NEW_TETROMINO_X        equ FIELD_START_X + FIELD_WIDTH / 2
+    NEW_TETROMINO_X        equ FIELD_START_X + FIELD_WIDTH/2-1
     NEW_TETROMINO_Y        equ FIELD_START_Y + FIELD_HEIGHT
     
     SCORE_TEXT_X           equ 11
@@ -263,9 +269,5 @@
     DIGIT_OFFSET    equ 10h - '0'
 
     PAGE1    equ 2000h
-
-    IF GAME_MODE_SPRINT40 <> 0
-        warning GAME_MODE_SPRINT40が0以外になってる. eqで判定ができない
-    ENDIF
 
 end

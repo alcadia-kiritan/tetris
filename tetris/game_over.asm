@@ -10,6 +10,8 @@
 game_over_start:
     eorz r0
     stra,r0 GameOverFrameCount+PAGE1
+    stra,r0 EnabledTimer
+
     lodi,r0 FIELD_START_Y-1
     stra,r0 GameOverFillLineIndex+PAGE1
     
@@ -20,7 +22,7 @@ game_over_start:
     ;-------------------
     ;game_over
     ;ゲームオーバーシーン
-    ;r0を使用
+    ;
 game_over:
     retc,un
 
@@ -67,39 +69,13 @@ _goav_draw_text:
     brnr,r1 _goav_draw_text
 
     ;適当に待機
-    lodi,r3 120
-_goav_wait:
-    bsta,un wait_vsync
-    bsta,un sound_process
-    bdrr,r3 _goav_wait
+    lodi,r2 120
+    bsta,un wait_for_frame
 
     ;スクロール位置を下げる
-    lodi,r3 SCROLL_Y-GAME_OVER_SCROLL_SPEED
-_goav_wait_scroll:
-    bsta,un wait_vsync
-    bsta,un sound_process
-    stra,r3 PAGE1+CRTCVPR
+    lodi,r2 GAME_OVER_SCROLL_SPEED
+    bsta,un scroll_to_bottom
 
-    ;スクロールと一緒にスプライト位置も下げていく
-    loda,r0 PAGE1+SPRITE0Y
-    subi,r0 GAME_OVER_SCROLL_SPEED
-    stra,r0 PAGE1+SPRITE0Y
-    loda,r0 PAGE1+SPRITE1Y
-    subi,r0 GAME_OVER_SCROLL_SPEED
-    stra,r0 PAGE1+SPRITE1Y
-    loda,r0 PAGE1+SPRITE2Y
-    subi,r0 GAME_OVER_SCROLL_SPEED
-    stra,r0 PAGE1+SPRITE2Y
-    loda,r0 PAGE1+SPRITE3Y
-    subi,r0 GAME_OVER_SCROLL_SPEED
-    stra,r0 PAGE1+SPRITE3Y
-
-    subi,r3 GAME_OVER_SCROLL_SPEED
-    comi,r3 SCROLL_Y
-    bctr,gt _goav_end
-    brnr,r3 _goav_wait_scroll
-
-_goav_end:
     lodi,r0 SCENE_GAME_TIELE
     stra,r0 NextSceneIndex+PAGE1
 

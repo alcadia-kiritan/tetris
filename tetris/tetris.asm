@@ -37,7 +37,7 @@ BOOT_3:
     ;高解像度モードへ切り替え
     lodi,r0 01000000b       ;ノーマルモード&高解像度
     stra,r0 RESOLUTION
-    lodi,r0 11000111b       ;高解像度&背景黒    ,取得するパッド軸を横方向
+    lodi,r0 11000111b       ;高解像度&背景黒, 取得するパッド軸を横方向
     stra,r0 BGCOLOUR
 
     ;スプライトの設定を書き込み
@@ -45,20 +45,25 @@ BOOT_3:
     stra,r0 SPRITES01CTRL
     stra,r0 SPRITES23CTRL
 
-    ;lodi,r0 SCENE_GAME_TIELE
-    lodi,r0 SCENE_GAME_START
-    stra,r0 NextSceneIndex
-
     ;乱数初期化
     bsta,un init_random_tetromino
     
-    ;ボリューム=3
+    ;音有効, ボリューム=3
     lodi,r0 0001011b
     stra,r0 VOLUMESCROLL
 
+    ;ハイスコアリセット(0じゃない)
+    lodi,r0 99h
+    stra,r0 BestTimer1msBCD-PAGE1
+    stra,r0 BestTimer100msBCD-PAGE1
+    stra,r0 BestTimer10sBCD-PAGE1
+
+    lodi,r0 SCENE_GAME_TIELE
+    ;lodi,r0 SCENE_GAME_START
+    stra,r0 NextSceneIndex
+
     ;============================================================================
     ;メインループ
-
 loopforever:
 
     ;シーンのインデックスを読み込み
@@ -78,9 +83,9 @@ _lf_no_change:
     ;現フレームのキー情報を退避
     bsta,un post_key_process        
 
-    ;スプリントならタイマー足す
-    loda,r0 GameMode
-    bsta,eq add_timer_1frame
+    ;タイマーを進める
+    loda,r0 EnabledTimer-PAGE1
+    bsta,gt add_timer_1frame
 
     ;垂直帰線期間を待つ
     bsta,un wait_vsync
@@ -95,9 +100,9 @@ _lf_no_change:
     loda,r3 SceneIndex
     bsxa scene_table+6,r3
 
-    ;スプリントならタイマー更新
-    loda,r0 GameMode
-    bsta,un update_timer_text
+    ;タイマー更新
+    loda,r0 EnabledTimer-PAGE1
+    bsta,gt update_timer_text
 
     ;0-5のカウンタを回す
     loda,r0 FrameCount6
@@ -121,6 +126,7 @@ _lf_skip_counter_reset:
     SCENE_GAME_OVER                 equ     3 * 9
     SCENE_GAME_TIELE                equ     4 * 9
     SCENE_GAME_START                equ     5 * 9
+    SCENE_GAME_CLEAR_SPRINT         equ     6 * 9
 
 scene_table:
     ;---    
@@ -145,8 +151,12 @@ scene_table:
     bcta,un game_title_after_vsync
     ;---
     bcta,un game_start_start
-    bcta,un game_start
-    bcta,un game_start_after_vsync
+    bcta,un empty_subroutine
+    bcta,un empty_subroutine
+    ;---
+    bcta,un game_clear_sprint_start
+    bcta,un game_clear_sprint
+    bcta,un game_clear_sprint_after_vsync
 
 
 
@@ -202,6 +212,9 @@ _PAGE0END_:
 
     ;スコア系
     include "tetris\score.asm"
+
+    ;スプリントクリア
+    include "tetris\game_clear_sprint.asm"
 
     ;/////////////////////////
 

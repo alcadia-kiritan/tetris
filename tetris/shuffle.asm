@@ -35,17 +35,17 @@ init_random_tetromino:
     ;ShuffleTetromino[0-6]にシャッフルした0-6を入れる
     eorz r0
     stra,r0 ShuffleTetromino3
-    lodi,r0 1
+    addi,r0 1
     stra,r0 ShuffleTetromino6
-    lodi,r0 2
+    addi,r0 1
     stra,r0 ShuffleTetromino0
-    lodi,r0 3
+    addi,r0 1
     stra,r0 ShuffleTetromino1
-    lodi,r0 4
+    addi,r0 1
     stra,r0 ShuffleTetromino5
-    lodi,r0 5
+    addi,r0 1
     stra,r0 ShuffleTetromino2
-    lodi,r0 6
+    addi,r0 1
     stra,r0 ShuffleTetromino4
     stra,r0 ShuffleIndex
     bcta,un init_random ;乱数初期化して元の場所に戻る

@@ -14,19 +14,53 @@ _sr:
     ;-------------------
     ;update_timer_text
     ;タイマーを更新
-    ;r0,r1,r2,r3を使用
+    ;r0,r1を使用
 update_timer_text:
-    lodi,r1 (SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X-1
-    lodi,r2 3
-    lodi,r3 ScoreCountBCD0-ScoreData
-    bcta,un draw_bcd
+    ;1/10s
+    loda,r1 Timer100msBCD
+    lodz r1 
+    andi,r0 0fh
+    addi,r0 10h
+    stra,r0 PAGE1+SCRLODATA+(SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X+4
+
+    ;'.'
+    lodi,r0 34h
+    stra,r0 PAGE1+SCRLODATA+(SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X+3
+
+    ;1s
+    rrr,r1
+    rrr,r1
+    rrr,r1
+    rrr,r1
+    andi,r1 0fh
+    addi,r1 10h
+    stra,r1 PAGE1+SCRLODATA+(SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X+2
+
+    ;10s/100s
+    loda,r1 Timer10sBCD
+    retc,eq ;上２桁が０. 描画しない
+
+    lodz r1
+    andi,r0 0f0h
+    bctr,eq _utt_skip100s
+    rrr,r0
+    rrr,r0
+    rrr,r0
+    rrr,r0
+    addi,r0 10h
+    stra,r0 PAGE1+SCRLODATA+(SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X+0
+
+_utt_skip100s:
+    andi,r1 0fh
+    addi,r1 10h
+    stra,r1 PAGE1+SCRLODATA+(SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X+1
+    retc,un
 
     ;-------------------
     ;update_score_text
-    ;スコアを更新
+    ;スコア表記を更新
     ;r0,r1,r2,r3を使用
 update_score_text:
-
     loda,r0 UpdateScoreText
     retc,eq ;更新がないので終了
 
@@ -36,10 +70,13 @@ update_score_text_force:
     stra,r0 UpdateScoreText ;フラグ落す
 
     ;スコア
+    loda,r0 PAGE1+GameMode
+    bctr,eq _ust_skip_score ;スプリントならスコアは描画しない
     lodi,r1 (SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X-1 ;エッジと被る,がまあ・・６桁は無理ってことでスルー
     lodi,r2 3
     lodi,r3 ScoreCountBCD0-ScoreData
     bsta,un draw_bcd
+_ust_skip_score:
 
     ;ライン
     lodi,r1 (LINE_TEXT_Y+1)*10h+LINE_TEXT_X+1

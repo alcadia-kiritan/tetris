@@ -277,4 +277,75 @@ se13_data:
     db 09h   ;ピッチ
     db 0     ;終端
 
+    ;--------------
+    ;play_se14      ;ゲームクリア
+    ;r0,r1,r2を使用
+    ;
+play_se14:
+    lodi,r0 se14_data>>8
+    lodi,r1 se14_data&0ffh
+    lodi,r2 20
+    bcta,un play_sound_with_priority
+se14_data:
+    db 03h   ;鳴らすフレーム数
+    db 1eh   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 1bh   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 18h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 15h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 12h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 0fh   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 0ch   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 09h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 06h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 09h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 0ch   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 06h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 09h   ;ピッチ
+    db 03h   ;鳴らすフレーム数
+    db 0ch   ;ピッチ
+    db 20h   ;鳴らすフレーム数
+    db 09h   ;ピッチ
+    db 0     ;終端
+
+    ;--------------
+    ;play_se15      ;ゲームスタート（スプリント
+    ;r0,r1,r2を使用
+    ;
+play_se15:
+    lodi,r0 play_se15_data>>8
+    lodi,r1 play_se15_data&0ffh
+    lodi,r2 8
+    bcta,un play_sound_with_priority
+play_se15_data:
+    db 0Ch   ;鳴らすフレーム数
+    db 03h   ;ピッチ
+    db 0     ;終端
+
+    
+    ;--------------
+    ;play_se16      ;ゲームスタート（スプリント
+    ;r0,r1,r2を使用
+    ;
+play_se16:
+    lodi,r0 play_se16_data>>8
+    lodi,r1 play_se16_data&0ffh
+    lodi,r2 8
+    bcta,un play_sound_with_priority
+play_se16_data:
+    db 1Ch   ;鳴らすフレーム数
+    db 01h   ;ピッチ
+    db 0     ;終端
+
 end

@@ -91,9 +91,7 @@ bake_operation_tetromino:
     strz r1 
     loda,r0 TETROMINOS-1,r3+
     adda,r0 TetrominoX
-    bstr,un flip_block
-
-    retc,un
+    bctr,un flip_block
 
     ;-------------------
     ;flip_block
@@ -191,5 +189,52 @@ get_next_tetromino_data_offset:
     strz r3
 
     retc,un
+
+    ;-------------------
+    ;scroll_to_bottom
+    ;CRTCVPRが0になるまで１フレームr2ずつ下げ続ける
+    ;r0,r1,r2を使用
+scroll_to_bottom:
+    bsta,un wait_vsync
+    bsta,un sound_process
+
+    loda,r0 CRTCVPR
+    comz r2 
+    bctr,lt _stb_end
+
+    subz r2
+    stra,r0 CRTCVPR
+
+    ;スクロールと一緒にスプライト位置も下げていく
+    loda,r0 SPRITE0Y
+    subz r2 
+    stra,r0 SPRITE0Y
+    loda,r0 SPRITE1Y
+    subz r2 
+    stra,r0 SPRITE1Y
+    loda,r0 SPRITE2Y
+    subz r2 
+    stra,r0 SPRITE2Y
+    loda,r0 SPRITE3Y
+    subz r2 
+    stra,r0 SPRITE3Y
     
+    bctr,un scroll_to_bottom
+
+_stb_end:
+    eorz r0
+    stra,r0 CRTCVPR
+    retc,un
+
+    ;-------------------
+    ;wait_for_frame
+    ;r2フレーム待機する
+    ;r0,r1,r2を使用
+wait_for_frame:
+    bsta,un wait_vsync
+    bsta,un sound_process
+    bdrr,r2 wait_for_frame
+    retc,un
+
+
 end ; End of assembly

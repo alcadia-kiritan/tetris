@@ -176,10 +176,7 @@ _dht_disable_color:
     lodi,r0 HOLD_TETROMINO_Y-1
     stra,r0 Temporary1
     loda,r3 HoldTetrominoType
-    bsta,un set_tetromino
-
-    retc,un
-
+    bcta,un set_tetromino
 
     ;-------------------
     ;store_operation_tetromino_position

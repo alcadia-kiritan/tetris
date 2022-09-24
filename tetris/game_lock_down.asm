@@ -15,11 +15,12 @@ game_lock_down:
     eorz r0
     stra,r0 FallFuncionIndex+PAGE1
     lodi,r0 SCENE_GAME_OVER
+    ;lodi,r0 SCENE_GAME_CLEAR_SPRINT
     stra,r0 NextSceneIndex+PAGE1
     retc,un
 
 _gld_no_game_over:
-    ;次は新テトロミノ生成に行く
+    ;次は基本新テトロミノ生成に行く
     lodi,r0 SCENE_GAME_NEW_TETROMINO
     stra,r0 NextSceneIndex+PAGE1
 
@@ -264,9 +265,22 @@ game_lock_down_after_vsync:
     
     ;落下処理を呼び出し
     loda,r1 FallLineIndex+PAGE1
-    bsxa fall_process_table-3,r3 
+    bsxa fall_process_table-3,r3
 
-    ;スコア更新
+    ;ゲームモードがスプリントならクリア判定
+    loda,r0 PAGE1+GameMode
+    bcfr,eq _gldav_skip_check_clear_sprint
+    lodi,r0 SPRINT_CLEAR_LINES_BCD
+    coma,r0 LineCountBCD1
+    bctr,gt _gldav_skip_check_clear_sprint
+
+    ;スプリントでクリアした
+    lodi,r0 SCENE_GAME_CLEAR_SPRINT
+    stra,r0 PAGE1+NextSceneIndex
+
+_gldav_skip_check_clear_sprint:
+
+    ;スコア更新して直return
     bcta,un update_score_text
 
     ;---------------
