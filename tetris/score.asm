@@ -158,12 +158,15 @@ _db_draw1:
     ;１行消したときのスコアカウント
     ;r0,r1,r2,Temporary0を使用
 add_line1_score:
+    loda,r0 PAGE1+GameMode
+    bctr,eq _al1s_skip_score
     ;スコア+
     lodi,r0 1h+66h
     stra,r0 UpdateScoreText
     lodi,r1 ScoreCountBCD2-ScoreData
     lodi,r2 3
     bsta,un bcd_add
+_al1s_skip_score:
     
     ;ライン+
     lodi,r0 1h+66h
@@ -176,12 +179,15 @@ add_line1_score:
     ;2行消したときのスコアカウント
     ;r0,r1,r2,Temporary0を使用
 add_line2_score:
+    loda,r0 PAGE1+GameMode
+    bctr,eq _al2s_skip_score
     ;スコア+
     lodi,r0 5h+66h
     stra,r0 UpdateScoreText
     lodi,r1 ScoreCountBCD2-ScoreData
     lodi,r2 3
     bsta,un bcd_add
+_al2s_skip_score:
     
     ;ライン+
     lodi,r0 2+66h
@@ -194,12 +200,15 @@ add_line2_score:
     ;3行消したときのスコアカウント
     ;r0,r1,r2,Temporary0を使用
 add_line3_score:
+    loda,r0 PAGE1+GameMode
+    bctr,eq _al3s_skip_score
     ;スコア+
     lodi,r0 10h+66h
     stra,r0 UpdateScoreText
     lodi,r1 ScoreCountBCD2-ScoreData
     lodi,r2 3
     bsta,un bcd_add
+_al3s_skip_score:
     
     ;ライン+
     lodi,r0 3+66h
@@ -212,6 +221,8 @@ add_line3_score:
     ;4行消したときのスコアカウント
     ;r0,r1,r2,Temporary0を使用
 add_line4_score:
+    loda,r0 PAGE1+GameMode
+    bctr,eq _al4s_skip_score
     ;スコア+
     lodi,r0 20h+66h
     stra,r0 UpdateScoreText
@@ -219,6 +230,7 @@ add_line4_score:
     lodi,r1 ScoreCountBCD2-ScoreData
     lodi,r2 3
     bsta,un bcd_add
+_al4s_skip_score:
 
     ;テトリス+
     lodi,r0 1+66h
@@ -237,12 +249,15 @@ add_line4_score:
     ;t-spinのスコアカウント
     ;r0,r1,r2,Temporary0を使用
 add_tspin_score:
+    loda,r0 PAGE1+GameMode
+    bctr,eq _ats_skip_score
     ;スコア+
     lodi,r0 8h+66h
     stra,r0 UpdateScoreText
     lodi,r1 ScoreCountBCD2-ScoreData
     lodi,r2 3
     bsta,un bcd_add
+_ats_skip_score:
     
     ;t-spin+
     lodi,r0 1+66h
