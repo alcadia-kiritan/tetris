@@ -261,36 +261,29 @@ _reset_tetromino_field_down:
     ENDIF
     brnr,r1 _reset_tetromino_field_down
 
-    ;SCORE, LINE, TSPIN, TETRISの描画
-    lodi,r0 ASCII_OFFSET+'T'
-    stra,r0 SCRLODATA+TSPIN_TEXT_Y*10h+TSPIN_TEXT_X+0
-    stra,r0 SCRLODATA+TETRIS_TEXT_Y*10h+TETRIS_TEXT_X+0
-    stra,r0 SCRLODATA+TETRIS_TEXT_Y*10h+TETRIS_TEXT_X+2
-    lodi,r0 ASCII_OFFSET+'S'
-    stra,r0 SCRLODATA+TSPIN_TEXT_Y*10h+TSPIN_TEXT_X+1
-    stra,r0 SCRLODATA+TETRIS_TEXT_Y*10h+TETRIS_TEXT_X+4
-    stra,r0 SCRLODATA+SCORE_TEXT_Y*10h+SCORE_TEXT_X+0
-    lodi,r0 ASCII_OFFSET+'P'
-    stra,r0 SCRLODATA+TSPIN_TEXT_Y*10h+TSPIN_TEXT_X+2
-    lodi,r0 ASCII_OFFSET+'I'
-    stra,r0 SCRLODATA+TSPIN_TEXT_Y*10h+TSPIN_TEXT_X+3
-    stra,r0 SCRLODATA+LINE_TEXT_Y*10h+LINE_TEXT_X+1
-    lodi,r0 ASCII_OFFSET+'N'
-    stra,r0 SCRLODATA+TSPIN_TEXT_Y*10h+TSPIN_TEXT_X+4
-    stra,r0 SCRLODATA+LINE_TEXT_Y*10h+LINE_TEXT_X+2
-    lodi,r0 ASCII_OFFSET+'E'
-    stra,r0 SCRLODATA+TETRIS_TEXT_Y*10h+TETRIS_TEXT_X+1
-    stra,r0 SCRLODATA+LINE_TEXT_Y*10h+LINE_TEXT_X+3
-    stra,r0 SCRLODATA+SCORE_TEXT_Y*10h+SCORE_TEXT_X+4
-    lodi,r0 ASCII_OFFSET+'R'
-    stra,r0 SCRLODATA+TETRIS_TEXT_Y*10h+TETRIS_TEXT_X+3
-    stra,r0 SCRLODATA+SCORE_TEXT_Y*10h+SCORE_TEXT_X+3
-    lodi,r0 ASCII_OFFSET+'L'
-    stra,r0 SCRLODATA+LINE_TEXT_Y*10h+LINE_TEXT_X+0
-    lodi,r0 ASCII_OFFSET+'C'
-    stra,r0 SCRLODATA+SCORE_TEXT_Y*10h+SCORE_TEXT_X+1
-    lodi,r0 ASCII_OFFSET+'O'
-    stra,r0 SCRLODATA+SCORE_TEXT_Y*10h+SCORE_TEXT_X+2
+    ;---
+    ;SCORE or TIMER, LINE, TSPIN, TETRISの描画
+
+    ;SCORE or TIMER(SPRINT40)
+    lodi,r2 game_start_time_text-game_start_texts
+    lodi,r0 GAME_MODE_SPRINT40
+    coma,r0 GameMode
+    bctr,eq _rtf_sprint
+    lodi,r2 game_start_score_text-game_start_texts
+_rtf_sprint:
+    bsta,un draw_text5
+
+    ;TETRIS
+    lodi,r2 game_start_tetrs_text-game_start_texts
+    bsta,un draw_text5
+
+    ;LINE
+    lodi,r2 game_start_line_text-game_start_texts
+    bsta,un draw_text5
+
+    ;TSPIN
+    lodi,r2 game_start_tspin_text-game_start_texts
+    bsta,un draw_text5
 
 
 IF 1
@@ -355,6 +348,62 @@ IF 1
 ENDIF
 
     retc,un ; return
+
+    ;-------------------
+    ;draw_text_lo
+    ;[SCRLODATA+[game_start_texts+r2]]へ[game_start_texts+r2+1~5]から５文字書き込む
+    ;r0,r1,r2,r3使用
+draw_text5:
+    lodi,r3 5
+    loda,r0 game_start_texts,r2
+    strz r1
+_dt5:
+    loda,r0 game_start_texts,r2+
+    stra,r0 SCRLODATA-1,r1+
+    bdrr,r3 _dt5
+    retc,un
+
+    ;0byte目は描画位置, 1-5byteは描画する文字列
+game_start_texts:
+game_start_time_text:
+    db SCORE_TEXT_Y*10h+SCORE_TEXT_X
+    db ASCII_OFFSET+'T'
+    db ASCII_OFFSET+'I'
+    db ASCII_OFFSET+'M'
+    db ASCII_OFFSET+'E'
+    db 0
+    
+game_start_score_text:
+    db SCORE_TEXT_Y*10h+SCORE_TEXT_X
+    db ASCII_OFFSET+'S'
+    db ASCII_OFFSET+'C'
+    db ASCII_OFFSET+'O'
+    db ASCII_OFFSET+'R'
+    db ASCII_OFFSET+'E'
+    
+game_start_tspin_text:
+    db TSPIN_TEXT_Y*10h+TSPIN_TEXT_X
+    db ASCII_OFFSET+'T'
+    db ASCII_OFFSET+'S'
+    db ASCII_OFFSET+'P'
+    db ASCII_OFFSET+'I'
+    db ASCII_OFFSET+'N'
+    
+game_start_line_text:
+    db LINE_TEXT_Y*10h+LINE_TEXT_X
+    db ASCII_OFFSET+'L'
+    db ASCII_OFFSET+'I'
+    db ASCII_OFFSET+'N'
+    db ASCII_OFFSET+'E'
+    db 0
+game_start_tetrs_text:
+    db TETRIS_TEXT_Y*10h+TETRIS_TEXT_X
+    db ASCII_OFFSET+'T'
+    db ASCII_OFFSET+'E'
+    db ASCII_OFFSET+'T'
+    db ASCII_OFFSET+'R'
+    db ASCII_OFFSET+'S'
+    
 
     IF FIELD_START_X-FIELD_START_X/2*2 > 0
         error FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます

@@ -12,10 +12,21 @@ _sr:
     retc,un
 
     ;-------------------
+    ;update_timer_text
+    ;タイマーを更新
+    ;r0,r1,r2,r3を使用
+update_timer_text:
+    lodi,r1 (SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X-1
+    lodi,r2 3
+    lodi,r3 ScoreCountBCD0-ScoreData
+    bcta,un draw_bcd
+
+    ;-------------------
     ;update_score_text
     ;スコアを更新
     ;r0,r1,r2,r3を使用
 update_score_text:
+
     loda,r0 UpdateScoreText
     retc,eq ;更新がないので終了
 
@@ -239,6 +250,29 @@ _ba_overflow_:
     bdrr,r2 _ba_overflow_
     retc,un
     
+    ;-------------------
+    ;add_timer_1frame
+    ;Timer1msBCD/Timer100msBCD/Timer10sBCDに1/60s(1フレーム)を足す
+    ;r0,r1,r2,Temporary0を使用
+add_timer_1frame:
+
+    ;0-5カウンタが奇数か０のときは17を足す,それ以外は16を足す. 60フレームで合計1000になる.
+    lodi,r0 17h + 66h
+    loda,r1 FrameCount6+PAGE1
+    bctr,eq _at1f_skip16
+    andi,r1 1
+    bcfr,eq _at1f_skip16
+    lodi,r0 16h + 66h
+_at1f_skip16:
+    lodi,r1 Timer1msBCD-ScoreData
+    lodi,r2 3
+
+    ;16か17足して直return
+    bcta,un bcd_add
+
+    
+    
+
     ;テストコード
 IF 0
 
