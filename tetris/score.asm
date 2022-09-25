@@ -218,19 +218,6 @@ add_line4_score:
     bcta,un bcd_add_with_line
 
     ;-------------------
-    ;level_up
-    ;レベルアップ処理
-    ;r0,r1を使用
-level_up:
-    bsta,un play_se8
-
-    ;表示用のBCDをインクリメント
-    lodi,r0 1+66h
-    lodi,r1 LvBCD1-ScoreData
-    lodi,r2 2
-    bctr,un bcd_add ;直return
-
-    ;-------------------
     ;bcd_add_with_line
     ;LineCountBCD0/1にr0(0~99)-66hを足す. ついでにレベルアップもする
     ;r0,r1,r2,r3,Temporary0を使用
@@ -247,7 +234,7 @@ bcd_add_with_line:
     retc,eq             ;１０の桁に変化なし.終了
     
     ;レベルアップ処理して直return
-    bctr,un level_up
+    bcta,un level_up
 
     ;-------------------
     ;add_tspin_score
@@ -334,7 +321,67 @@ _at1f_skip16:
     ;16か17足して直return
     bcta,un bcd_add
 
+    ;-------------------
+    ;level_up
+    ;レベルアップ処理
+    ;r0,r1,r2を使用
+level_up:
+    bsta,un play_se8
+
+    loda,r0 PAGE1+GameMode
+    bcfr,eq _lu_not_sprint
+
+    ;スプリント
+    loda,r0 FallFrame+PAGE1
+    comi,r0 5
+    bctr,lt _lv_sprint_gup
+
+    ;落下までのフレーム数を下げる
+    subi,r0 3
+    stra,r0 FallFrame+PAGE1
+    bctr,un _lu_lv_inc
+
+_lv_sprint_gup:
+    ;フレームはもう十分小さいので重力上げる
+    loda,r0 FallDistance+PAGE1
+    addi,r0 2
+    stra,r0 FallDistance+PAGE1
+    bctr,un _lu_lv_inc
+
+_lu_not_sprint:
+    ;スプリント以外
+    loda,r0 FallFrame+PAGE1
+    comi,r0 5
+    bctr,lt _lv_not_sprint_gup
     
+    ;落下までのフレーム数を下げる
+    subi,r0 2
+    stra,r0 FallFrame+PAGE1
+    bctr,un _lu_lv_inc
+
+_lv_not_sprint_gup:
+    ;フレームはもう十分小さいので重力上げる
+    loda,r0 FallDistance+PAGE1
+    comi,r0 20
+    bctr,eq _lv_not_sprint_lock_up
+    addi,r0 1
+    stra,r0 FallDistance+PAGE1
+    bctr,un _lu_lv_inc
+
+_lv_not_sprint_lock_up:
+    ;重力も十分大きいので、ロックダウンまでのフレーム数を下げる
+    loda,r0 LockDownFrames+PAGE1
+    comi,r0 3
+    bctr,lt _lu_lv_inc
+    subi,r0 1
+    stra,r0 LockDownFrames+PAGE1
+
+_lu_lv_inc:
+    ;表示用のBCDをインクリメント
+    lodi,r0 1+66h
+    lodi,r1 LvBCD1-ScoreData
+    lodi,r2 2
+    bcta,un bcd_add ;直return
     
 
     ;テストコード

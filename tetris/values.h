@@ -185,9 +185,9 @@
     ;ゲーム関係
     MAX_LOCK_DOWN_OPERATION equ 15          ;接地状態で最大何回操作可能か
 
-    SPRINT_CLEAR_LINES_BCD  equ 2h         ;スプリントモードのクリア行数のBCD表記
+    SPRINT_CLEAR_LINES_BCD  equ 20h         ;スプリントモードのクリア行数のBCD表記
 
-    CLEAR_LEVEL_BCD         equ 15h          ;スプリント以外でクリアになるレベルのBCD表記
+    CLEAR_LEVEL_BCD         equ 99h          ;スプリント以外でクリアになるレベルのBCD表記
 
     GAME_MODE_NORMAL        equ 1
     GAME_MODE_SPRINT        equ 0

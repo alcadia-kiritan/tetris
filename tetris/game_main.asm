@@ -333,11 +333,6 @@ _move_tetromino_skip_rotate:
     stra,r3 LastOperationIsRotated
 _move_tetromino_skip_A_key:
 
-    tmi,r0 0001b
-    bcfr,eq _move_tetromino_skip_Z_key
-    bsta,un bake_operation_tetromino
-_move_tetromino_skip_Z_key:
-
     ;3,e,d,cキー
     loda,r0 P1RIGHTKEYS
     lodi,r1 PrevP1RightKeys - KeyData
@@ -756,6 +751,10 @@ fall_operation_tetromino:
     ;r0に落下予定座標を格納
     loda,r0 NextTetrominoY
     suba,r0 FallDistance
+    comi,r0 FIELD_START_Y+FIELD_HEIGHT
+    bctr,lt _fot_not_oveflow
+    lodi,r0 0   ;オーバーフローしたので0に戻す
+_fot_not_oveflow:
 
     ;最大落下可能座標
     loda,r1 GhostTetrominoY

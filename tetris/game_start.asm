@@ -70,14 +70,47 @@ _gss_set_user_characters:
     lodi,r0 EMPTY_HOLD_TETROMINO_TYPE
     stra,r0 HoldTetrominoType
 
-    lodi,r0 30  ;0.5[s]
-    stra,r0 LockDownFrames
+    ;パラメータ類
 
+    loda,r0 GameMode
+    comi,r0 GAME_MODE_NORMAL
+    bcfr,eq _gss_sprint_or_tgm20g
+
+    ;ノーマル
+    lodi,r0 30  ;0.5[s]
+    stra,r0 LockDownFrames      ;接地してから固定されるまでのフレーム数
     lodi,r0 40
-    stra,r0 FallFrame
+    stra,r0 FallFrame           ;落下までのフレーム数
     lodi,r0 1
-    stra,r0 FallDistance
-    
+    stra,r0 FallDistance        ;落下するブロック数
+    bctr,un _gss_end_set_param
+
+_gss_sprint_or_tgm20g:
+
+    comi,r0 GAME_MODE_SPRINT
+    bcfr,eq _gss_tgm20g
+
+    ;スプリント
+    lodi,r0 30
+    stra,r0 LockDownFrames      ;接地してから固定されるまでのフレーム数
+    lodi,r0 30
+    stra,r0 FallFrame           ;落下までのフレーム数
+    lodi,r0 2
+    stra,r0 FallDistance        ;落下するブロック数
+    bctr,un _gss_end_set_param
+
+_gss_tgm20g:
+
+    ;TGM20G
+    lodi,r0 30
+    stra,r0 LockDownFrames      ;接地してから固定されるまでのフレーム数
+    lodi,r0 1
+    stra,r0 FallFrame           ;落下までのフレーム数
+    lodi,r0 20
+    stra,r0 FallDistance        ;落下するブロック数
+
+_gss_end_set_param:
+
     ;ランダムなテトロミノを３つセット
     bsta,un get_random_tetromino_index
     stra,r0 NextOperationTetrominoType0
@@ -267,7 +300,7 @@ _rtf_sprint:
     stra,r0 SCRLODATA+(LV_TEXT_Y)*10h+LV_TEXT_X+1
 
 
-IF 1
+IF 0
     ;フィールドテスト用コード
 
     lodi,r1 1

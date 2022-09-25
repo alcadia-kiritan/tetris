@@ -130,7 +130,7 @@ _lf_skip_counter_reset:
     SCENE_GAME_OVER                 equ     3 * 9
     SCENE_GAME_TIELE                equ     4 * 9
     SCENE_GAME_START                equ     5 * 9
-    SCENE_GAME_CLEAR         equ     6 * 9
+    SCENE_GAME_CLEAR                equ     6 * 9
 
 scene_table:
     ;---    

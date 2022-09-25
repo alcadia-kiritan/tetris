@@ -86,6 +86,13 @@ _gcsav_not_best_time:
     ;----
 _gcsav_result:
 
+    ;テキストと被ることがあるのでスプライト消す
+    eorz r0 
+    stra,r0 PAGE1+SPRITE0X
+    stra,r0 PAGE1+SPRITE1X
+    stra,r0 PAGE1+SPRITE2X
+    stra,r0 PAGE1+SPRITE3X
+
     ;game clear or over
     lodi,r2 text_game-game_hiscr_texts
     bsta,un draw_text_hiscr
