@@ -61,8 +61,11 @@ _gss_set_user_characters:
 
     ;----
     ;ゲーム関係の変数群を初期化
+    bsta,un score_reset
+
     lodi,r0 1
     stra,r0 EnabledHoldTetromino
+    stra,r0 LvBCD1-PAGE1
 
     lodi,r0 EMPTY_HOLD_TETROMINO_TYPE
     stra,r0 HoldTetrominoType
@@ -90,7 +93,6 @@ _gss_set_user_characters:
     bsta,un draw_next_tetromino
 
     ;スコア描画
-    bsta,un score_reset
     bsta,un update_score_text_force
 
     ;次フレームテトロミノ生成から開始
@@ -160,41 +162,15 @@ reset_tetromino_field:
 _reset_tetromino_field_fill:
     stra,r0 SCRUPDATA,r1-
     stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
-    stra,r0 SCRUPDATA,r1-
-    stra,r0 SCRLODATA,r1
     brnr,r1 _reset_tetromino_field_fill
 
     ;HOLD
-    lodi,r0 CHAR_A_OFFSET+'H'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2-1
-    lodi,r0 CHAR_A_OFFSET+'O'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2+0
-    lodi,r0 CHAR_A_OFFSET+'L'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2+1
-    lodi,r0 CHAR_A_OFFSET+'D'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2+2
-    
+    lodi,r2 text_hold-game_hiscr_texts
+    bsta,un draw_text_hiscr
+
     ;NEXT
-    lodi,r0 CHAR_A_OFFSET+'N'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2-1
-    lodi,r0 CHAR_A_OFFSET+'E'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2+0
-    lodi,r0 CHAR_A_OFFSET+'X'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2+1
-    lodi,r0 CHAR_A_OFFSET+'T'
-    stra,r0 SCRUPDATA+(SCREEN_CHARA_HEIGHT - NEXT_TETROMINO_Y-3)*10h+NEXT_TETROMINO_X/2+2
+    lodi,r2 text_next-game_hiscr_texts
+    bsta,un draw_text_hiscr
 
     ;下画面の左側の線
     lodi,r0 EDGE_COLOR + 03h   ;塗りつぶしマス
@@ -261,7 +237,7 @@ _reset_tetromino_field_down:
     brnr,r1 _reset_tetromino_field_down
 
     ;---
-    ;SCORE or TIMER, LINE, TSPIN, TETRISの描画
+    ;SCORE or TIMER, LINE, TSPIN, TETRIS, LVの描画
 
     ;SCORE or TIMER(SPRINT)
     lodi,r2 game_start_time_text-game_start_texts
@@ -283,6 +259,12 @@ _rtf_sprint:
     ;TSPIN
     lodi,r2 game_start_tspin_text-game_start_texts
     bsta,un draw_text5_lo
+
+    ;LV, 2文字なので直
+    lodi,r0 ASCII_OFFSET+'L'
+    stra,r0 SCRLODATA+(LV_TEXT_Y)*10h+LV_TEXT_X+0
+    lodi,r0 ASCII_OFFSET+'V'
+    stra,r0 SCRLODATA+(LV_TEXT_Y)*10h+LV_TEXT_X+1
 
 
 IF 1
@@ -395,6 +377,7 @@ game_start_line_text:
     db ASCII_OFFSET+'N'
     db ASCII_OFFSET+'E'
     db 0
+    
 game_start_tetrs_text:
     db TETRIS_TEXT_Y*10h+TETRIS_TEXT_X
     db ASCII_OFFSET+'T'
@@ -402,7 +385,7 @@ game_start_tetrs_text:
     db ASCII_OFFSET+'T'
     db ASCII_OFFSET+'R'
     db ASCII_OFFSET+'S'
-
+    
     IF FIELD_START_X-FIELD_START_X/2*2 > 0
         error FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
     ENDIF

@@ -70,10 +70,10 @@ _gcsav_result:
     stra,r0 PAGE1+SPRITE3X
 
     ;game clear
-    lodi,r2 game_clear_game-game_clear_texts
-    bsta,un draw_text5_hi
-    lodi,r2 game_clear_clear-game_clear_texts
-    bsta,un draw_text5_hi
+    lodi,r2 text_game-game_hiscr_texts
+    bsta,un draw_text_hiscr
+    lodi,r2 text_clear-game_hiscr_texts
+    bsta,un draw_text_hiscr
 
     lodi,r1 (GAME_TEXT_Y-1)*10h+(GAME_TEXT_X-1)
     bsta,un clear5_hi
@@ -81,8 +81,8 @@ _gcsav_result:
     lodi,r1 (GAME_TEXT_Y+2)*10h+(GAME_TEXT_X-1)
     bsta,un clear5_hi
 
-    lodi,r2 game_clear_time-game_clear_texts
-    bsta,un draw_text5_hi
+    lodi,r2 text_time-game_hiscr_texts
+    bsta,un draw_text_hiscr
 
     lodi,r2 (GAME_TEXT_Y+4)*10h+(GAME_TEXT_X-1)
     lodi,r3 Timer10sBCD-ScoreData
@@ -93,12 +93,12 @@ _gcsav_result:
     
     bsta,un compare_best_time
     bcfr,eq _gcav_skip_new
-    lodi,r2 game_clear_new-game_clear_texts
-    bsta,un draw_text5_hi
+    lodi,r2 text_new-game_hiscr_texts
+    bsta,un draw_text_hiscr
 _gcav_skip_new:
 
-    lodi,r2 game_clear_best-game_clear_texts
-    bsta,un draw_text5_hi
+    lodi,r2 text_best-game_hiscr_texts
+    bsta,un draw_text_hiscr
 
     lodi,r2 (GAME_TEXT_Y+7)*10h+(GAME_TEXT_X-1)
     lodi,r3 BestTimer10sBCD-ScoreData
@@ -127,67 +127,6 @@ clear5_hi:
     stra,r0 PAGE1+SCRUPDATA,r1+
     retc,un
 
-    ;-------------------
-    ;draw_text5_lo
-    ;[SCRUPDATA+[game_clear_texts+r2]]へ[game_clear_texts+r2+1~7]から5文字書き込む
-    ;r0,r1,r2,r3使用
-draw_text5_hi:
-    lodi,r3 5
-    loda,r0 game_clear_texts,r2
-    strz r1
-_dt5h:
-    loda,r0 game_clear_texts,r2+
-    stra,r0 PAGE1+SCRUPDATA-1,r1+
-    bdrr,r3 _dt5h
-    ;文字の前後１文字を塗りつぶす
-    eorz r0
-    stra,r0 PAGE1+SCRUPDATA-1,r1+
-    stra,r0 PAGE1+SCRUPDATA-7,r1
-    retc,un
-
-    GAME_TEXT_X     equ 5
-    GAME_TEXT_Y     equ 5
-
-game_clear_texts:
-game_clear_game:
-    db GAME_TEXT_Y*10h+GAME_TEXT_X
-    db ASCII_OFFSET+'G'
-    db ASCII_OFFSET+'A'
-    db ASCII_OFFSET+'M'
-    db ASCII_OFFSET+'E'
-    db 0
-
-game_clear_clear:
-    db (GAME_TEXT_Y+1)*10h+GAME_TEXT_X
-    db ASCII_OFFSET+'C'
-    db ASCII_OFFSET+'L'
-    db ASCII_OFFSET+'E'
-    db ASCII_OFFSET+'A'
-    db ASCII_OFFSET+'R'
-
-game_clear_time:
-    db (GAME_TEXT_Y+3)*10h+GAME_TEXT_X
-    db ASCII_OFFSET+'T'
-    db ASCII_OFFSET+'I'
-    db ASCII_OFFSET+'M'
-    db ASCII_OFFSET+'E'
-    db 0
-
-game_clear_best:
-    db (GAME_TEXT_Y+6)*10h+GAME_TEXT_X
-    db ASCII_OFFSET+'B'
-    db ASCII_OFFSET+'E'
-    db ASCII_OFFSET+'S'
-    db ASCII_OFFSET+'T'
-    db 0
-
-game_clear_new:
-    db (GAME_TEXT_Y+6)*10h+GAME_TEXT_X-5
-    db 0
-    db ASCII_OFFSET+'N'
-    db ASCII_OFFSET+'E'
-    db ASCII_OFFSET+'W'
-    db 0
     
 
     ;-------------------

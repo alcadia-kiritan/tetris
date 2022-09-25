@@ -87,6 +87,10 @@ _lf_no_change:
     loda,r0 EnabledTimer-PAGE1
     bsta,gt add_timer_1frame
 
+    ;負荷見る用のコード
+    ;loda,r0 CHARLINE
+    ;stra,r0 Debug0
+
     ;垂直帰線期間を待つ
     bsta,un wait_vsync
 
@@ -215,6 +219,9 @@ _PAGE0END_:
 
     ;スプリントクリア
     include "tetris\game_clear_sprint.asm"
+
+    ;テキスト描画
+    include "tetris\draw_text_hiscr.asm"
 
     ;/////////////////////////
 

@@ -52,8 +52,10 @@
     SceneIndex                  equ GameManagedData+0     ;現在処理中のシーンのインデックス（の３倍の値）
     NextSceneIndex              equ GameManagedData+1     ;次に処理するシーンのインデックス（の３倍の値）
 
+    Debug0                      equ GameManagedData+2
+
     ;領域超過チェック用！　最後の変数の変更に注意！
-    EndRAM1                     equ NextSceneIndex
+    EndRAM1                     equ Debug0
 
     IF EndRAM1 > 18EFh
         error RAM1がオーバーしてるよ
@@ -160,7 +162,6 @@
     BestTimer100msBCD           equ HighScoreData+7
     BestTimer1msBCD             equ HighScoreData+8
     
-    
     ;音系
     SoundData                   equ HighScoreData+9 -PAGE1
     SoundFrameCount             equ SoundData+0         ;音節を何フレーム回すか
@@ -182,7 +183,7 @@
     ;ゲーム関係
     MAX_LOCK_DOWN_OPERATION equ 15          ;接地状態で最大何回操作可能か
 
-    SPRINT_CLEAR_LINES_BCD  equ 40h         ;スプリントモードのクリア行数のBCD表記
+    SPRINT_CLEAR_LINES_BCD  equ 20h         ;スプリントモードのクリア行数のBCD表記
 
     GAME_MODE_NORMAL        equ 1
     GAME_MODE_SPRINT        equ 0
@@ -216,7 +217,7 @@
 
     SCREEN_CHARA_WIDTH          equ 16                          ;アルカディアのキャラクター(8x4)での横幅
     HALF_SCREEN_CHARA_HEIGHT    equ 13              
-    SCREEN_CHARA_HEIGHT         equ HALF_SCREEN_CHARA_HEIGHT*2  ;アルカディアのキャラクター(8x4)での立幅
+    SCREEN_CHARA_HEIGHT         equ HALF_SCREEN_CHARA_HEIGHT*2  ;アルカディアのキャラクター(8x4)での縦幅
 
     ;[テトリスの座標系]
     ;画面左下を(0,0), 右上を(31,25)とする32x26の座標系
@@ -249,6 +250,8 @@
     NEW_TETROMINO_X        equ FIELD_START_X + FIELD_WIDTH/2-1
     NEW_TETROMINO_Y        equ FIELD_START_Y + FIELD_HEIGHT
     
+    ;テキスト系, 上画面、下画面でのcharacter座標系
+    ;スコア関係の描画位置
     SCORE_TEXT_X           equ 11
     SCORE_TEXT_Y           equ 1
     LINE_TEXT_X            equ 11
@@ -257,6 +260,8 @@
     TETRIS_TEXT_Y          equ 7
     TSPIN_TEXT_X           equ 11
     TSPIN_TEXT_Y           equ 10
+    LV_TEXT_X              equ 0
+    LV_TEXT_Y              equ 1
     
 
     ;-----

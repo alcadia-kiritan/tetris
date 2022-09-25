@@ -90,6 +90,12 @@ _ust_skip_score:
     lodi,r3 TetrisCountBCD0-ScoreData
     bsta,un draw_bcd
 
+    ;レベル
+    lodi,r1 (LV_TEXT_Y+1)*10h+LV_TEXT_X
+    lodi,r2 2
+    lodi,r3 LvBCD0-ScoreData
+    bsta,un draw_bcd
+
     ;t-spin
     lodi,r1 (TSPIN_TEXT_Y+1)*10h+TSPIN_TEXT_X+1
     lodi,r2 2
@@ -244,7 +250,11 @@ bcd_add_with_score:
     ;レベルアップ処理
     ;r0,r1を使用
 level_up:
-    retc,un
+    ;表示用のBCDをインクリメント
+    lodi,r0 1+66h
+    lodi,r1 LvBCD1-ScoreData
+    lodi,r2 2
+    bctr,un bcd_add ;直return
 
     ;-------------------
     ;bcd_add_with_line
@@ -255,7 +265,7 @@ bcd_add_with_line:
     lodi,r1 LineCountBCD1-ScoreData
     lodi,r2 2
     stra,r2 UpdateScoreText         ;更新フラグ立てる
-    bctr,un bcd_add
+    bstr,un bcd_add
 
     ;ラインの10の桁が変わったかチェック, 代わってたらレベルアップ
     eora,r3 LineCountBCD1

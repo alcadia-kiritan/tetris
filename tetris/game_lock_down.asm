@@ -255,13 +255,9 @@ game_lock_down_after_vsync:
     ;ゴーストスプライトを画面領域外に飛ばして見えなくする
     eorz r0 
     stra,r0 SPRITE0X+PAGE1
-    stra,r0 SPRITE0Y+PAGE1
     stra,r0 SPRITE1X+PAGE1
-    stra,r0 SPRITE1Y+PAGE1
     stra,r0 SPRITE2X+PAGE1
-    stra,r0 SPRITE2Y+PAGE1
     stra,r0 SPRITE3X+PAGE1
-    stra,r0 SPRITE3Y+PAGE1
     
     ;落下処理を呼び出し
     loda,r1 FallLineIndex+PAGE1

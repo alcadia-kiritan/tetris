@@ -154,8 +154,8 @@ sprint_text:
     db ASCII_OFFSET+'I'
     db ASCII_OFFSET+'N'
     db ASCII_OFFSET+'T'
-    db DIGIT_OFFSET+'4'
-    db DIGIT_OFFSET+'0'
+    db 10h + (SPRINT_CLEAR_LINES_BCD>>4)
+    db 10h + (SPRINT_CLEAR_LINES_BCD&0fh)
 
 tgm_20g_text:
     db 0
