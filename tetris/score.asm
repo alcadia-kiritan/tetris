@@ -156,81 +156,50 @@ _db_draw1:
     ;-------------------
     ;add_line1_score
     ;１行消したときのスコアカウント
-    ;r0,r1,r2,Temporary0を使用
+    ;r0,r1,r2,r3,Temporary0を使用
 add_line1_score:
-    loda,r0 PAGE1+GameMode
-    bctr,eq _al1s_skip_score
     ;スコア+
     lodi,r0 1h+66h
-    stra,r0 UpdateScoreText
-    lodi,r1 ScoreCountBCD2-ScoreData
-    lodi,r2 3
-    bsta,un bcd_add
-_al1s_skip_score:
+    bsta,un bcd_add_with_score
     
     ;ライン+
     lodi,r0 1h+66h
-    lodi,r1 LineCountBCD1-ScoreData
-    lodi,r2 2
-    bcta,un bcd_add
+    bcta,un bcd_add_with_line
 
     ;-------------------
     ;add_line2_score
     ;2行消したときのスコアカウント
-    ;r0,r1,r2,Temporary0を使用
+    ;r0,r1,r2,r3,Temporary0を使用
 add_line2_score:
-    loda,r0 PAGE1+GameMode
-    bctr,eq _al2s_skip_score
     ;スコア+
     lodi,r0 5h+66h
-    stra,r0 UpdateScoreText
-    lodi,r1 ScoreCountBCD2-ScoreData
-    lodi,r2 3
-    bsta,un bcd_add
-_al2s_skip_score:
+    bsta,un bcd_add_with_score
     
     ;ライン+
     lodi,r0 2+66h
-    lodi,r1 LineCountBCD1-ScoreData
-    lodi,r2 2
-    bcta,un bcd_add
+    bcta,un bcd_add_with_line
 
     ;-------------------
     ;add_line3_score
     ;3行消したときのスコアカウント
-    ;r0,r1,r2,Temporary0を使用
+    ;r0,r1,r2,r3,Temporary0を使用
 add_line3_score:
-    loda,r0 PAGE1+GameMode
-    bctr,eq _al3s_skip_score
     ;スコア+
     lodi,r0 10h+66h
-    stra,r0 UpdateScoreText
-    lodi,r1 ScoreCountBCD2-ScoreData
-    lodi,r2 3
-    bsta,un bcd_add
-_al3s_skip_score:
+    bsta,un bcd_add_with_score
     
     ;ライン+
     lodi,r0 3+66h
-    lodi,r1 LineCountBCD1-ScoreData
-    lodi,r2 2
-    bcta,un bcd_add
+    bcta,un bcd_add_with_line
 
     ;-------------------
     ;add_line4_score
     ;4行消したときのスコアカウント
-    ;r0,r1,r2,Temporary0を使用
+    ;r0,r1,r2,r3,Temporary0を使用
 add_line4_score:
-    loda,r0 PAGE1+GameMode
-    bctr,eq _al4s_skip_score
     ;スコア+
     lodi,r0 20h+66h
-    stra,r0 UpdateScoreText
-    stra,r0 UpdateScoreText
-    lodi,r1 ScoreCountBCD2-ScoreData
-    lodi,r2 3
-    bsta,un bcd_add
-_al4s_skip_score:
+    bsta,un bcd_add_with_score
 
     ;テトリス+
     lodi,r0 1+66h
@@ -240,30 +209,61 @@ _al4s_skip_score:
     
     ;ライン+
     lodi,r0 4+66h
-    lodi,r1 LineCountBCD1-ScoreData
-    lodi,r2 2
-    bcta,un bcd_add
+    bcta,un bcd_add_with_line
 
     ;-------------------
     ;add_tspin_score
     ;t-spinのスコアカウント
     ;r0,r1,r2,Temporary0を使用
 add_tspin_score:
-    loda,r0 PAGE1+GameMode
-    bctr,eq _ats_skip_score
     ;スコア+
     lodi,r0 8h+66h
-    stra,r0 UpdateScoreText
-    lodi,r1 ScoreCountBCD2-ScoreData
-    lodi,r2 3
-    bsta,un bcd_add
-_ats_skip_score:
+    bsta,un bcd_add_with_score
     
     ;t-spin+
     lodi,r0 1+66h
+    stra,r0 UpdateScoreText
     lodi,r1 TspinCountBCD1-ScoreData
     lodi,r2 2
     bcta,un bcd_add
+
+    ;-------------------
+    ;bcd_add_with_score
+    ;ScoreCountBCD0-2にr0(0~99)-66hを足す.
+    ;r0,r1,r2,Temporary0を使用
+bcd_add_with_score:
+    loda,r1 PAGE1+GameMode
+    retc,eq                 ;スプリントならスコアは足さない.
+
+    lodi,r1 ScoreCountBCD2-ScoreData
+    lodi,r2 3
+    bcta,un bcd_add ;直return
+
+    ;-------------------
+    ;level_up
+    ;レベルアップ処理
+    ;r0,r1を使用
+level_up:
+    retc,un
+
+    ;-------------------
+    ;bcd_add_with_line
+    ;LineCountBCD0/1にr0(0~99)-66hを足す. ついでにレベルアップもする
+    ;r0,r1,r2,r3,Temporary0を使用
+bcd_add_with_line:
+    loda,r3 LineCountBCD1
+    lodi,r1 LineCountBCD1-ScoreData
+    lodi,r2 2
+    stra,r2 UpdateScoreText         ;更新フラグ立てる
+    bctr,un bcd_add
+
+    ;ラインの10の桁が変わったかチェック, 代わってたらレベルアップ
+    eora,r3 LineCountBCD1
+    andi,r3 0f0h
+    retc,eq             ;１０の桁に変化なし.終了
+    
+    ;レベルアップ処理して直return
+    bctr,un level_up
 
     ;-------------------
     ;bcd_add

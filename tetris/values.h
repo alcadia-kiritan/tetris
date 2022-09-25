@@ -109,7 +109,7 @@
     
     ;乱数系
     RandomData                  equ TetrominoData4+4 +PAGE1
-    RandomBytes0                equ RandomData+0        ;乱数制御用のデータ
+    RandomBytes0                equ RandomData+0        ;乱数制御用のデータ, xorshift16
     RandomBytes1                equ RandomData+1   
 
     ;テトロミノのシャッフル用
@@ -142,7 +142,9 @@
     
     UpdateScoreText             equ ScoreData+9
     EnabledTimer                equ ScoreData+10
-    LastScoreValue              equ ScoreData+11 ;最後のマーカ. 変数としては使ってない
+    LvBCD0                      equ ScoreData+11
+    LvBCD1                      equ ScoreData+12
+    LastScoreValue              equ ScoreData+13 ;最後のマーカ. 変数としては使ってない
     
     ;ハイスコア系
     HighScoreData               equ LastScoreValue+0
