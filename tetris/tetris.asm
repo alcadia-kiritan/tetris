@@ -130,7 +130,7 @@ _lf_skip_counter_reset:
     SCENE_GAME_OVER                 equ     3 * 9
     SCENE_GAME_TIELE                equ     4 * 9
     SCENE_GAME_START                equ     5 * 9
-    SCENE_GAME_CLEAR_SPRINT         equ     6 * 9
+    SCENE_GAME_CLEAR         equ     6 * 9
 
 scene_table:
     ;---    
@@ -147,7 +147,7 @@ scene_table:
     bcta,un game_lock_down_after_vsync
     ;---
     bcta,un game_over_start
-    bcta,un game_over
+    bcta,un empty_subroutine
     bcta,un game_over_after_vsync
     ;---
     bcta,un game_title_start
@@ -158,9 +158,9 @@ scene_table:
     bcta,un empty_subroutine
     bcta,un empty_subroutine
     ;---
-    bcta,un game_clear_sprint_start
-    bcta,un game_clear_sprint
-    bcta,un game_clear_sprint_after_vsync
+    bcta,un game_clear_start
+    bcta,un game_clear
+    bcta,un game_clear_after_vsync
 
 
 
@@ -218,7 +218,7 @@ _PAGE0END_:
     include "tetris\score.asm"
 
     ;スプリントクリア
-    include "tetris\game_clear_sprint.asm"
+    include "tetris\game_clear.asm"
 
     ;テキスト描画
     include "tetris\draw_text_hiscr.asm"

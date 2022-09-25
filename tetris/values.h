@@ -92,6 +92,7 @@
     GameTitleFrameCount         equ TetrominoData3+0
 
     GameClearFrameCount         equ TetrominoData3+0
+    GameClearHighScoreUpdated   equ TetrominoData3+1
 
     OperationTetrominoX0        equ TetrominoData3+0    ;操作テトロミノのブロック座標郡
     OperationTetrominoY0        equ TetrominoData3+1
@@ -150,17 +151,18 @@
     
     ;ハイスコア系
     HighScoreData               equ LastScoreValue+0
-    HighNormalScoreBCD0         equ HighScoreData+0
-    HighNormalScoreBCD1         equ HighScoreData+1
-    HighNormalScoreBCD2         equ HighScoreData+2
+    BestTimer10sBCD             equ HighScoreData+0
+    BestTimer100msBCD           equ HighScoreData+1
+    BestTimer1msBCD             equ HighScoreData+2
 
-    HighTGM20GScoreBCD0         equ HighScoreData+3
-    HighTGM20GScoreBCD1         equ HighScoreData+4
-    HighTGM20GScoreBCD2         equ HighScoreData+5
+    HighNormalScoreBCD0         equ HighScoreData+3
+    HighNormalScoreBCD1         equ HighScoreData+4
+    HighNormalScoreBCD2         equ HighScoreData+5
 
-    BestTimer10sBCD             equ HighScoreData+6
-    BestTimer100msBCD           equ HighScoreData+7
-    BestTimer1msBCD             equ HighScoreData+8
+    HighTGM20GScoreBCD0         equ HighScoreData+6
+    HighTGM20GScoreBCD1         equ HighScoreData+7
+    HighTGM20GScoreBCD2         equ HighScoreData+8
+
     
     ;音系
     SoundData                   equ HighScoreData+9 -PAGE1
@@ -183,7 +185,9 @@
     ;ゲーム関係
     MAX_LOCK_DOWN_OPERATION equ 15          ;接地状態で最大何回操作可能か
 
-    SPRINT_CLEAR_LINES_BCD  equ 20h         ;スプリントモードのクリア行数のBCD表記
+    SPRINT_CLEAR_LINES_BCD  equ 2h         ;スプリントモードのクリア行数のBCD表記
+
+    CLEAR_LEVEL_BCD         equ 15h          ;スプリント以外でクリアになるレベルのBCD表記
 
     GAME_MODE_NORMAL        equ 1
     GAME_MODE_SPRINT        equ 0

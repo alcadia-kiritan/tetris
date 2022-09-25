@@ -15,7 +15,7 @@ game_lock_down:
     eorz r0
     stra,r0 FallFuncionIndex+PAGE1
     lodi,r0 SCENE_GAME_OVER
-    ;lodi,r0 SCENE_GAME_CLEAR_SPRINT
+    ;lodi,r0 SCENE_GAME_CLEAR
     stra,r0 NextSceneIndex+PAGE1
     retc,un
 
@@ -265,20 +265,33 @@ game_lock_down_after_vsync:
 
     ;ゲームモードがスプリントならクリア判定
     loda,r0 PAGE1+GameMode
-    bcfr,eq _gldav_skip_check_clear_sprint
+    bcfr,eq _gldav_check_clear_other_sprint
+
+    ;スプリントのクリア判定
     lodi,r0 SPRINT_CLEAR_LINES_BCD
     coma,r0 LineCountBCD1
-    bctr,gt _gldav_skip_check_clear_sprint
+    bctr,gt _gldav_no_clear
 
-    ;スプリントでクリアした
-    lodi,r0 SCENE_GAME_CLEAR_SPRINT
+    ;クリアした
+_gldav_cleared:
+    lodi,r0 SCENE_GAME_CLEAR
     stra,r0 PAGE1+NextSceneIndex
 
-_gldav_skip_check_clear_sprint:
+_gldav_no_clear:
 
     ;スコア更新して直return
     bcta,un update_score_text
 
+_gldav_check_clear_other_sprint:
+    ;スプリント以外のクリア判定
+    
+    lodi,r0 CLEAR_LEVEL_BCD
+    coma,r0 LvBCD1
+    bctr,gt _gldav_no_clear
+
+    ;クリアした.
+    bctr,un _gldav_cleared
+    
     ;---------------
     ;落下処理のテーブルのインデックス
     GLD_NOT_FALL            equ 0

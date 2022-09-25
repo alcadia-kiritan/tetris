@@ -18,14 +18,6 @@ game_over_start:
     ;音鳴らして直return
     bcta,un play_se12
     
-
-    ;-------------------
-    ;game_over
-    ;ゲームオーバーシーン
-    ;
-game_over:
-    retc,un
-
     ;-------------------
     ;game_over_after_vsync
     ;ゲームオーバーシーン（垂直同期後
@@ -72,14 +64,22 @@ _goav_draw_text:
     lodi,r2 120
     bsta,un wait_for_frame
 
-    ;スクロール位置を下げる
-    lodi,r2 GAME_OVER_SCROLL_SPEED
-    bsta,un scroll_to_bottom
+    ;スプリントならタイトルへ, スプリント以外ならクリア(リザルト)画面へ
+    loda,r0 PAGE1+GameMode
+    bctr,eq _goav_sprint
 
-    lodi,r0 SCENE_GAME_TIELE
-    stra,r0 NextSceneIndex+PAGE1
-
+    ;スプリント以外,クリアへ移動
+    lodi,r1 SCENE_GAME_CLEAR
+    stra,r1 NextSceneIndex+PAGE1
     retc,un
+
+_goav_sprint:
+    ;スプリントでゲームオーバー, スクロールしてタイトルへ移動
+    lodi,r1 SCENE_GAME_TIELE
+    stra,r1 NextSceneIndex+PAGE1
+    
+    lodi,r2 4
+    bcta,un scroll_to_bottom
 
 game_text:
     db 0

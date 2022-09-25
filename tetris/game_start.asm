@@ -1,6 +1,6 @@
 ;ゲームスタート
 
-    DEBUG_MODE  equ 1
+    DEBUG_MODE  equ 0
     
     ;-------------------
     ;game_start_start
@@ -18,7 +18,7 @@ IF DEBUG_MODE = 0
 ENDIF
     
 IF DEBUG_MODE = 0
-    GAME_START_SCROLL equ 3
+    GAME_START_SCROLL equ 4
 ELSE
     GAME_START_SCROLL equ 10
 ENDIF

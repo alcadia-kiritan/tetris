@@ -218,38 +218,12 @@ add_line4_score:
     bcta,un bcd_add_with_line
 
     ;-------------------
-    ;add_tspin_score
-    ;t-spinのスコアカウント
-    ;r0,r1,r2,Temporary0を使用
-add_tspin_score:
-    ;スコア+
-    lodi,r0 8h+66h
-    bsta,un bcd_add_with_score
-    
-    ;t-spin+
-    lodi,r0 1+66h
-    stra,r0 UpdateScoreText
-    lodi,r1 TspinCountBCD1-ScoreData
-    lodi,r2 2
-    bcta,un bcd_add
-
-    ;-------------------
-    ;bcd_add_with_score
-    ;ScoreCountBCD0-2にr0(0~99)-66hを足す.
-    ;r0,r1,r2,Temporary0を使用
-bcd_add_with_score:
-    loda,r1 PAGE1+GameMode
-    retc,eq                 ;スプリントならスコアは足さない.
-
-    lodi,r1 ScoreCountBCD2-ScoreData
-    lodi,r2 3
-    bcta,un bcd_add ;直return
-
-    ;-------------------
     ;level_up
     ;レベルアップ処理
     ;r0,r1を使用
 level_up:
+    bsta,un play_se8
+
     ;表示用のBCDをインクリメント
     lodi,r0 1+66h
     lodi,r1 LvBCD1-ScoreData
@@ -274,6 +248,34 @@ bcd_add_with_line:
     
     ;レベルアップ処理して直return
     bctr,un level_up
+
+    ;-------------------
+    ;add_tspin_score
+    ;t-spinのスコアカウント
+    ;r0,r1,r2,Temporary0を使用
+add_tspin_score:
+    ;スコア+
+    lodi,r0 8h+66h
+    bsta,un bcd_add_with_score
+    
+    ;t-spin+
+    lodi,r0 1+66h
+    stra,r0 UpdateScoreText
+    lodi,r1 TspinCountBCD1-ScoreData
+    lodi,r2 2
+    bctr,un bcd_add
+
+    ;-------------------
+    ;bcd_add_with_score
+    ;ScoreCountBCD0-2にr0(0~99)-66hを足す.
+    ;r0,r1,r2,Temporary0を使用
+bcd_add_with_score:
+    loda,r1 PAGE1+GameMode
+    retc,eq                 ;スプリントならスコアは足さない.
+
+    lodi,r1 ScoreCountBCD2-ScoreData
+    lodi,r2 3
+    bctr,un bcd_add ;直return
 
     ;-------------------
     ;bcd_add

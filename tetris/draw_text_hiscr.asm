@@ -38,6 +38,14 @@ text_clear:
     db ASCII_OFFSET+'A'
     db ASCII_OFFSET+'R'
 
+text_over:
+    db (GAME_TEXT_Y+1)*10h+GAME_TEXT_X
+    db 0
+    db ASCII_OFFSET+'O'
+    db ASCII_OFFSET+'V'
+    db ASCII_OFFSET+'E'
+    db ASCII_OFFSET+'R'
+
 text_time:
     db (GAME_TEXT_Y+3)*10h+GAME_TEXT_X
     db ASCII_OFFSET+'T'
@@ -45,6 +53,14 @@ text_time:
     db ASCII_OFFSET+'M'
     db ASCII_OFFSET+'E'
     db 0
+
+text_score:
+    db (GAME_TEXT_Y+3)*10h+GAME_TEXT_X
+    db ASCII_OFFSET+'S'
+    db ASCII_OFFSET+'C'
+    db ASCII_OFFSET+'O'
+    db ASCII_OFFSET+'R'
+    db ASCII_OFFSET+'E'
 
 text_best:
     db (GAME_TEXT_Y+6)*10h+GAME_TEXT_X
@@ -55,12 +71,12 @@ text_best:
     db 0
 
 text_new:
-    db (GAME_TEXT_Y+6)*10h+GAME_TEXT_X-5
+    db (GAME_TEXT_Y+6)*10h+GAME_TEXT_X-6
+    db 0
     db 0
     db ASCII_OFFSET+'N'
     db ASCII_OFFSET+'E'
     db ASCII_OFFSET+'W'
-    db 0
 
 text_hold:
     db (SCREEN_CHARA_HEIGHT - HOLD_TETROMINO_Y-3)*10h+HOLD_TETROMINO_X/2-2
