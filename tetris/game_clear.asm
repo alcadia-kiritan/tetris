@@ -160,7 +160,7 @@ _gcav_sprint:
 _gcav_end_draw_scores:
 
     lodi,r1 (GAME_TEXT_Y+5)*10h+(GAME_TEXT_X-1)
-    bsta,un clear5_hi
+    bstr,un clear5_hi
     
     loda,r0 PAGE1+GameClearHighScoreUpdated
     bctr,eq _gcav_skip_new

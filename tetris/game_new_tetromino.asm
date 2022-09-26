@@ -61,7 +61,7 @@ game_new_tetromino_after_vsync:
     bsta,un set_enabled_hold_tetromino
 
     ;NEXTテトロミノを描画, 直return
-    bcta,un draw_next_tetromino
+    bctr,un draw_next_tetromino
 
     ;-------------------
     ;draw_next_tetromino
@@ -87,7 +87,7 @@ draw_next_tetromino:
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*0 - 1
     stra,r0 Temporary1
-    bsta,un set_tetromino
+    bstr,un set_tetromino
     
     ;二個目のNextテトリミノを描画
     lodi,r0 NEXT_TETROMINO_COLOR + 3Ch
@@ -101,7 +101,7 @@ draw_next_tetromino:
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*1 - 1
     stra,r0 Temporary1
-    bsta,un set_tetromino
+    bstr,un set_tetromino
 
     ;３個目のNextテトリミノを描画
     lodi,r0 NEXT_TETROMINO_COLOR + 3Ch
@@ -115,7 +115,7 @@ draw_next_tetromino:
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*2 - 1
     stra,r0 Temporary1
-    bsta,un set_tetromino
+    bstr,un set_tetromino
 
     retc,un
     

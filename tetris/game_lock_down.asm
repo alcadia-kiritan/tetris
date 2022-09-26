@@ -135,8 +135,8 @@ _gld_clear_3:
 
     addi,r2 1
     lodz r2
-    bsta,un check_cleared
-    bcta,eq _gld_clear_4        ;この行は消せる
+    bstr,un check_cleared
+    bctr,eq _gld_clear_4        ;この行は消せる
     ;Iテトロミノでの４マスが上限なのでこれ以上繰り返す必要はない
 
 _gld_check_line_4_end:
@@ -1272,10 +1272,10 @@ check_tspin:
 
     lodi,r3 0
     lodi,r2 1
-    bsta,un check_tspin_line
+    bstr,un check_tspin_line
 
     lodi,r2 -1
-    bsta,un check_tspin_line
+    bstr,un check_tspin_line
 
     comi,r3 3
     retc,lt ;3未満終了

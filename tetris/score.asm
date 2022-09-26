@@ -75,32 +75,32 @@ update_score_text_force:
     lodi,r1 (SCORE_TEXT_Y+1)*10h+SCORE_TEXT_X-1 ;エッジと被る,がまあ・・６桁は無理ってことでスルー
     lodi,r2 3
     lodi,r3 ScoreCountBCD0-ScoreData
-    bsta,un draw_bcd
+    bstr,un draw_bcd
 _ust_skip_score:
 
     ;ライン
     lodi,r1 (LINE_TEXT_Y+1)*10h+LINE_TEXT_X+1
     lodi,r2 2
     lodi,r3 LineCountBCD0-ScoreData
-    bsta,un draw_bcd
+    bstr,un draw_bcd
 
     ;テトリス
     lodi,r1 (TETRIS_TEXT_Y+1)*10h+TETRIS_TEXT_X+1
     lodi,r2 2
     lodi,r3 TetrisCountBCD0-ScoreData
-    bsta,un draw_bcd
+    bstr,un draw_bcd
 
     ;レベル
     lodi,r1 (LV_TEXT_Y+1)*10h+LV_TEXT_X
     lodi,r2 2
     lodi,r3 LvBCD0-ScoreData
-    bsta,un draw_bcd
+    bstr,un draw_bcd
 
     ;t-spin
     lodi,r1 (TSPIN_TEXT_Y+1)*10h+TSPIN_TEXT_X+1
     lodi,r2 2
     lodi,r3 TspinCountBCD0-ScoreData
-    bcta,un draw_bcd    ;直return
+    bctr,un draw_bcd    ;直return
 
     ;-------------------
     ;draw_bcd
@@ -170,7 +170,7 @@ add_line1_score:
     
     ;ライン+
     lodi,r0 1h+66h
-    bcta,un bcd_add_with_line
+    bctr,un bcd_add_with_line
 
     ;-------------------
     ;add_line2_score
@@ -183,7 +183,7 @@ add_line2_score:
     
     ;ライン+
     lodi,r0 2+66h
-    bcta,un bcd_add_with_line
+    bctr,un bcd_add_with_line
 
     ;-------------------
     ;add_line3_score
@@ -192,11 +192,11 @@ add_line2_score:
 add_line3_score:
     ;スコア+
     lodi,r0 10h+66h
-    bsta,un bcd_add_with_score
+    bstr,un bcd_add_with_score
     
     ;ライン+
     lodi,r0 3+66h
-    bcta,un bcd_add_with_line
+    bctr,un bcd_add_with_line
 
     ;-------------------
     ;add_line4_score
@@ -205,17 +205,17 @@ add_line3_score:
 add_line4_score:
     ;スコア+
     lodi,r0 20h+66h
-    bsta,un bcd_add_with_score
+    bstr,un bcd_add_with_score
 
     ;テトリス+
     lodi,r0 1+66h
     lodi,r1 TetrisCountBCD1-ScoreData
     lodi,r2 2
-    bsta,un bcd_add
+    bstr,un bcd_add
     
     ;ライン+
     lodi,r0 4+66h
-    bcta,un bcd_add_with_line
+    bctr,un bcd_add_with_line
 
     ;-------------------
     ;bcd_add_with_line
@@ -243,7 +243,7 @@ bcd_add_with_line:
 add_tspin_score:
     ;スコア+
     lodi,r0 8h+66h
-    bsta,un bcd_add_with_score
+    bstr,un bcd_add_with_score
     
     ;t-spin+
     lodi,r0 1+66h
@@ -319,7 +319,7 @@ _at1f_skip16:
     lodi,r2 3
 
     ;16か17足して直return
-    bcta,un bcd_add
+    bctr,un bcd_add
 
     ;-------------------
     ;level_up

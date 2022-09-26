@@ -61,7 +61,7 @@ get_random_tetromino_index:
     bctr,eq _grti_last      ;シャッフル７回目か？
 
     ;ランダムなシャッフル位置を取得
-    bsta,un get_shuffle_index
+    bstr,un get_shuffle_index
 
     ;---
     ;[ShuffleTetromino0+r0]と[ShuffleTetromino0+[ShuffleIndex]]を交換する
@@ -158,13 +158,13 @@ _gr5_less255:
     bcta,un mod5            ;乱数をmod5
 
 get_random_4:
-    bsta,un next_random
+    bstr,un next_random
     loda,r0 RandomBytes0
     andi,r0 3               ;mod4
     retc,un
 
 get_random_3:
-    bsta,un next_random
+    bstr,un next_random
     loda,r0 RandomBytes1
     comi,r0 3*85
     bctr,lt _gr3_less255   ;255未満ならループ抜ける
@@ -175,7 +175,7 @@ _gr3_less255:
     bcta,un mod3            ;乱数をmod3
 
 get_random_2:
-    bsta,un next_random
+    bstr,un next_random
     loda,r0 RandomBytes0
     andi,r0 1               ;mod2
     retc,un

@@ -279,19 +279,19 @@ _reset_tetromino_field_down:
     bctr,eq _rtf_sprint
     lodi,r2 game_start_score_text-game_start_texts
 _rtf_sprint:
-    bsta,un draw_text5_lo
+    bstr,un draw_text5_lo
 
     ;TETRIS
     lodi,r2 game_start_tetrs_text-game_start_texts
-    bsta,un draw_text5_lo
+    bstr,un draw_text5_lo
 
     ;LINE
     lodi,r2 game_start_line_text-game_start_texts
-    bsta,un draw_text5_lo
+    bstr,un draw_text5_lo
 
     ;TSPIN
     lodi,r2 game_start_tspin_text-game_start_texts
-    bsta,un draw_text5_lo
+    bstr,un draw_text5_lo
 
     ;LV, 2文字なので直
     lodi,r0 ASCII_OFFSET+'L'

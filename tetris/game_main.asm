@@ -269,9 +269,9 @@ move_tetromino:
     loda,r0 P1Pad
     lodi,r1 PrevP1Pad - KeyData
     bsta,un button_process
-    bcta,eq _move_tetromino_skip_rotate     ;何も押されてない、スキップ
+    bctr,eq _move_tetromino_skip_rotate     ;何も押されてない、スキップ
     tmi,r0 11b
-    bcta,eq _move_tetromino_skip_rotate     ;右左両方押されてる. スキップ
+    bctr,eq _move_tetromino_skip_rotate     ;右左両方押されてる. スキップ
 
     
     tmi,r0 01b
@@ -576,7 +576,7 @@ rtrip_tetromino_i:
     stra,r0 NextTetrominoX
     
     ppsl 10000b                 ;RSをセット. 裏レジスタを使用, r1,r2,r3を退避
-    bsta,un can_block_moved
+    bstr,un can_block_moved
     cpsl 10000b                 ;RSをリセット. 表レジスタを使用
     retc,eq ;移動できた. 終了
 
@@ -588,7 +588,7 @@ rtrip_tetromino_i:
     stra,r0 NextTetrominoX
     
     ppsl 10000b                 ;RSをセット. 裏レジスタを使用, r1,r2,r3を退避
-    bsta,un can_block_moved
+    bstr,un can_block_moved
     cpsl 10000b                 ;RSをリセット. 表レジスタを使用
     retc,eq ;移動できた. 終了
 
