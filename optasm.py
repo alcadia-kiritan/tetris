@@ -28,6 +28,11 @@ def load_asm_file( asm_file_path ):
             return line[0:semicolon].strip()
         return line
 
+    prev_mnemonics = None
+    prev_mnemonics_line = None
+
+    remove_line_indices = []
+
     for index in range(len(asm_file)):
         line = asm_file[index]
 
@@ -51,6 +56,23 @@ def load_asm_file( asm_file_path ):
             mnemonics[0][-1:].lower() == b'a':
             #絶対アドレスの分岐命令
             branch_instructions[asm_file_path].append(index)
+
+        #条件なしのretcの手前に条件なしのbsxx命令がある.
+        if b'retc,un' in line.lower() and prev_mnemonics is not None and \
+           prev_mnemonics[0][0:2].lower() == b'bs' and prev_mnemonics[1].lower() == b'un':
+
+           #retcを消して,bsをbcに変更する
+           remove_line_indices.append(index)
+
+           prev = bytearray(asm_file[prev_mnemonics_line])
+           prev[prev.lower().index(b'bs')+1] += ord(b'c') - ord(b's')
+           asm_file[prev_mnemonics_line] = bytes(prev)
+           
+        prev_mnemonics_line = index
+        prev_mnemonics = mnemonics
+
+    for i in reversed(remove_line_indices):
+        asm_file.pop(i)
     
     return
 
@@ -121,7 +143,6 @@ def optimize( main_asm_file_path, target_asm_file_path ):
 
     #命令末尾のaをrに変更してコンパイルしてみる
     for branch_index in branch_instructions[target_asm_file_path]:
-
         #相対分岐に直す
         lines[branch_index] = a_to_r(lines[branch_index])
         open(target_asm_file_path,'wb').writelines(lines)

@@ -115,9 +115,8 @@ draw_next_tetromino:
     stra,r0 Temporary0
     lodi,r0 NEXT_TETROMINO_Y - NEXT_TETROMINO_Y_STEP*2 - 1
     stra,r0 Temporary1
-    bstr,un set_tetromino
+    bctr,un set_tetromino
 
-    retc,un
     
     ;-------------------
     ;set_tetromino
