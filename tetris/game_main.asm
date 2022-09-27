@@ -753,7 +753,7 @@ fall_operation_tetromino:
     suba,r0 FallDistance
     comi,r0 FIELD_START_Y+FIELD_HEIGHT
     bctr,lt _fot_not_oveflow
-    lodi,r0 0   ;オーバーフローしたので0に戻す
+    eorz r0     ;オーバーフローしたので0に戻す
 _fot_not_oveflow:
 
     ;最大落下可能座標

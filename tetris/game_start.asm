@@ -350,14 +350,14 @@ IF 0
 
     
     ;lodi,r0 5  ;T型
-    lodi,r0 0
     stra,r0 NextOperationTetrominoType0
+    eorz r0
     ;lodi,r0 5  ;T型
-    lodi,r0 0
     stra,r0 NextOperationTetrominoType1
+    eorz r0
     ;lodi,r0 5  ;T型
-    lodi,r0 0
     stra,r0 NextOperationTetrominoType2
+    eorz r0
 
 ENDIF
 

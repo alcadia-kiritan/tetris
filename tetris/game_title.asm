@@ -386,7 +386,7 @@ _gtav_draw_push_button:
     addz r2
     comi,r0 0C0h
     bcfr,eq _gtav_skip_c0
-    lodi,r0 0
+    eorz r0
 _gtav_skip_c0:
     stra,r0 SCRLODATA+10h*2+1,r1
     brnr,r1 _gtav_draw_push_button

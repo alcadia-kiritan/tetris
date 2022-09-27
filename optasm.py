@@ -57,11 +57,20 @@ def load_asm_file( asm_file_path ):
             #絶対アドレスの分岐命令
             branch_instructions[asm_file_path].append(index)
 
-        #条件なしのretcの手前に条件なしのbsxx命令がある.
+        #lodi,r0 0 があったらeorz r0に修正
+        if len(mnemonics) >= 3 and \
+            mnemonics[0].lower() == b'lodi' and mnemonics[1].lower() == b'r0' and \
+            (mnemonics[2] == b'0' or mnemonics[2].lower() == b'0h' or mnemonics[2].lower() == b'$0'):
+            i = line.lower().index(b'l')
+            e = b'eorz r0'
+            c = line.find(b';')
+            last = b'\r\n' if c < 0 else (b' ' * (c-i-len(e)) + line[c:])
+            asm_file[index] = line[0:i] + e + last
+
+        #条件なしのretcの手前に条件なしのbsxx命令がある. retcを消して,bsをbcに変更する
         if b'retc,un' in line.lower() and prev_mnemonics is not None and \
            prev_mnemonics[0][0:2].lower() == b'bs' and prev_mnemonics[1].lower() == b'un':
 
-           #retcを消して,bsをbcに変更する
            remove_line_indices.append(index)
 
            prev = bytearray(asm_file[prev_mnemonics_line])
@@ -171,6 +180,7 @@ def main():
         exit(-2)
     
     for opt_asm_file_path in asm_files:
+        #continue
         optimize(asm_file_path, opt_asm_file_path)
 
 if __name__ == '__main__':

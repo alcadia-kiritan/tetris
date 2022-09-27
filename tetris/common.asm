@@ -49,7 +49,7 @@ _button_process_same_button_state:
 _button_process_not_repeated:
     subi,r0 1
     stra,r0 KeyData+1,r1    ;減らしたリピートカウントを保存
-    lodi,r0 0               ;ボタン何も押してない
+    eorz r0                 ;ボタン何も押してない
     retc,un
 
     ;-------------------
