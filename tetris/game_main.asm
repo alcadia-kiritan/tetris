@@ -430,7 +430,7 @@ rotate_to_left_if_possiable:
     
     ;Iかそれ以外(Oなら回転に成功してる)かで切り替え
     IF RKO90_I_TETROMINO_0 - ROTATE90_KICK_OFFSETS <> 0 
-        WARNING RKO90_I_TETROMINO_0 が先頭前提(オフセット0)のコードがあるから要修正
+        WARNING "RKO90_I_TETROMINO_0 が先頭前提(オフセット0)のコードがあるから要修正"
     ENDIF
     lodi,r1 I_TETROMINO_INDEX
     coma,r1 TetrominoType

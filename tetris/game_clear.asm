@@ -350,19 +350,19 @@ compare_score:
     retc,un
 
     IF BestTimer10sBCD-HighScoreData <> GAME_MODE_SPRINT*3
-        warning ゲームモードのオフセットとハイスコアデータのオフセットがズレてる
+        warning "ゲームモードのオフセットとハイスコアデータのオフセットがズレてる"
     ENDIF
 
     IF HighNormalScoreBCD0-HighScoreData <> GAME_MODE_NORMAL*3
-        warning ゲームモードのオフセットとハイスコアデータのオフセットがズレてる
+        warning "ゲームモードのオフセットとハイスコアデータのオフセットがズレてる"
     ENDIF
 
     IF HighTGM20GScoreBCD0-HighScoreData <> GAME_MODE_TGM20G*3
-        warning ゲームモードのオフセットとハイスコアデータのオフセットがズレてる
+        warning "ゲームモードのオフセットとハイスコアデータのオフセットがズレてる"
     ENDIF
 
     IF ScoreCountBCD0 <> Timer10sBCD
-        warning ScoreCountBCD0とTimer10sBCDが同じ位置にない
+        warning "ScoreCountBCD0とTimer10sBCDが同じ位置にない"
     ENDIF
 
 

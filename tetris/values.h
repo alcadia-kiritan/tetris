@@ -58,7 +58,7 @@
     EndRAM1                     equ Debug0
 
     IF EndRAM1 > 18EFh
-        WARNING RAM1がオーバーしてるよ
+        WARNING "RAM1がオーバーしてるよ"
     ENDIF
 
     ;----
@@ -175,7 +175,7 @@
     EndRAM3                     equ SoundDataAddress1
 
     IF EndRAM3 > 1AFFh
-        WARNING RAM3がオーバーしてるよ
+        WARNING "RAM3がオーバーしてるよ"
     ENDIF
 
     ;-------------------------------------------------------------------------

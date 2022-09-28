@@ -153,7 +153,7 @@ _gss_scroll_end:
     retc,gt             ;スプリント以外なら終了
 
     IF GAME_MODE_SPRINT <> 0
-        warning GAME_MODE_SPRINTが0以外になってる. eqで判定ができない
+        warning "GAME_MODE_SPRINTが0以外になってる. eqで判定ができない"
     ENDIF
 
     ;タイマー描画
@@ -420,11 +420,11 @@ game_start_tetrs_text:
     db ASCII_OFFSET+'S'
     
     IF FIELD_START_X-FIELD_START_X/2*2 > 0
-        WARNING FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
+        WARNING "FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます"
     ENDIF
 
     IF FIELD_WIDTH-FIELD_WIDTH/2*2 > 0
-        WARNING FIELD_WIDTHが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
+        WARNING "FIELD_WIDTHが奇数だよ。reset_tetromino_fieldでの書き込みがずれます"
     ENDIF
 
 
