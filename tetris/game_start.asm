@@ -420,11 +420,11 @@ game_start_tetrs_text:
     db ASCII_OFFSET+'S'
     
     IF FIELD_START_X-FIELD_START_X/2*2 > 0
-        error FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
+        WARNING FIELD_START_Xが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
     ENDIF
 
     IF FIELD_WIDTH-FIELD_WIDTH/2*2 > 0
-        error FIELD_WIDTHが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
+        WARNING FIELD_WIDTHが奇数だよ。reset_tetromino_fieldでの書き込みがずれます
     ENDIF
 
 

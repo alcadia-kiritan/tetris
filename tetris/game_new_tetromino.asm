@@ -170,7 +170,7 @@ set_tetromino:
 set_enabled_hold_tetromino:
 
     IF HOLD_DISABLE_COLOR < HOLD_ENABLE_COLOR
-        error 色変更がandiで出来なくなってない？
+        WARNING 色変更がandiで出来なくなってない？
     ENDIF
     
     ;色を有効の色に戻す
@@ -202,7 +202,7 @@ set_enabled_hold_tetromino:
 set_disabled_hold_tetromino:
 
     IF HOLD_DISABLE_COLOR < HOLD_ENABLE_COLOR
-        error 色変更がandiで出来なくなってない？
+        WARNING 色変更がandiで出来なくなってない？
     ENDIF
     
     ;色を有効の色に戻す
