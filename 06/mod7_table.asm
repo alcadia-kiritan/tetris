@@ -84,9 +84,7 @@ gen_mod7_to_lower_screen:
     ;r0%7をr0に入れて返す
     ;r0を使用
 mod7:
-    ppsl 02h  ;COMをセット
     loda,r0 mod7_table,r0
-    cpsl 02h  ;COMをリセット
     retc,un
 
     include "06\mod7_table.h"
