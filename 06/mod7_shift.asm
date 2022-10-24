@@ -84,56 +84,57 @@ gen_mod7_to_lower_screen:
     ;r0%7をr0に入れて返す
     ;r0,r1,r2を使用
 mod7:
+    strz r2
+    lodi,r1 0   ; 下位バイト
+    addz r1     ; Cをリセット
+    
     ppsl 0Ah  ;WC,COMを1に, キャリーありの論理比較モードに変更
 
-    strz r2
+    ; x/7 = (x*146+72)>>10
 
-    lodi,r1 0   ; 上位バイト
-    cpsl 1      ; Cをリセット
-
-    ; r1:r0 <<= 3
-    rrl,r0
-    rrl,r1
-    rrl,r0
-    rrl,r1
-    rrl,r0
-    rrl,r1
-
-    ; r1:r0 += r2
-    addz r2
-    addi,r1 0
-
-    ; r1:r0 <<= 3
-    rrl,r0
-    rrl,r1
-    rrl,r0
-    rrl,r1
-    rrl,r0
-    rrl,r1
-
-    ; r1:r0 += r2
-    addz r2
-    addi,r1 0
-
-    ; r1:r0 += 36
-    addi,r0 36
-    addi,r1 0
-    
-    ; r0 = r1:r0 >> 9
+    ; r0:r1 >>= 3
+    rrr,r0
     rrr,r1
-    lodz r1
+    rrr,r0
+    rrr,r1
+    rrr,r0
+    rrr,r1
 
-    ; r0 += (r1*2 + r1) * 2   r0を7倍
-    cpsl 01b      ; Cをリセット
-    rrl,r0
+    ; r0:r1 += r2 << 8
+    addz r2
+
+    ; r0:r1 >>= 3
+    rrr,r0
+    rrr,r1
+    rrr,r0
+    rrr,r1
+    rrr,r0
+    rrr,r1
+
+    ; r0:r1 += r2<<8
+    addz r2
+
+    rrr,r0
+    rrr,r1
+    ;この時点でr0:r1 = x*146
+
+    ; r0:r1 += 72
+    addi,r1 72
+    addi,r0 0
+    
+    ; r0 = (x/7) << 2
+    andi,r0 0FCh
+
+    ; r0 = r0 + (r0>>1) + (r0>>2)
+    strz r1
+    rrr,r1
     addz r1
-    rrl,r0
+    rrr,r1
     addz r1
 
-    ; r0 = 最初の数値 - r0/7*7
+    ; r0 = 最初の数値 - x/7*7
     strz r1
     lodz r2
-
     cpsl 0Bh ;WC,COMを0に戻す  引き算でキャリーが邪魔なのでここで戻す
     subz r1
   
