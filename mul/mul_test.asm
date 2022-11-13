@@ -259,11 +259,11 @@ _wait_vsync:
 
         ;mul8を定義しているファイルを切り替えることでテスト対象を切り替える
 
-        include "09/mul.asm"
-        ;include "09/mul_table.asm"
-        ;include "09/mul_net.asm"
-        ;include "09/mul_simple.asm"
-        ;include "09/mul2.asm"
+        include "mul/mul.asm"
+        ;include "mul/mul_table.asm"
+        ;include "mul/mul_net.asm"
+        ;include "mul/mul_simple.asm"
+        ;include "mul/mul2.asm"
 
     ELSE
 
