@@ -217,4 +217,14 @@ un    equ  3
 
 ;-------------------------------------------------------------------------
 
+;Program Status Lower (PSL)
+C     equ 1<<0
+COM   equ 1<<1
+OVF   equ 1<<2
+WC    equ 1<<3
+RS    equ 1<<4
+IDC   equ 1<<5
+CC0   equ 1<<6
+CC1   equ 1<<7
+
 end
