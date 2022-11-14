@@ -11,9 +11,13 @@ fsub:
 
     bstr,un fadd
 
+    comi,r2 0
+    retc,eq         ;r2が0(FStack+0)なら符号を戻さず終了
+
     loda,r0 FStack,r2
     eori,r0 80h
     stra,r0 FStack,r2
+
     retc,un
 
     ;-------------------
