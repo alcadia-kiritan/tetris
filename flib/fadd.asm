@@ -148,7 +148,7 @@ _fa_eqsign_gt9_r1:
     eorz r3
     tmi,r0 80h
     retc,lt
-    bsta,eq fexception      ;インクリメントして符号ビットが変化した=指数部がオーバーフローした
+    bsta,un fexception      ;インクリメントして符号ビットが変化した=指数部がオーバーフローした
     
 _fa_eqsign_gt9_r1_nc:
     stra,r0 FStack+1        ;仮数部を保存
@@ -181,7 +181,7 @@ _fa_eqsign_0_not_carry:
     eorz r3
     tmi,r0 80h
     retc,lt
-    bsta,eq fexception  ;加算して符号ビットが変化した=指数部がオーバーフローした
+    bsta,un fexception  ;加算して符号ビットが変化した=指数部がオーバーフローした
 
 _fa_diffsign:
 
