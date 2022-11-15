@@ -45,12 +45,54 @@ programstart:
     bcta,un fsqrt_test
 
 fsqrt_test_data:
+    ;sqrt(0.112305) = 0.335119
+    db EXPONENT_OFFSET + -4
+    db 0CCh
+    db EXPONENT_OFFSET + -2
+    db 057h
+    
+    ;sqrt(6899514629131599872.000000) = 2626692716.922099
+    db EXPONENT_OFFSET + 62
+    db 07Fh
+    db EXPONENT_OFFSET + 31
+    db 039h
+
+    ;sqrt(13799029258263199744.000000) = 3714704464.457866
+    db EXPONENT_OFFSET + 63
+    db 07Fh
+    db EXPONENT_OFFSET + 31
+    db 0BAh
+
+    ;sqrt(0.000000) = 0.000000
+    db EXPONENT_OFFSET + -63
+    db 07Fh
+    db EXPONENT_OFFSET + -32
+    db 0BAh
+
+    ;sqrt(0.000000) = 0.000000
+    db EXPONENT_OFFSET + -62
+    db 07Fh
+    db EXPONENT_OFFSET + -31
+    db 039h
+
+    ;sqrt(0.000000) = 0.000000
+    db EXPONENT_OFFSET + -62
+    db 0FFh
+    db EXPONENT_OFFSET + -31
+    db 069h
+
+    ;sqrt(0.000000) = 0.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -32
+    db 0FFh
+
     ;sqrt(1023.000000) = 31.984371
     db EXPONENT_OFFSET + 9
     db 0FFh
     db EXPONENT_OFFSET + 4
     db 0FFh
-    
+
     ;sqrt(4.046875) = 2.011685
     db EXPONENT_OFFSET + 2
     db 003h
