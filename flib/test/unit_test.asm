@@ -26,7 +26,6 @@ programstart:
     ;スクロール位置を画面上端へ
     lodi,r0 0F0h
     stra,r0 CRTCVPR
-
     
     ;RAM1           equ 18D0h   ;$18D0..$18EF are user RAM1 - 32 Byte 
     Sign            equ 18D0h 
@@ -40,6 +39,202 @@ programstart:
     Temporary1P1    equ 18F9h + 8*1024
 
     FStack equ 1AD0h + PAGE1        ;$1AD0..$1AFF are user RAM3 - 48 Byte
+
+    ;-------
+    ;fsqrtのテスト
+    bcta,un fsqrt_test
+
+fsqrt_test_data:
+    ;sqrt(1023.000000) = 31.984371
+    db EXPONENT_OFFSET + 9
+    db 0FFh
+    db EXPONENT_OFFSET + 4
+    db 0FFh
+    
+    ;sqrt(4.046875) = 2.011685
+    db EXPONENT_OFFSET + 2
+    db 003h
+    db EXPONENT_OFFSET + 1
+    db 001h
+
+    ;sqrt(2.023438) = 1.422476
+    db EXPONENT_OFFSET + 1
+    db 003h
+    db EXPONENT_OFFSET + 0
+    db 06Ch
+
+    ;sqrt(1.011719) = 1.005842
+    db EXPONENT_OFFSET + 0
+    db 003h
+    db EXPONENT_OFFSET + 0
+    db 001h
+
+    ;sqrt(1.003906) = 1.001951
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+
+    ;sqrt(1.996094) = 1.412832
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 069h
+    
+    ;sqrt(0.996094) = 0.998045
+    db EXPONENT_OFFSET + -1
+    db 0FEh
+    db EXPONENT_OFFSET + -1
+    db 0FEh
+
+    ;sqrt(511.000000) = 22.605309
+    db EXPONENT_OFFSET + 8
+    db 0FFh
+    db EXPONENT_OFFSET + 4
+    db 069h
+
+    ;sqrt(1.996094) = 1.412832
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 069h
+
+    ;sqrt(0.003906) = 0.062500
+    db EXPONENT_OFFSET + -8
+    db 000h
+    db EXPONENT_OFFSET + -4
+    db 000h
+
+    ;sqrt(10.00000) = 3.16228
+    db EXPONENT_OFFSET + 3
+    db 40h
+    db EXPONENT_OFFSET + 1
+    db 94h
+
+    ;sqrt(9.000000) = 3.000000
+    db EXPONENT_OFFSET+3
+    db 20h
+    db EXPONENT_OFFSET+1
+    db 080h
+
+    ; sqrt(3.00) = 1.732051
+    db EXPONENT_OFFSET+1
+    db 80h
+    db EXPONENT_OFFSET
+    db 0BBh
+
+    ; sqrt(1.50) = 1.224745
+    db EXPONENT_OFFSET
+    db 80h
+    db EXPONENT_OFFSET
+    db 039h
+
+    ; sqrt(0.75) = 0.86602540378
+    db EXPONENT_OFFSET-1
+    db 80h
+    db EXPONENT_OFFSET-1
+    db 0BBh
+
+    ; sqrt(0.25) = 0.5
+    db EXPONENT_OFFSET-2
+    db 0
+    db EXPONENT_OFFSET-1
+    db 0h
+
+    ; sqrt(0.5) = 0.70710678118
+    db EXPONENT_OFFSET-1
+    db 0
+    db EXPONENT_OFFSET-1
+    db 06Ah
+
+    ; sqrt(1.0) = 1.0
+    db EXPONENT_OFFSET
+    db 0
+    db EXPONENT_OFFSET
+    db 0
+
+    ; sqrt(2.0) = 1.41421356237
+    db EXPONENT_OFFSET+1
+    db 0
+    db EXPONENT_OFFSET
+    db 06Ah
+
+    ; sqrt(0.0) = 1.0
+    db 0
+    db 0
+    db 0
+    db 0
+    
+fsqrt_test_data_end:
+
+fsqrt_test:
+
+    ;テストデータのアドレスをDataOffset0/DataOffset1へセット
+    lodi,r0 fsqrt_test_data>>8
+    stra,r0 DataOffset0
+    lodi,r0 fsqrt_test_data&0ffh
+    stra,r0 DataOffset1
+
+
+fsqrt_test_loop:
+
+    ;テストデータをFStack+2へロード
+    lodi,r3 0
+    loda,r0 *DataOffset0,r3
+    stra,r0 FStack+2-PAGE1
+    lodi,r3 1
+    loda,r0 *DataOffset0,r3
+    stra,r0 FStack+3-PAGE1
+    
+    lodi,r0 0DEh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    ;fsqrtを呼び出し
+    lodi,r1 2
+    lodi,r2 0
+    bsta,un fsqrt
+
+    ;r1,r2に変化がないことをチェック
+    comi,r1 2
+    bcfa,eq failed_unit_test
+    comi,r2 0
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0DFh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    ;テストデータの結果と比較
+    lodi,r3 2
+    loda,r0 *DataOffset0,r3
+    loda,r3 FStack+0-PAGE1
+    comz r3    
+    bcfa,eq failed_unit_test
+    
+    lodi,r3 3
+    loda,r0 *DataOffset0,r3
+    loda,r3 FStack+1-PAGE1
+    comz r3    
+    bcfa,eq failed_unit_test
+
+    ;テストデータのアドレスをインクリメント
+    loda,r0 DataOffset1
+    addi,r0 4
+    stra,r0 DataOffset1
+    tpsl 1
+    bcfr,eq _fsqrt_test_not_carry
+    loda,r0 DataOffset0
+    addi,r0 1
+    stra,r0 DataOffset0
+_fsqrt_test_not_carry:
+
+    ;テストデータ末尾チェックして到達してないならループ
+    loda,r0 DataOffset1
+    comi,r0 fsqrt_test_data_end & 0ffh
+    bcfa,eq fsqrt_test_loop
+    loda,r0 DataOffset0
+    comi,r0 fsqrt_test_data_end >> 8
+    bcfa,eq fsqrt_test_loop
+
 
     ;-------
     ;faddのテスト
@@ -826,6 +1021,7 @@ failed_unit_test:
     include "flib\fadd.asm"
     include "flib\mantissa_rshift.asm"
     include "flib\fmul.asm"
+    include "flib\fsqrt.asm"
 
 
 end ; End of assembly
