@@ -41,6 +41,45 @@ programstart:
     FStack equ 1AD0h + PAGE1        ;$1AD0..$1AFF are user RAM3 - 48 Byte
 
     ;-------
+    ;fcom0のテスト
+
+    ; +0.0
+    lodi,r0 00h
+    stra,r0 FStack+0-PAGE1
+    lodi,r0 00h
+    stra,r0 FStack+1-PAGE1
+    lodi,r1 0
+    bsta,un fcom0
+    bsfa,eq failed_unit_test
+
+    ; -0.0
+    lodi,r0 80h
+    stra,r0 FStack+2-PAGE1
+    lodi,r0 00h
+    stra,r0 FStack+3-PAGE1
+    lodi,r1 2
+    bsta,un fcom0
+    bsfa,eq failed_unit_test
+
+    ; 1.0
+    lodi,r0 00h + EXPONENT_OFFSET
+    stra,r0 FStack+4-PAGE1
+    lodi,r0 00h
+    stra,r0 FStack+5-PAGE1
+    lodi,r1 4
+    bsta,un fcom0
+    bsfa,gt failed_unit_test
+
+    ; -1.0
+    lodi,r0 80h + EXPONENT_OFFSET
+    stra,r0 FStack+6-PAGE1
+    lodi,r0 00h
+    stra,r0 FStack+7-PAGE1
+    lodi,r1 6
+    bsta,un fcom0
+    bsfa,lt failed_unit_test
+
+    ;-------
     ;fsqrtのテスト
     bcta,un fsqrt_test
 
@@ -1064,6 +1103,7 @@ failed_unit_test:
     include "flib\mantissa_rshift.asm"
     include "flib\fmul.asm"
     include "flib\fsqrt.asm"
+    include "flib\fcom.asm"
 
 
 end ; End of assembly
