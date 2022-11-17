@@ -79,6 +79,201 @@ programstart:
     bsta,un fcom0
     bsfa,lt failed_unit_test
 
+    ; 1.5
+    lodi,r0 00h + EXPONENT_OFFSET
+    stra,r0 FStack+8-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+9-PAGE1
+    lodi,r1 8
+    bsta,un fcom0
+    bsfa,gt failed_unit_test
+
+    ; -1.5
+    lodi,r0 80h + EXPONENT_OFFSET
+    stra,r0 FStack+10-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+11-PAGE1
+    lodi,r1 10
+    bsta,un fcom0
+    bsfa,lt failed_unit_test
+    
+    ; 3.0
+    lodi,r0 00h + EXPONENT_OFFSET + 1
+    stra,r0 FStack+8-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+9-PAGE1
+    lodi,r1 8
+    bsta,un fcom0
+    bsfa,gt failed_unit_test
+
+    ; -3.0
+    lodi,r0 80h + EXPONENT_OFFSET + 1
+    stra,r0 FStack+10-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+11-PAGE1
+    lodi,r1 10
+    bsta,un fcom0
+    bsfa,lt failed_unit_test
+    
+    ; 0.75
+    lodi,r0 00h + EXPONENT_OFFSET - 1
+    stra,r0 FStack+12-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+13-PAGE1
+    lodi,r1 12
+    bsta,un fcom0
+    bsfa,gt failed_unit_test
+
+    ; -0.75
+    lodi,r0 80h + EXPONENT_OFFSET - 1
+    stra,r0 FStack+14-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+15-PAGE1
+    lodi,r1 14
+    bsta,un fcom0
+    bsfa,lt failed_unit_test
+
+    ; 0.375
+    lodi,r0 00h + EXPONENT_OFFSET - 2
+    stra,r0 FStack+16-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+17-PAGE1
+    lodi,r1 16
+    bsta,un fcom0
+    bsfa,gt failed_unit_test
+
+    ; -0.375
+    lodi,r0 80h + EXPONENT_OFFSET - 2
+    stra,r0 FStack+18-PAGE1
+    lodi,r0 80h
+    stra,r0 FStack+19-PAGE1
+    lodi,r1 18
+    bsta,un fcom0
+    bsfa,lt failed_unit_test
+
+    ;-------
+    ;fcomのテスト
+
+    ;0.0 == 0.0
+    lodi,r1 0
+    lodi,r2 0
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
+    ;-0.0 == -0.0
+    lodi,r1 2
+    lodi,r2 2
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
+    ;1.0 == 1.0
+    lodi,r1 4
+    lodi,r2 4
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
+    ;-1.0 == -1.0
+    lodi,r1 6
+    lodi,r2 6
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
+    ;0.0 < 1.0
+    lodi,r1 0
+    lodi,r2 4
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+
+    ;1.0 > 0.0
+    lodi,r1 4
+    lodi,r2 0
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+
+    ;0.0 > -1.0
+    lodi,r1 0
+    lodi,r2 6
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+
+    ;-1.0 < 0.0
+    lodi,r1 6
+    lodi,r2 0
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+
+    ;1.0 < 1.5
+    lodi,r1 4
+    lodi,r2 8
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+
+    ;1.5 > 1.0
+    lodi,r1 8
+    lodi,r2 4
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+
+    ;-1.0 > -1.5
+    lodi,r1 6
+    lodi,r2 10
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+
+    ;-1.5 < -1.0
+    lodi,r1 10
+    lodi,r2 6
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+    
+    ;-1.0 < 1.5
+    lodi,r1 6
+    lodi,r2 8
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+
+    ;1.0 > -1.5
+    lodi,r1 4
+    lodi,r2 10
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+
+    ;0.75 > 0.375
+    lodi,r1 12
+    lodi,r2 16
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+
+    ;0.375 < 0.75
+    lodi,r1 16
+    lodi,r2 12
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+
+    ;0.375 == 0.375
+    lodi,r1 16
+    lodi,r2 16
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
+    ;-0.75 < -0.375
+    lodi,r1 14
+    lodi,r2 18
+    bsta,un fcom
+    bsfa,lt failed_unit_test
+
+    ;-0.375 > -0.75
+    lodi,r1 18
+    lodi,r2 14
+    bsta,un fcom
+    bsfa,gt failed_unit_test
+    
+    ;-0.75 == -0.75
+    lodi,r1 14
+    lodi,r2 14
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
     ;-------
     ;fsqrtのテスト
     bcta,un fsqrt_test
