@@ -1068,11 +1068,6 @@ _fsub_next_test2:
     lodi,r2 4
     bsta,un fmul
 
-    comi,r1 2
-    bcfa,eq failed_unit_test
-    comi,r2 4
-    bcfa,eq failed_unit_test
-
     lodi,r3 8
     loda,r0 *DataOffset0,r3
 
@@ -1108,11 +1103,6 @@ _fmul_next_test:
     lodi,r1 4
     lodi,r2 2
     bsta,un fmul
-
-    comi,r1 4
-    bcfa,eq failed_unit_test
-    comi,r2 2
-    bcfa,eq failed_unit_test
 
     lodi,r3 8
     loda,r0 *DataOffset0,r3

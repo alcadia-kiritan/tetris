@@ -14,7 +14,8 @@ _fmul_zero:
     ;[FStack+0][FStack+1] = [FStack+r1][FStack+r1+1] * [FStack+r2+0][FStack+r2+1]
     ;精度は下駄含めて8bit, 下駄を含めなければ7bit.
     ;仮数部の最下位ビットは真値と同じかどうかは保証されない.
-    ;r0,r1,r2,r3,r4,r5,r6,Temporary0を使用.  r1,r2は変化しない.
+    ;r0,r1,r2,r3を使用.
+    ;fadd/fsubと異なり、r1,r2が破壊される.
 fmul:
 
     loda,r0 FStack+0,r1
@@ -26,49 +27,53 @@ fmul:
     andi,r0 07fh
     bctr,eq _fmul_zero      ;0確定
 
-    ;指数部を加算してr3へ格納しておく
+    ;指数部を加算してr3へ格納
     addz r3
+    subi,r0 EXPONENT_OFFSET ;下駄が２個分あるので１つ消す
+    bsfa,gt fexception      ;ltかeqなら指数がオーバーフローしてる
     strz r3
-
-    loda,r0 FStack+1,r2
-    stra,r0 Temporary0P1
-    loda,r0 FStack+1,r1
-
-    ppsl RS     ;r1,r2を退避
-    
-    bstr,un _mantissa_mul8
-    stra,r0 FStack+1        ;仮数部を書き込み
-    lodz r1                 ;右シフト量をr0へ退避
-
-    cpsl RS     ;r1,r2をレストア
-
-    ;指数部から指数を取り出して加算
-    addz r3
-    subi,r0 EXPONENT_OFFSET         ;下駄が２個分あるので１つ消す
-
-    bsfa,gt fexception              ;ltかeq 指数が0かオーバーフローした
-    
-    strz r3                 ;指数をr3へ退避
     
     ;符号を計算
     loda,r0 FStack+0,r1
-    eora,r0 FStack+0,r2
-    
+    eora,r0 FStack+0,r2    
     andi,r0 080h
+    
     addz r3 
+    stra,r0 FStack+0        ;途中まで計算した指数部を書き込み
 
+    ;r2/r1の仮数部を読み込み
+    loda,r0 FStack+1,r2
+    strz r2
+    
+    loda,r0 FStack+1,r1
+    strz r1
+    
+    bstr,un _mantissa_mul8
+    stra,r0 FStack+1        ;仮数部を書き込み
+    ;右シフト量がr1に入ってる
+
+    ;途中まで計算した指数部をr0,r2へ読み取り
+    loda,r0 FStack+0
+    strz r2
+
+    addz r1
     stra,r0 FStack+0        ;指数部を書き込み
 
+    eorz r2
+    
+    ;r1は0~1の加算のみなので符号ビットの変化だけ見ればOK
+    bsta,lt fexception              ;lt,指数がオーバーフローした
+    
     retc,un
 
     ;------
-    ;r0とTemporary0を仮数部とみなして
+    ;r0(=r1)とr2を仮数部とみなして,
     ;その乗算結果のケチ表現の上位8bitをr0へ格納する
     ;r1へ仮数部の右シフト量を格納する
+    ;
+    ;r0,r1,r2,r3を使用
 _mantissa_mul8:
 
-    loda,r2 Temporary0P1    ;r2 = r2の仮数部
-    strz r1                 ;r1 = r1の仮数部
     subz r2                 ;r0 = r1の仮数部 - r2の仮数部
 
     tpsl C
