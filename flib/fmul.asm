@@ -46,9 +46,7 @@ fmul:
     addz r3
     subi,r0 EXPONENT_OFFSET         ;下駄が２個分あるので１つ消す
 
-    bcta,eq fexception              ;指数が0になった
-    tmi,r0 080h
-    bcta,eq fexception              ;オーバーフローした
+    bsfa,gt fexception              ;ltかeq 指数が0かオーバーフローした
     
     strz r3                 ;指数をr3へ退避
     

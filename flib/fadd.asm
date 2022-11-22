@@ -46,8 +46,7 @@ fadd:
 
     ;符号&指数部をxor
     eorz r3
-    tmi,r0 080h
-    bcta,eq _fa_diffsign
+    bcta,lt _fa_diffsign
 
     ;同符号
 
@@ -107,9 +106,8 @@ _fa_eqsign_lt9_r1:
 
     ;符号ビットが変化してないかチェック
     eorz r3
-    tmi,r0 80h
-    retc,lt
-    bsta,eq fexception      ;インクリメントして符号ビットが変化した=指数部がオーバーフローした
+    retc,gt                 ;res=(x+1)^x ,resが1~127なので範囲内ならgt確定
+    bsta,un fexception      ;インクリメントして符号ビットが変化した=指数部がオーバーフローした
     
 _fa_eqsign_lt9_r1_nc:
     stra,r0 FStack+1        ;仮数部を保存
@@ -146,8 +144,7 @@ _fa_eqsign_gt9_r1:
 
     ;符号ビットが変化してないかチェック
     eorz r3
-    tmi,r0 80h
-    retc,lt
+    retc,gt
     bsta,un fexception      ;インクリメントして符号ビットが変化した=指数部がオーバーフローした
     
 _fa_eqsign_gt9_r1_nc:
@@ -179,8 +176,7 @@ _fa_eqsign_0_not_carry:
 
     ;符号ビットが変化してないかチェック
     eorz r3
-    tmi,r0 80h
-    retc,lt
+    retc,gt
     bsta,un fexception  ;加算して符号ビットが変化した=指数部がオーバーフローした
 
 _fa_diffsign:
@@ -268,12 +264,18 @@ _fa_diff_gt9_r1:
     stra,r3 FStack+1    ;仮数部を保存
     stra,r0 FStack+0    ;指数部を保存
     retc,un
+    
+_fa_diff_e_eq_zero:
+    eorz r0
+    stra,r0 FStack+0
+    stra,r0 FStack+1
+    retc,un
 
 _fa_diff_e_eq:
     ;指数が同じ
     loda,r0 FStack+1,r1
     suba,r0 FStack+1,r2
-    bcta,eq _fa_diff_e_eq_zero   ;指数が同じで仮数部も同じで符号だけ違う＝答えは０
+    bctr,eq _fa_diff_e_eq_zero   ;指数が同じで仮数部も同じで符号だけ違う＝答えは０
     strz r3 
     tpsl 1                       ;suba,r0のキャリーをチェック
     bctr,eq _fa_diff_e_eq_r1     ;Cがたってる=減算時に桁を借りなかった.r1の仮数部の方が大きい
@@ -297,8 +299,7 @@ _fa_diff_sub_r2_normalized:
 
     ;オーバーフローチェック
     eora,r0 FStack,r2
-    tmi,r0 80h
-    bsta,eq fexception      ;符号ビットが変化した,オーバフロー発生
+    bsta,lt fexception      ;符号ビットが変化した,オーバフロー発生
 
     andi,r0 7fh
     retc,gt
@@ -321,17 +322,10 @@ _fa_diff_sub_r1_normalized:
 
     ;オーバーフローチェック
     eora,r0 FStack,r1
-    tmi,r0 80h
-    bsta,eq fexception      ;符号ビットが変化した,オーバフロー発生
+    bsta,lt fexception      ;符号ビットが変化した,オーバフロー発生
     
     andi,r0 7fh
     retc,gt
     bsta,un fexception      ;指数部が0になった
-    
-_fa_diff_e_eq_zero:
-    eorz r0
-    stra,r0 FStack+0
-    stra,r0 FStack+1
-    retc,un
 
 end ; End of assembly
