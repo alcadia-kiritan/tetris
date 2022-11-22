@@ -6,6 +6,12 @@ _fdiv_zero:
     stra,r0 FStack+1
     retc,un
 
+_fdiv_zero_mantissa:
+    ;除数の仮数部が0, 被除数の仮数部がそのままになる
+    loda,r0 FStack+1,r1
+    stra,r0 FStack+1
+    retc,un
+
     ;-------------------
     ;fdiv
     ;[FStack+0][FStack+1] = [FStack+r1][FStack+r1+1] / [FStack+r2+0][FStack+r2+1]
@@ -38,7 +44,9 @@ fdiv:
     
     ;r0,r2に仮数部を読み取り
     loda,r0 FStack+1,r2
+    bctr,eq _fdiv_zero_mantissa     ;除数の仮数部が0?
     strz r2
+    subi,r2 1                       ;除数を-1
     loda,r0 FStack+1,r1
 
     ;r1:r0 = 1:[FStack+1+r1]    被除数
@@ -53,9 +61,10 @@ fdiv:
     ;r1:r0 から 256+r2を引いていく
 
     comz r2
-    bctr,lt _fdiv0_lt
+    bcfr,gt _fdiv0_lt
 
     ;r0 >= r2
+    cpsl C      ;C=0
     subz r2
     subi,r1 1
     ;r1は1なのでCは確定で1 
@@ -76,9 +85,8 @@ _fdiv0_lt:
     rrl,r0
     rrl,r1
     andi,r0 0feh        ;最下位ビットにキャリーが入ってるので消す
-    subi,r1 0           ;r1 -= 1 / C=1      ppsl Cの代替,ppslより速い
     subz r2
-    subi,r1 0
+    subi,r1 1
     ;r1は2なのでCは確定で1 
 
 _fdiv1:
@@ -93,12 +101,11 @@ _fdiv1:
 
     ;r1 == 1
     comz r2
-    bctr,lt _fdiv1_lt
+    bcfr,gt _fdiv1_lt
 
 _fdiv1_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0       ; r3 += 1   ↑のsubiのr1は1以上なのでC=1確定
     ;C=0
     
@@ -116,11 +123,10 @@ _fdiv2:
     bctr,lt _fdiv2_lt
     bctr,gt _fdiv2_gt
     comz r2
-    bctr,lt _fdiv2_lt
+    bcfr,gt _fdiv2_lt
 _fdiv2_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0
 _fdiv2_lt:
     rrl,r0
@@ -132,11 +138,10 @@ _fdiv3:
     bctr,lt _fdiv3_lt
     bctr,gt _fdiv3_gt
     comz r2
-    bctr,lt _fdiv3_lt
+    bcfr,gt _fdiv3_lt
 _fdiv3_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0
 _fdiv3_lt:
     rrl,r0
@@ -148,11 +153,10 @@ _fdiv4:
     bctr,lt _fdiv4_lt
     bctr,gt _fdiv4_gt
     comz r2
-    bctr,lt _fdiv4_lt
+    bcfr,gt _fdiv4_lt
 _fdiv4_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0
 _fdiv4_lt:
     rrl,r0
@@ -164,11 +168,10 @@ _fdiv5:
     bctr,lt _fdiv5_lt
     bctr,gt _fdiv5_gt
     comz r2
-    bctr,lt _fdiv5_lt
+    bcfr,gt _fdiv5_lt
 _fdiv5_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0
 _fdiv5_lt:
     rrl,r0
@@ -180,11 +183,10 @@ _fdiv6:
     bctr,lt _fdiv6_lt
     bctr,gt _fdiv6_gt
     comz r2
-    bctr,lt _fdiv6_lt
+    bcfr,gt _fdiv6_lt
 _fdiv6_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0
 _fdiv6_lt:
     rrl,r0
@@ -196,11 +198,10 @@ _fdiv7:
     bctr,lt _fdiv7_lt
     bctr,gt _fdiv7_gt
     comz r2
-    bctr,lt _fdiv7_lt
+    bcfr,gt _fdiv7_lt
 _fdiv7_gt:
-    subi,r1 0
     subz r2
-    subi,r1 0
+    subi,r1 1
     addi,r3 0
 _fdiv7_lt:
     rrl,r0
@@ -212,7 +213,7 @@ _fdiv8:
     bctr,lt _fdiv8_lt
     bctr,gt _fdiv8_gt
     comz r2
-    bctr,lt _fdiv8_lt
+    bcfr,gt _fdiv8_lt
 _fdiv8_gt:
     addi,r3 1
 _fdiv8_lt:
