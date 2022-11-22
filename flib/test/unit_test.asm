@@ -518,23 +518,31 @@ _fsqrt_test_not_carry:
 
 fadd_test_data:
 
-    ;511 + 511 = 1022
-    ;511 - 511 = 0
-    ;511 * 511 = 261,121
-    db EXPONENT_OFFSET+8
-    db 0FFh
-    db EXPONENT_OFFSET+8
-    db 0FFh
-    db EXPONENT_OFFSET+9
-    db 0FFh
-    db 0
+    ;1.5 + -0.25 = 1.25
+    ;1.5 - -0.25 = 1.75
+    ;1.5 * -0.25 = -0.375
+    ;1.500000 / -0.250000 = -6.000000
+    ;-0.250000 / 1.500000 = -0.166667
+    db EXPONENT_OFFSET
+    db 80h
+    db 80h + EXPONENT_OFFSET - 2
     db 0h
-    db EXPONENT_OFFSET+17
-    db 0FEh
+    db EXPONENT_OFFSET
+    db 40h
+    db EXPONENT_OFFSET
+    db 0C0h
+    db 80h + EXPONENT_OFFSET - 2
+    db 080h
+    db 80h + EXPONENT_OFFSET + 2
+    db 080h
+    db 80h + EXPONENT_OFFSET + -3
+    db 055h
 
     ;0.99609375 + -1.00390625 = 0.0078125
     ;0.99609375 - -1.00390625 = 2.0
     ;0.99609375 * -1.00390625 = -0.99998474121 = -1
+    ;0.996094 / -1.003906 = -0.992218
+    ;-1.003906 / 0.996094 = -1.007843
     db EXPONENT_OFFSET-1
     db 0feh
     db 80h + EXPONENT_OFFSET
@@ -545,10 +553,36 @@ fadd_test_data:
     db 0h
     db 80h + EXPONENT_OFFSET
     db 00h
+    db 80h + EXPONENT_OFFSET + -1
+    db 0FCh
+    db 80h + EXPONENT_OFFSET + 0
+    db 002h
+
+    ;511 + 511 = 1022
+    ;511 - 511 = 0
+    ;511 * 511 = 261,121
+    ;511 / 511 = 1
+    ;511 / 511 = 1
+    db EXPONENT_OFFSET+8
+    db 0FFh
+    db EXPONENT_OFFSET+8
+    db 0FFh
+    db EXPONENT_OFFSET+9
+    db 0FFh
+    db 0
+    db 0h
+    db EXPONENT_OFFSET+17
+    db 0FEh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
 
     ;2.0 + -0.00390625 = 2.0
     ;2.0 - -0.00390625 = 2.0
     ;2.0 * -0.00390625 = -0.0078125
+    ;2.000000 / -0.003906 = -512.000000
+    ;-0.003906 / 2.000000 = -0.001953
     db EXPONENT_OFFSET+1
     db 00h
     db 80h+EXPONENT_OFFSET-8
@@ -559,10 +593,16 @@ fadd_test_data:
     db 00h
     db 80h+EXPONENT_OFFSET-7
     db 00h
+    db 80h + EXPONENT_OFFSET + 9
+    db 000h
+    db 80h + EXPONENT_OFFSET + -9
+    db 000h
 
     ;1.0 + -0.00390625 = 0.99609375
     ;1.0 - -0.00390625 = 1.00390625
     ;1.0 * -0.00390625 = -0.00390625
+    ;1.000000 / -0.003906 = -256.000000
+    ;-0.003906 / 1.000000 = -0.003906
     db EXPONENT_OFFSET
     db 00h
     db 80h+EXPONENT_OFFSET-8
@@ -572,11 +612,17 @@ fadd_test_data:
     db EXPONENT_OFFSET
     db 01h
     db 80h+EXPONENT_OFFSET-8
-    db 00h
+    db 00h    
+    db 80h + EXPONENT_OFFSET + 8
+    db 000h
+    db 80h + EXPONENT_OFFSET + -8
+    db 000h
 
     ;0.99609375 + -0.00390625 = 0.9921875
     ;0.99609375 - -0.00390625 = 1.0
     ;0.99609375 * -0.00390625 = -0.00389099121
+    ;0.996094 / -0.003906 = -255.000000
+    ;-0.003906 / 0.996094 = -0.003922
     db EXPONENT_OFFSET-1
     db 0feh
     db 80h + EXPONENT_OFFSET-8
@@ -587,24 +633,16 @@ fadd_test_data:
     db 0h
     db 80h + EXPONENT_OFFSET-9
     db 0feh
-    
-    ;1.5 + -0.25 = 1.25
-    ;1.5 - -0.25 = 1.75
-    ;1.5 * -0.25 = -0.375
-    db EXPONENT_OFFSET
-    db 80h
-    db 80h + EXPONENT_OFFSET - 2
-    db 0h
-    db EXPONENT_OFFSET
-    db 40h
-    db EXPONENT_OFFSET
-    db 0C0h
-    db 80h + EXPONENT_OFFSET - 2
-    db 080h
+    db 80h + EXPONENT_OFFSET + 7
+    db 0FEh
+    db 80h + EXPONENT_OFFSET + -8
+    db 001h
 
     ;1.5 + -0.5 = 1.0
     ;1.5 - -0.5 = 2.0
     ;1.5 * -0.5 = -0.75
+    ;1.500000 / -0.500000 = -3.000000
+    ;-0.500000 / 1.500000 = -0.333333
     db EXPONENT_OFFSET
     db 80h
     db 80h + EXPONENT_OFFSET - 1
@@ -615,10 +653,16 @@ fadd_test_data:
     db 0h
     db 80h + EXPONENT_OFFSET-1
     db 80h
+    db 80h + EXPONENT_OFFSET + 1
+    db 080h
+    db 80h + EXPONENT_OFFSET + -2
+    db 055h
 
     ;1.5 + -1.0 = 0.5
     ;1.5 - -1.0 = 2.5
     ;1.5 * -1.0 = -1.5
+    ;1.500000 / -1.000000 = -1.500000
+    ;-1.000000 / 1.500000 = -0.666667
     db EXPONENT_OFFSET
     db 80h
     db 80h + EXPONENT_OFFSET
@@ -629,10 +673,16 @@ fadd_test_data:
     db 040h
     db 80h + EXPONENT_OFFSET
     db 080h
+    db 80h + EXPONENT_OFFSET + 0
+    db 080h
+    db 80h + EXPONENT_OFFSET + -1
+    db 055h
 
     ;1.0 + -1.0 = 0.0
     ;1.0 - -1.0 = 2.0
     ;1.0 * -1.0 = -1.0
+    ;1.000000 / -1.000000 = -1.000000
+    ;-1.000000 / 1.000000 = -1.000000
     db EXPONENT_OFFSET
     db 0h
     db 80h + EXPONENT_OFFSET
@@ -643,10 +693,16 @@ fadd_test_data:
     db 0h
     db 80h + EXPONENT_OFFSET
     db 0h
+    db 80h + EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 000h
 
     ;1.99609375 + -0.0 = 1.99609375
     ;1.99609375 - -0.0 = 1.99609375
     ;1.99609375 * -0.0 = 0
+    ;1.996094 / -0.000000 = inf
+    ;-0.000000 / 1.996094 = 0.000000
     db EXPONENT_OFFSET
     db 0ffh
     db 80h
@@ -657,10 +713,16 @@ fadd_test_data:
     db 0ffh
     db 0
     db 0
+    db 0
+    db 0
+    db 0
+    db 0
 
     ;1.99609375 + 0.0 = 1.99609375
     ;1.99609375 - 0.0 = 1.99609375
     ;1.99609375 * 0.0 = 0
+    ;1.996094 / 0.000000 = inf
+    ;0.000000 / 1.996094 = 0.000000
     db EXPONENT_OFFSET
     db 0ffh
     db 0h
@@ -669,12 +731,18 @@ fadd_test_data:
     db 0ffh
     db EXPONENT_OFFSET
     db 0ffh
+    db 0
+    db 0
+    db 0
+    db 0
     db 0
     db 0
 
     ;0.0 + -0.0 = -0.0
     ;0.0 - -0.0 = -0.0
     ;0.0 * -0.0 = -0.0
+    ;0.000000 / -0.000000 = inf
+    ;-0.000000 / 0.000000 = inf
     db 00h
     db 0h
     db 80h
@@ -685,10 +753,16 @@ fadd_test_data:
     db 0h
     db 80h
     db 0
+    db 0
+    db 0
+    db 0
+    db 0
 
     ;0.0 + 0.0 = 0.0
     ;0.0 + 0.0 = 0.0
     ;0.0 * 0.0 = 0.0
+    ;0.000000 / -0.000000 = inf
+    ;-0.000000 / 0.000000 = inf
     db 0
     db 0h
     db 0
@@ -697,12 +771,18 @@ fadd_test_data:
     db 0h
     db 0
     db 0h
+    db 0
+    db 0
+    db 0
+    db 0
     db 0
     db 0
 
     ;1.00390625 + 1.00390625 = 2.0078125
     ;1.00390625 - 1.00390625 = 0.0
     ;1.00390625 * 1.00390625 = 1.00782775879
+    ;1.003906 / 1.003906 = 1.000000
+    ;1.003906 / 1.003906 = 1.000000
     db EXPONENT_OFFSET
     db 01h
     db EXPONENT_OFFSET
@@ -713,10 +793,16 @@ fadd_test_data:
     db 0h
     db EXPONENT_OFFSET
     db 02h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
 
     ;0.5 + 1.00390625 = 1.50390625
     ;0.5 - 1.00390625 = -0.50390625
     ;0.5 * 1.00390625 = 0.501953125
+    ;0.500000 / 1.003906 = 0.498054
+    ;1.003906 / 0.500000 = 2.007812
     db EXPONENT_OFFSET-1
     db 00h
     db EXPONENT_OFFSET
@@ -727,10 +813,16 @@ fadd_test_data:
     db 02h
     db EXPONENT_OFFSET-1
     db 01h
+    db EXPONENT_OFFSET + -2
+    db 0FEh
+    db EXPONENT_OFFSET + 1
+    db 001h
 
     ;1.0 + 1.00390625 = 2.0
     ;1.0 - 1.00390625 = -0.00390625
     ;1.0 * 1.00390625 = 1.00390625
+    ;1.000000 / 1.003906 = 0.996109
+    ;1.003906 / 1.000000 = 1.003906
     db EXPONENT_OFFSET
     db 00h
     db EXPONENT_OFFSET
@@ -741,10 +833,16 @@ fadd_test_data:
     db 00h
     db EXPONENT_OFFSET
     db 01h
+    db EXPONENT_OFFSET + -1
+    db 0FEh
+    db EXPONENT_OFFSET + 0
+    db 001h
 
     ;2.0 + 0.00390625 = 2.0
     ;2.0 - 0.00390625 = 2.0
     ;2.0 * 0.00390625 = 0.0078125
+    ;2.000000 / 0.003906 = 512.000000
+    ;0.003906 / 2.000000 = 0.001953
     db EXPONENT_OFFSET+1
     db 00h
     db EXPONENT_OFFSET-8
@@ -755,10 +853,16 @@ fadd_test_data:
     db 00h
     db EXPONENT_OFFSET-7
     db 00h
+    db EXPONENT_OFFSET + 9
+    db 000h
+    db EXPONENT_OFFSET + -9
+    db 000h
 
     ;1.0 + 0.00390625 = 1.00390625
     ;1.0 - 0.00390625 = 0.99609375
     ;1.0 * 0.00390625 = 0.00390625
+    ;1.000000 / 0.003906 = 256.000000
+    ;0.003906 / 1.000000 = 0.003906
     db EXPONENT_OFFSET
     db 00h
     db EXPONENT_OFFSET-8
@@ -769,10 +873,16 @@ fadd_test_data:
     db 0feh
     db EXPONENT_OFFSET-8
     db 00h
+    db EXPONENT_OFFSET + 8
+    db 000h
+    db EXPONENT_OFFSET + -8
+    db 000h
 
     ;511 + 257 = 768
     ;511 - 257 = 254
     ;511 * 257 = 131,327
+    ;511.000000 / 257.000000 = 1.988327
+    ;257.000000 / 511.000000 = 0.502935
     db EXPONENT_OFFSET+8
     db 0FFh
     db EXPONENT_OFFSET+8
@@ -783,10 +893,16 @@ fadd_test_data:
     db 0fch
     db EXPONENT_OFFSET+17
     db 00h
+    db EXPONENT_OFFSET + 0
+    db 0FDh
+    db EXPONENT_OFFSET + -1
+    db 001h
 
     ;1.75 + 1.5 = 3.25
     ;1.75 - 1.5 = 0.25
     ;1.75 * 1.5 = 2.625
+    ;1.750000 / 1.500000 = 1.166667
+    ;1.500000 / 1.750000 = 0.857143
     db EXPONENT_OFFSET
     db 0C0h
     db EXPONENT_OFFSET
@@ -797,10 +913,16 @@ fadd_test_data:
     db 00h
     db EXPONENT_OFFSET+1
     db 50h
+    db EXPONENT_OFFSET + 0
+    db 02Ah
+    db EXPONENT_OFFSET + -1
+    db 0B6h
 
     ;1.0 + 1.0 = 2.0
     ;1.0 - 1.0 = 0.0
     ;1.0 * 1.0 = 1.0
+    ;1.0 / 1.0 = 1.0
+    ;1.0 / 1.0 = 1.0
     db EXPONENT_OFFSET
     db 00h
     db EXPONENT_OFFSET
@@ -811,10 +933,16 @@ fadd_test_data:
     db 00h
     db EXPONENT_OFFSET
     db 00h
+    db EXPONENT_OFFSET
+    db 00h
+    db EXPONENT_OFFSET
+    db 00h
     
     ;1.0 + 0.5 = 1.5
     ;1.0 - 0.5 = 0.5
     ;1.0 * 0.5 = 0.5
+    ;1.000000 / 0.500000 = 2.000000
+    ;0.500000 / 1.000000 = 0.500000
     db EXPONENT_OFFSET
     db 00h
     db EXPONENT_OFFSET-1
@@ -825,10 +953,16 @@ fadd_test_data:
     db 00h
     db EXPONENT_OFFSET-1
     db 00h
+    db EXPONENT_OFFSET + 1
+    db 000h
+    db EXPONENT_OFFSET + -1
+    db 000h
     
     ;1.0 + 0.25 = 1.25
     ;1.0 - 0.25 = 0.75
     ;1.0 * 0.25 = 0.25
+    ;1.000000 / 0.250000 = 4.000000
+    ;0.250000 / 1.000000 = 0.250000
     db EXPONENT_OFFSET
     db 00h
     db EXPONENT_OFFSET-2
@@ -838,11 +972,17 @@ fadd_test_data:
     db EXPONENT_OFFSET-1
     db 80h
     db EXPONENT_OFFSET-2
-    db 00h
+    db 00h    
+    db EXPONENT_OFFSET + 2
+    db 000h
+    db EXPONENT_OFFSET + -2
+    db 000h
 
     ;1.5 + 1.5 = 3.0
     ;1.5 - 1.5 = 0.0
     ;1.5 * 1.5 = 2.25
+    ;1.5 / 1.5 = 1.0
+    ;1.5 / 1.5 = 1.0
     db EXPONENT_OFFSET
     db 80h
     db EXPONENT_OFFSET
@@ -853,10 +993,16 @@ fadd_test_data:
     db 0h
     db EXPONENT_OFFSET+1
     db 20h
+    db EXPONENT_OFFSET
+    db 00h
+    db EXPONENT_OFFSET
+    db 00h
 
     ;1.5 + 1.5+eps = 3.0
     ;1.5 - 1.5-eps = -eps
     ;1.5 * 1.5+eps = 2.25 + 1.5*eps
+    ;1.500000 / 1.503906 = 0.997403
+    ;1.503906 / 1.500000 = 1.002604
     db EXPONENT_OFFSET
     db 80h
     db EXPONENT_OFFSET
@@ -867,7 +1013,11 @@ fadd_test_data:
     db 0h
     db EXPONENT_OFFSET+1
     db 20h
-    
+    db EXPONENT_OFFSET + -1
+    db 0FEh
+    db EXPONENT_OFFSET + 0
+    db 000h
+
     
 fadd_test_data_end:
 
@@ -1135,6 +1285,81 @@ _fmul_next_test2:
     lodi,r0 0DDh            ;マーカー
     stra,r0 SCRUPDATA
 
+    lodi,r1 4
+    bsta,un fcom0
+    bctr,eq _fdiv_next_test     ;除数が０ならテストしない
+
+    lodi,r1 2
+    lodi,r2 4
+    bsta,un fdiv
+
+    lodi,r3 10
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fdiv_zero_test
+    comi,r0 80h
+    bctr,eq _fdiv_zero_test
+
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0DEh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 11
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fdiv_next_test   
+
+_fdiv_zero_test:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fdiv_next_test:
+
+    lodi,r0 0DFh            ;マーカーF
+    stra,r0 SCRUPDATA
+
+    lodi,r1 2
+    bsta,un fcom0
+    bctr,eq _fdiv_next_test2     ;除数が０ならテストしない
+
+    lodi,r1 4
+    lodi,r2 2
+    bsta,un fdiv
+
+    lodi,r3 12
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fdiv_zero_test2
+    comi,r0 80h
+    bctr,eq _fdiv_zero_test2
+
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0E0h            ;マーカーG
+    stra,r0 SCRUPDATA
+
+    lodi,r3 13
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fdiv_next_test2
+
+_fdiv_zero_test2:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fdiv_next_test2:
+
 
     ;Signを切り替えてもう一回
     loda,r0 Sign
@@ -1144,7 +1369,7 @@ _fmul_next_test2:
 
     ;データオフセット進める
     loda,r0 DataOffset1
-    addi,r0 10
+    addi,r0 14
     stra,r0 DataOffset1
     tpsl 1
     bcfr,eq _fadd_test_not_carry
@@ -1289,6 +1514,7 @@ failed_unit_test:
     include "flib\fmul.asm"
     include "flib\fsqrt.asm"
     include "flib\fcom.asm"
+    include "flib\fdiv.asm"
 
 
 end ; End of assembly
