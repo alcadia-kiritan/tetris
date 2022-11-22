@@ -46,7 +46,6 @@ fdiv:
     loda,r0 FStack+1,r2
     bctr,eq _fdiv_zero_mantissa     ;除数の仮数部が0?
     strz r2
-    subi,r2 1                       ;除数を-1
     loda,r0 FStack+1,r1
 
     ;r1:r0 = 1:[FStack+1+r1]    被除数
@@ -61,13 +60,13 @@ fdiv:
     ;r1:r0 から 256+r2を引いていく
 
     comz r2
-    bcfr,gt _fdiv0_lt
+    bctr,lt _fdiv0_lt
 
     ;r0 >= r2
-    cpsl C      ;C=0
+    subi,r1 1   ; r1 -= 1
     subz r2
-    subi,r1 1
-    ;r1は1なのでCは確定で1 
+    
+    ;r0>=r2なのでCは確定で1 
     bctr,un _fdiv1
 
 _fdiv0_lt:
@@ -85,11 +84,13 @@ _fdiv0_lt:
     rrl,r0
     rrl,r1
     andi,r0 0feh        ;最下位ビットにキャリーが入ってるので消す
+    subi,r1 0           ;C=1, cpslより速い
     subz r2
-    subi,r1 1
+    subi,r1 0
     ;r1は2なのでCは確定で1 
 
 _fdiv1:
+    subi,r2 1                       ;除数を-1, C=0の状態で計算をできるようにする
     rrl,r0
     rrl,r1
     andi,r0 0feh    ;最下位ビットにキャリーが入ってるので消す
@@ -106,17 +107,15 @@ _fdiv1:
 _fdiv1_gt:
     subz r2
     subi,r1 1
-    addi,r3 0       ; r3 += 1   ↑のsubiのr1は1以上なのでC=1確定
-    ;C=0
+    ;↑のsubiのr1は1以上なのでC=1確定
     
 _fdiv1_lt:
+    rrl,r3      ;答えの仮数部を左シフト&C=1なら最下位ビットに1がセット
+    ;r3の上位ビットは0なのでCは確定で0
     ;r1:r0を左シフト
     rrl,r0
     rrl,r1
-    andi,r0 0feh
     ;r1の上位ビットは0なのでCは確定で0
-    rrl,r3      ;答えの仮数部を左シフト
-    ;r3の上位ビットは0なのでCは確定で0
 
 _fdiv2:
     comi,r1 1
@@ -127,11 +126,10 @@ _fdiv2:
 _fdiv2_gt:
     subz r2
     subi,r1 1
-    addi,r3 0
 _fdiv2_lt:
+    rrl,r3
     rrl,r0
     rrl,r1
-    rrl,r3
 
 _fdiv3:
     comi,r1 1
@@ -142,11 +140,10 @@ _fdiv3:
 _fdiv3_gt:
     subz r2
     subi,r1 1
-    addi,r3 0
 _fdiv3_lt:
+    rrl,r3
     rrl,r0
     rrl,r1
-    rrl,r3
 
 _fdiv4:
     comi,r1 1
@@ -157,11 +154,10 @@ _fdiv4:
 _fdiv4_gt:
     subz r2
     subi,r1 1
-    addi,r3 0
 _fdiv4_lt:
+    rrl,r3
     rrl,r0
     rrl,r1
-    rrl,r3
 
 _fdiv5:
     comi,r1 1
@@ -172,11 +168,10 @@ _fdiv5:
 _fdiv5_gt:
     subz r2
     subi,r1 1
-    addi,r3 0
 _fdiv5_lt:
+    rrl,r3
     rrl,r0
     rrl,r1
-    rrl,r3
 
 _fdiv6:
     comi,r1 1
@@ -187,11 +182,10 @@ _fdiv6:
 _fdiv6_gt:
     subz r2
     subi,r1 1
-    addi,r3 0
 _fdiv6_lt:
+    rrl,r3
     rrl,r0
     rrl,r1
-    rrl,r3
 
 _fdiv7:
     comi,r1 1
@@ -202,11 +196,10 @@ _fdiv7:
 _fdiv7_gt:
     subz r2
     subi,r1 1
-    addi,r3 0
 _fdiv7_lt:
+    rrl,r3
     rrl,r0
     rrl,r1
-    rrl,r3
 
 _fdiv8:
     comi,r1 1
@@ -215,8 +208,9 @@ _fdiv8:
     comz r2
     bcfr,gt _fdiv8_lt
 _fdiv8_gt:
-    addi,r3 1
+    subi,r1 0   ;C=1
 _fdiv8_lt:
+    rrl,r3
 
     stra,r3 FStack+1    ;仮数部を保存
 
