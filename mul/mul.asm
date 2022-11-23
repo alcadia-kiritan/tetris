@@ -10,7 +10,7 @@ mul8:
     strz r2     
     addz r0      ;Cをリセット, cpslより速いし小さい
 
-    ppsl 1000b  ;WCをセット. シフトでのキャリーをありにする
+    ppsl WC  ;WCをセット. シフトでのキャリーをありにする
 
     ;r2:r0(をシフトしたもの) にr3を足していく
     
@@ -63,8 +63,8 @@ _m8_6:
     rrr,r0
     rrr,r2
 
-    tmi,r1 10000000b
-    bcfr,eq _m8_7
+    andi,r1 10000000b
+    bcfr,lt _m8_7
     addz r3
 _m8_7:
     rrr,r0
@@ -74,7 +74,7 @@ _m8_7:
     strz r1
     lodz r2
 
-    cpsl 1000b  ;WCをリセット
+    cpsl WC+C  ;WC（とついでにC)をリセット
     retc,un
 
 end ; End of assembly
