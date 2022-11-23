@@ -42,8 +42,8 @@ fadd:
     ;MEMO: 9ジャストなら仮数部を+1した方が真値に近くなるけどやるべき？
     ;+1による（恐らく極々わずかな）精度向上 vs １０未満の命令の実行速度   
     ;判断がつかない・・とりま無しで
-    tmi,r0 80h
-    bctr,lt _fadd_overwrite_r1 ; [FStack+r1+0] - [FStack+r2+0] の結果の符号が+, r1のが大きい.
+    iorz r0
+    bcfr,lt _fadd_overwrite_r1 ; [FStack+r1+0] - [FStack+r2+0] の結果の符号が+, r1のが大きい.
 
 _fadd_overwrite_r2:
     ;[FStack+0][FStack+1] = [FStack+r2+0][FStack+r2+1]
@@ -175,8 +175,8 @@ _fa_diffsign:
     ;指数差が9以上. どっちかに上書きして終了
     ;MEMO: 9ジャストなら-1した方が真値に近くなるけどやるべき？
 
-    tmi,r0 80h
-    bctr,lt _fa_ds_overwrite_r1 ; [FStack+r1+0] - [FStack+r2+0] の結果の符号が+, r1のが大きい.
+    iorz r0
+    bcfr,lt _fa_ds_overwrite_r1 ; [FStack+r1+0] - [FStack+r2+0] の結果の符号が+, r1のが大きい.
 
 _fa_ds_overwrite_r2:
     ;[FStack+0][FStack+1] = [FStack+r2+0][FStack+r2+1]
