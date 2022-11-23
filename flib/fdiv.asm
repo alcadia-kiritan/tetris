@@ -92,12 +92,13 @@ _fdiv0_lt:
 _fdiv1:
     subi,r2 1                       ;除数を-1, C=0の状態で計算をできるようにする
     rrl,r0
-    rrl,r1
     andi,r0 0feh    ;最下位ビットにキャリーが入ってるので消す
+    rrl,r1
     ;C=0, r1の上位ビットは0なのでCは確定で0
 
+    bctr,eq _fdiv1_lt   ;上位byteが0なので256+r2を引けない
+
     comi,r1 1
-    bctr,lt _fdiv1_lt
     bctr,gt _fdiv1_gt
 
     ;r1 == 1
@@ -118,8 +119,8 @@ _fdiv1_lt:
     ;r1の上位ビットは0なのでCは確定で0
 
 _fdiv2:
+    bctr,eq _fdiv2_lt
     comi,r1 1
-    bctr,lt _fdiv2_lt
     bctr,gt _fdiv2_gt
     comz r2
     bcfr,gt _fdiv2_lt
@@ -132,8 +133,8 @@ _fdiv2_lt:
     rrl,r1
 
 _fdiv3:
+    bctr,eq _fdiv3_lt
     comi,r1 1
-    bctr,lt _fdiv3_lt
     bctr,gt _fdiv3_gt
     comz r2
     bcfr,gt _fdiv3_lt
@@ -146,8 +147,8 @@ _fdiv3_lt:
     rrl,r1
 
 _fdiv4:
+    bctr,eq _fdiv4_lt
     comi,r1 1
-    bctr,lt _fdiv4_lt
     bctr,gt _fdiv4_gt
     comz r2
     bcfr,gt _fdiv4_lt
@@ -160,8 +161,8 @@ _fdiv4_lt:
     rrl,r1
 
 _fdiv5:
+    bctr,eq _fdiv5_lt
     comi,r1 1
-    bctr,lt _fdiv5_lt
     bctr,gt _fdiv5_gt
     comz r2
     bcfr,gt _fdiv5_lt
@@ -174,8 +175,8 @@ _fdiv5_lt:
     rrl,r1
 
 _fdiv6:
+    bctr,eq _fdiv6_lt
     comi,r1 1
-    bctr,lt _fdiv6_lt
     bctr,gt _fdiv6_gt
     comz r2
     bcfr,gt _fdiv6_lt
@@ -186,10 +187,10 @@ _fdiv6_lt:
     rrl,r3
     rrl,r0
     rrl,r1
-
+    
 _fdiv7:
+    bctr,eq _fdiv7_lt
     comi,r1 1
-    bctr,lt _fdiv7_lt
     bctr,gt _fdiv7_gt
     comz r2
     bcfr,gt _fdiv7_lt
@@ -202,8 +203,8 @@ _fdiv7_lt:
     rrl,r1
 
 _fdiv8:
+    bctr,eq _fdiv8_lt
     comi,r1 1
-    bctr,lt _fdiv8_lt
     bctr,gt _fdiv8_gt
     comz r2
     bcfr,gt _fdiv8_lt
