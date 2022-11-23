@@ -98,18 +98,17 @@ _fdiv1:
 
     bctr,eq _fdiv1_lt   ;上位byteが0なので256+r2を引けない
 
-    comi,r1 1
-    bctr,gt _fdiv1_gt
-
-    ;r1 == 1
-    comz r2
-    bcfr,gt _fdiv1_lt
-
-_fdiv1_gt:
+    ;とりあえず256+r2を引いてみる
     subz r2
     subi,r1 1
-    ;↑のsubiのr1は1以上なのでC=1確定
-    
+    bcfr,lt _fdiv1_lt
+
+    ;引けなかったので元に戻す
+    subi,r1 0   ;r1 -= 1, C=1
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh        ;C=0    r1 += 1     r1>0は４つ上のbcfrで保証されてて,r1>=2は引けなかったことからない.引く前のr1は1確定. ffhが引けてC=1になる心配はない
+
 _fdiv1_lt:
     rrl,r3      ;答えの仮数部を左シフト&C=1なら最下位ビットに1がセット
     ;r3の上位ビットは0なのでCは確定で0
@@ -118,29 +117,27 @@ _fdiv1_lt:
     rrl,r1
     ;r1の上位ビットは0なのでCは確定で0
 
-_fdiv2:
     bctr,eq _fdiv2_lt
-    comi,r1 1
-    bctr,gt _fdiv2_gt
-    comz r2
-    bcfr,gt _fdiv2_lt
-_fdiv2_gt:
     subz r2
     subi,r1 1
+    bcfr,lt _fdiv2_lt
+    subi,r1 0
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh
 _fdiv2_lt:
     rrl,r3
     rrl,r0
     rrl,r1
 
-_fdiv3:
     bctr,eq _fdiv3_lt
-    comi,r1 1
-    bctr,gt _fdiv3_gt
-    comz r2
-    bcfr,gt _fdiv3_lt
-_fdiv3_gt:
     subz r2
     subi,r1 1
+    bcfr,lt _fdiv3_lt
+    subi,r1 0
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh
 _fdiv3_lt:
     rrl,r3
     rrl,r0
@@ -148,13 +145,13 @@ _fdiv3_lt:
 
 _fdiv4:
     bctr,eq _fdiv4_lt
-    comi,r1 1
-    bctr,gt _fdiv4_gt
-    comz r2
-    bcfr,gt _fdiv4_lt
-_fdiv4_gt:
     subz r2
     subi,r1 1
+    bcfr,lt _fdiv4_lt
+    subi,r1 0
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh
 _fdiv4_lt:
     rrl,r3
     rrl,r0
@@ -162,13 +159,13 @@ _fdiv4_lt:
 
 _fdiv5:
     bctr,eq _fdiv5_lt
-    comi,r1 1
-    bctr,gt _fdiv5_gt
-    comz r2
-    bcfr,gt _fdiv5_lt
-_fdiv5_gt:
     subz r2
     subi,r1 1
+    bcfr,lt _fdiv5_lt
+    subi,r1 0
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh
 _fdiv5_lt:
     rrl,r3
     rrl,r0
@@ -176,13 +173,13 @@ _fdiv5_lt:
 
 _fdiv6:
     bctr,eq _fdiv6_lt
-    comi,r1 1
-    bctr,gt _fdiv6_gt
-    comz r2
-    bcfr,gt _fdiv6_lt
-_fdiv6_gt:
     subz r2
     subi,r1 1
+    bcfr,lt _fdiv6_lt
+    subi,r1 0
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh
 _fdiv6_lt:
     rrl,r3
     rrl,r0
@@ -190,27 +187,22 @@ _fdiv6_lt:
     
 _fdiv7:
     bctr,eq _fdiv7_lt
-    comi,r1 1
-    bctr,gt _fdiv7_gt
-    comz r2
-    bcfr,gt _fdiv7_lt
-_fdiv7_gt:
     subz r2
     subi,r1 1
+    bcfr,lt _fdiv7_lt
+    subi,r1 0
+    addz r2
+    addi,r1 1
+    subi,r1 0ffh
 _fdiv7_lt:
     rrl,r3
     rrl,r0
     rrl,r1
 
 _fdiv8:
-    bctr,eq _fdiv8_lt
-    comi,r1 1
-    bctr,gt _fdiv8_gt
-    comz r2
-    bcfr,gt _fdiv8_lt
-_fdiv8_gt:
-    subi,r1 0   ;C=1
-_fdiv8_lt:
+    ;最後の一桁はr1:r0が破壊されても構わない.
+    subz r2
+    subi,r1 1       ;引けたらC=1, 引けなかったらC=0
     rrl,r3
 
     stra,r3 FStack+1    ;仮数部を保存
