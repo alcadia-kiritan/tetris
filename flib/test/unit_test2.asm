@@ -185,6 +185,228 @@ _vsum3_test2_:
     bsfa,eq failed_unit_test
     brnr,r1 _vsum3_test2_
 
+    
+    ;-------
+    ;fsqのテスト
+    bcta,un _fsq_data_end
+_fsq_data:
+    ;0^2=0
+    db 0
+    db 0
+    db 0
+    db 0
+    ;-0^2=0
+    db 80h
+    db 0
+    db 0
+    db 0
+    ;-3.992188^2 = 15.937561
+    db 80h + EXPONENT_OFFSET + 1
+    db 0FFh
+    db EXPONENT_OFFSET + 3
+    db 0FEh
+    ;-15.937500^2 = 254.003906
+    db 80h + EXPONENT_OFFSET + 3
+    db 0FEh
+    db EXPONENT_OFFSET + 7
+    db 0FCh
+    ;-65.000000^2 = 4225.000000
+    db 80h + EXPONENT_OFFSET + 6
+    db 004h
+    db EXPONENT_OFFSET + 12
+    db 008h
+    ;-16.125000^2 = 260.015625
+    db 80h + EXPONENT_OFFSET + 4
+    db 002h
+    db EXPONENT_OFFSET + 8
+    db 004h
+    ;-2.007812^2 = 4.031311
+    db 80h + EXPONENT_OFFSET + 1
+    db 001h
+    db EXPONENT_OFFSET + 2
+    db 002h
+    ;16.000000^2 = 256.000000
+    db EXPONENT_OFFSET + 4
+    db 000h
+    db EXPONENT_OFFSET + 8
+    db 000h
+    ;64.250000^2 = 4128.062500
+    db EXPONENT_OFFSET + 6
+    db 001h
+    db EXPONENT_OFFSET + 12
+    db 002h
+    ;64.500000^2 = 4160.250000
+    db EXPONENT_OFFSET + 6
+    db 002h
+    db EXPONENT_OFFSET + 12
+    db 004h
+    ;4.046875^2 = 16.377197
+    db EXPONENT_OFFSET + 2
+    db 003h
+    db EXPONENT_OFFSET + 4
+    db 006h
+    ;1.410156^2 = 1.988541
+    db EXPONENT_OFFSET + 0
+    db 069h
+    db EXPONENT_OFFSET + 0
+    db 0FDh
+    ;2.828125^2 = 7.998291
+    db EXPONENT_OFFSET + 1
+    db 06Ah
+    db EXPONENT_OFFSET + 2
+    db 0FFh
+    ;2.835938^2 = 8.042542
+    db EXPONENT_OFFSET + 1
+    db 06Bh
+    db EXPONENT_OFFSET + 3
+    db 001h
+    ;2.843750^2 = 8.086914
+    db EXPONENT_OFFSET + 1
+    db 06Ch
+    db EXPONENT_OFFSET + 3
+    db 002h
+    ;11.406250^2 = 130.102539
+    db EXPONENT_OFFSET + 3
+    db 06Dh
+    db EXPONENT_OFFSET + 7
+    db 004h
+    ;3.976562^2 = 15.813049
+    db EXPONENT_OFFSET + 1
+    db 0FDh
+    db EXPONENT_OFFSET + 3
+    db 0FAh
+    ;15.937500^2 = 254.003906
+    db EXPONENT_OFFSET + 3
+    db 0FEh
+    db EXPONENT_OFFSET + 7
+    db 0FCh
+    ;15.968750^2 = 255.000977
+    db EXPONENT_OFFSET + 3
+    db 0FFh
+    db EXPONENT_OFFSET + 7
+    db 0FEh
+    ;-0.998047^2 = 0.996098
+    db 80h + EXPONENT_OFFSET + -1
+    db 0FFh
+    db EXPONENT_OFFSET + -1
+    db 0FEh
+    ;-0.249023^2 = 0.062013
+    db 80h + EXPONENT_OFFSET + -3
+    db 0FEh
+    db EXPONENT_OFFSET + -5
+    db 0FCh
+    ;-0.015869^2 = 0.000252
+    db 80h + EXPONENT_OFFSET + -6
+    db 004h
+    db EXPONENT_OFFSET + -12
+    db 008h
+    ;-0.062988^2 = 0.003968
+    db 80h + EXPONENT_OFFSET + -4
+    db 002h
+    db EXPONENT_OFFSET + -8
+    db 004h
+    ;-0.501953^2 = 0.251957
+    db 80h + EXPONENT_OFFSET + -1
+    db 001h
+    db EXPONENT_OFFSET + -2
+    db 002h
+    ;0.062500^2 = 0.003906
+    db EXPONENT_OFFSET + -4
+    db 000h
+    db EXPONENT_OFFSET + -8
+    db 000h
+    ;0.015686^2 = 0.000246
+    db EXPONENT_OFFSET + -6
+    db 001h
+    db EXPONENT_OFFSET + -12
+    db 002h
+    ;0.015747^2 = 0.000248
+    db EXPONENT_OFFSET + -6
+    db 002h
+    db EXPONENT_OFFSET + -12
+    db 004h
+    ;0.252930^2 = 0.063973
+    db EXPONENT_OFFSET + -2
+    db 003h
+    db EXPONENT_OFFSET + -4
+    db 006h
+    ;1.410156^2 = 1.988541
+    db EXPONENT_OFFSET + 0
+    db 069h
+    db EXPONENT_OFFSET + 0
+    db 0FDh
+    ;0.707031^2 = 0.499893
+    db EXPONENT_OFFSET + -1
+    db 06Ah
+    db EXPONENT_OFFSET + -2
+    db 0FFh
+    ;0.708984^2 = 0.502659
+    db EXPONENT_OFFSET + -1
+    db 06Bh
+    db EXPONENT_OFFSET + -1
+    db 001h
+    ;0.710938^2 = 0.505432
+    db EXPONENT_OFFSET + -1
+    db 06Ch
+    db EXPONENT_OFFSET + -1
+    db 002h
+    ;0.178223^2 = 0.031763
+    db EXPONENT_OFFSET + -3
+    db 06Dh
+    db EXPONENT_OFFSET + -5
+    db 004h
+    ;0.994141^2 = 0.988316
+    db EXPONENT_OFFSET + -1
+    db 0FDh
+    db EXPONENT_OFFSET + -1
+    db 0FAh
+    ;0.249023^2 = 0.062013
+    db EXPONENT_OFFSET + -3
+    db 0FEh
+    db EXPONENT_OFFSET + -5
+    db 0FCh
+    ;0.249512^2 = 0.062256
+    db EXPONENT_OFFSET + -3
+    db 0FFh
+    db EXPONENT_OFFSET + -5
+    db 0FEh
+_fsq_data_end:
+
+    lodi,r3 0
+
+_fsq_test:
+    lodi,r0 0D6h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 _fsq_data+0,r3
+    stra,r0 FStack+2-PAGE1
+    loda,r0 _fsq_data+1,r3
+    stra,r0 FStack+3-PAGE1
+
+    lodi,r1 2
+    lodi,r2 4
+    bsta,un fsq
+
+    lodi,r0 0D7h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 _fsq_data+2,r3
+    coma,r0 FStack+4-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0D8h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 _fsq_data+3,r3
+    coma,r0 FStack+5-PAGE1
+    bcfa,eq failed_unit_test
+
+    addi,r3 4
+    comi,r3 _fsq_data_end-_fsq_data
+    bcfr,eq _fsq_test
+
+
+
 
     ;--------
     ;テストOK
@@ -212,11 +434,8 @@ failed_unit_test:
     include "flib\floating_point_number.asm"
     include "flib\fadd.asm"
     include "flib\mantissa_rshift.asm"
-    include "flib\fmul.asm"
-    include "flib\fsqrt.asm"
-    include "flib\fcom.asm"
-    include "flib\fdiv.asm"
     include "flib\vec3.asm"
+    include "flib\fsq.asm"
 
 
 end ; End of assembly
