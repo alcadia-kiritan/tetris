@@ -1,6 +1,46 @@
     name fadd          ; module name
 
     ;-------------------
+    ;vadd3
+    ;[FStack+r0+0~5][FStack+r0+1~6] = [FStack+r1+0~5][FStack+r1+1~6] + [FStack+r2+0~5][FStack+r2+1~6]
+    ;r0,r1,r2,r3,Temporary0を使用.
+    ;r0,r1,r2に0~1が含まれていると正しく動かないので注意
+vadd3:
+    stra,r0 Temporary0P1
+
+    ;xを計算して結果を所定の場所へコピー
+    bstr,un fadd
+    loda,r3 Temporary0P1
+    loda,r0 FStack+0
+    stra,r0 FStack+0,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+1,r3
+
+    addi,r1 2
+    addi,r2 2
+
+    ;yを計算して結果を所定の場所へコピー
+    bstr,un fadd
+    loda,r3 Temporary0P1
+    loda,r0 FStack+0
+    stra,r0 FStack+2,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+3,r3
+
+    addi,r1 2
+    addi,r2 2
+
+    ;zを計算して結果を所定の場所へコピー
+    bstr,un fadd
+    loda,r3 Temporary0P1
+    loda,r0 FStack+0
+    stra,r0 FStack+4,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+5,r3
+    
+    retc,un
+
+    ;-------------------
     ;fadd
     ;[FStack+0][FStack+1] = [FStack+r1][FStack+r1+1] + [FStack+r2+0][FStack+r2+1]
     ;r0,r1,r2,r3を使用.  r1,r2は変化しない.
@@ -307,6 +347,46 @@ _fa_diff_sub_r1_normalized:
     andi,r0 7fh
     retc,gt
     bsta,un fexception      ;指数部が0になった
+
+    ;-------------------
+    ;vsub3
+    ;[FStack+r0+0~5][FStack+r0+1~6] = [FStack+r1+0~5][FStack+r1+1~6] - [FStack+r2+0~5][FStack+r2+1~6]
+    ;r0,r1,r2,r3,Temporary0を使用.
+    ;r0,r1,r2に0~1が含まれていると正しく動かないので注意
+vsub3:
+    stra,r0 Temporary0P1
+
+    ;xを計算して結果を所定の場所へコピー
+    bstr,un fsub
+    loda,r3 Temporary0P1
+    loda,r0 FStack+0
+    stra,r0 FStack+0,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+1,r3
+
+    addi,r1 2
+    addi,r2 2
+
+    ;yを計算して結果を所定の場所へコピー
+    bstr,un fsub
+    loda,r3 Temporary0P1
+    loda,r0 FStack+0
+    stra,r0 FStack+2,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+3,r3
+
+    addi,r1 2
+    addi,r2 2
+
+    ;zを計算して結果を所定の場所へコピー
+    bstr,un fsub
+    loda,r3 Temporary0P1
+    loda,r0 FStack+0
+    stra,r0 FStack+4,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+5,r3
+    
+    retc,un
 
     ;-------------------
     ;fsub
