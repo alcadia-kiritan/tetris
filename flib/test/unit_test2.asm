@@ -145,6 +145,47 @@ _vsub3_test2_:
     bsfa,eq failed_unit_test
     brnr,r1 _vsub3_test2_
 
+
+    ;-------
+    ;vsum3のテスト
+    bcta,un _vsum3_test
+_vsum3_data:
+    ;(1+eps,1+eps,2+2eps)
+    db EXPONENT_OFFSET+0
+    db 001h
+    db EXPONENT_OFFSET+1
+    db 001h
+    db EXPONENT_OFFSET+0
+    db 001h
+    ;4+4eps
+    db EXPONENT_OFFSET+2
+    db 001h
+
+_vsum3_test:
+
+    lodi,r0 0D4h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 6
+_vsum3_test_:
+    loda,r0 _vsum3_data,r1-
+    stra,r0 FStack+2-PAGE1,r1
+    brnr,r1 _vsum3_test_
+
+    lodi,r1 2
+    bsta,un vsum3
+
+    lodi,r0 0D5h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 2
+_vsum3_test2_:
+    loda,r0 _vsum3_data+6,r1-
+    coma,r0 FStack+0-PAGE1,r1
+    bsfa,eq failed_unit_test
+    brnr,r1 _vsum3_test2_
+
+
     ;--------
     ;テストOK
     lodi,r0 010000011b  ;背景緑
@@ -175,6 +216,7 @@ failed_unit_test:
     include "flib\fsqrt.asm"
     include "flib\fcom.asm"
     include "flib\fdiv.asm"
+    include "flib\vec3.asm"
 
 
 end ; End of assembly
