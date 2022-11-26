@@ -1,5 +1,50 @@
     name vec3          ; module name
 
+    ;-------------------
+    ;vdot3
+    ;[FStack+0][FStack+1] = 
+    ;   [FStack+r1+0][FStack+r1+1] * [FStack+r2+0][FStack+r2+1] + 
+    ;   [FStack+r1+2][FStack+r1+3] * [FStack+r2+2][FStack+r2+3] + 
+    ;   [FStack+r1+4][FStack+r1+5] * [FStack+r2+4][FStack+r2+5]
+    ;r0,r1,r2,r3,Temporary0,Temporary1,FStack+2~7を使用
+vdot3:
+    stra,r1 Temporary0P1
+    stra,r2 Temporary1P1
+    bsta,un fmul
+
+    ;x1*x2をFStack+2へ退避
+    loda,r0 FStack+0
+    stra,r0 FStack+2
+    loda,r0 FStack+1
+    stra,r0 FStack+3
+
+    lodi,r1 2
+    lodi,r2 2
+    adda,r1 Temporary0P1
+    adda,r2 Temporary1P1
+    bsta,un fmul
+
+    ;y1*y2をFStack+4へ退避
+    loda,r0 FStack+0
+    stra,r0 FStack+4
+    loda,r0 FStack+1
+    stra,r0 FStack+5
+
+    lodi,r1 4
+    lodi,r2 4
+    adda,r1 Temporary0P1
+    adda,r2 Temporary1P1
+    bsta,un fmul
+
+    ;z1*z2をFStack+6へ退避
+    loda,r0 FStack+0
+    stra,r0 FStack+6
+    loda,r0 FStack+1
+    stra,r0 FStack+7
+    
+    ;FStack+2~7を加算
+    lodi,r1 2
+    bctr,un vsum3
 
     ;-------------------
     ;vnorm2
@@ -27,7 +72,7 @@ vnorm2:
     ;[FStack+0][FStack+1] = [FStack+r1+0][FStack+r1+1] + [FStack+r1+2][FStack+r1+3] + [FStack+r1+4][FStack+r1+5]
     ;情報落ち緩和のために値の小さいものから加算する. 
     ;r0,r1,r2,r3を使用.  r1は変化しない.
-    ;r12に0~1が含まれていると正しく動かないので注意
+    ;r1に0~1が含まれていると正しく動かないので注意
     ;
     ;MEMO:カハンの加算アルゴとかの方がいいか？
     ;精度は間違いなくカハンのが良いんだけどfadd/fsub演算回数が２回から６回になんのよなあ。

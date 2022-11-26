@@ -445,6 +445,54 @@ _vnorm2_test_:
     coma,r0 FStack+1-PAGE1
     bsfa,eq failed_unit_test
 
+    ;-------
+    ;vdotのテスト
+    bctr,un _vdot_test
+_vdot_data:
+    ;(2,3,4)
+    db EXPONENT_OFFSET+1
+    db 000h
+    db EXPONENT_OFFSET+1
+    db 080h
+    db EXPONENT_OFFSET+2
+    db 000h
+    ;(5,6,7)
+    db EXPONENT_OFFSET+2
+    db 040h
+    db EXPONENT_OFFSET+2
+    db 080h
+    db EXPONENT_OFFSET+2
+    db 0C0h
+    ;2*5+3*6+4*7=56
+    db EXPONENT_OFFSET+5
+    db 0C0h
+_vdot_test:
+
+    lodi,r0 0DBh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 12
+_vdot_test_:
+    loda,r0 _vdot_data,r1-
+    stra,r0 FStack+8-PAGE1,r1
+    brnr,r1 _vdot_test_
+
+    lodi,r1 8
+    lodi,r2 14
+    bsta,un vdot3
+
+    lodi,r0 0DCh            ;マーカー
+    stra,r0 SCRUPDATA
+    
+    loda,r0 _vdot_data+12
+    coma,r0 FStack+0-PAGE1
+    bsfa,eq failed_unit_test
+
+    loda,r0 _vdot_data+13
+    coma,r0 FStack+1-PAGE1
+    bsfa,eq failed_unit_test
+
+
     ;--------
     ;テストOK
     lodi,r0 010000011b  ;背景緑
@@ -473,6 +521,7 @@ failed_unit_test:
     include "flib\mantissa_rshift.asm"
     include "flib\vec3.asm"
     include "flib\fsq.asm"
+    include "flib\fmul.asm"
 
 
 end ; End of assembly
