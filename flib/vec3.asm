@@ -1,5 +1,27 @@
     name vec3          ; module name
 
+
+    ;-------------------
+    ;vnorm2
+    ;[FStack+0][FStack+1] = [FStack+r1+0][FStack+r1+1]^2 + [FStack+r1+2][FStack+r1+3]^2 + [FStack+r1+4][FStack+r1+5]^2
+    ;r0,r1,r2,r3,FStack+2~7を使用.
+    ;r1が0だと正常動作しないので注意
+vnorm2:
+    ;FStack+r1+0~5をFStack+2~7へ２乗してコピー
+    lodi,r2 2
+    bsta,un fsq
+
+    addi,r1 2
+    addi,r2 2
+    bsta,un fsq
+
+    addi,r1 2
+    addi,r2 2
+    bsta,un fsq
+
+    lodi,r1 2
+    ;vsum3へこのまま落す
+
     ;-------------------
     ;vsum3
     ;[FStack+0][FStack+1] = [FStack+r1+0][FStack+r1+1] + [FStack+r1+2][FStack+r1+3] + [FStack+r1+4][FStack+r1+5]

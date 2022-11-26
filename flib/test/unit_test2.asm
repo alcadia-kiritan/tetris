@@ -406,7 +406,44 @@ _fsq_test:
     bcfr,eq _fsq_test
 
 
+    ;-------
+    ;vnorm2のテスト
+    bctr,un _vnorm2_test
+_vnorm2_data:
+    ;(2,3,4)
+    db EXPONENT_OFFSET+1
+    db 000h
+    db EXPONENT_OFFSET+1
+    db 080h
+    db EXPONENT_OFFSET+2
+    db 000h
+    ;2^2+3^2+4^2=29 
+    db EXPONENT_OFFSET+4
+    db 0D0h
+_vnorm2_test:
 
+    lodi,r0 0D9h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 6
+_vnorm2_test_:
+    loda,r0 _vnorm2_data,r1-
+    stra,r0 FStack+8-PAGE1,r1
+    brnr,r1 _vnorm2_test_
+
+    lodi,r1 8
+    bsta,un vnorm2
+
+    lodi,r0 0DAh            ;マーカー
+    stra,r0 SCRUPDATA
+    
+    loda,r0 _vnorm2_data+6
+    coma,r0 FStack+0-PAGE1
+    bsfa,eq failed_unit_test
+
+    loda,r0 _vnorm2_data+7
+    coma,r0 FStack+1-PAGE1
+    bsfa,eq failed_unit_test
 
     ;--------
     ;テストOK
