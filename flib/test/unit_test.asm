@@ -517,6 +517,25 @@ _fsqrt_test_not_carry:
     bcta,un fadd_test
 
 fadd_test_data:
+    ;77.000000 + 25.312500 = 102.312500
+    ;77.000000 - 25.312500 = 51.687500
+    ;77.000000 * 25.312500 = 1949.062500(1948.000000)
+    ;77.000000 / 25.312500 = 3.041975
+    ;25.312500 / 77.000000 = 0.328734
+    db EXPONENT_OFFSET + 6
+    db 034h
+    db EXPONENT_OFFSET + 4
+    db 095h
+    db EXPONENT_OFFSET + 6
+    db 099h
+    db EXPONENT_OFFSET + 5
+    db 09Eh
+    db EXPONENT_OFFSET + 10
+    db 0E7h
+    db EXPONENT_OFFSET + 1
+    db 085h
+    db EXPONENT_OFFSET + -2
+    db 050h
     ;256.000000 + 256.000000 = 512.000000
     ;256.000000 - 256.000000 = 0.000000
     ;256.000000 * 256.000000 = 65536.000000(65536.000000)
