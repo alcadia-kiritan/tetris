@@ -313,15 +313,17 @@ _fa_diff_sub_r2_normalized:
     bcfr,eq _fa_diff_sub_r2_normalized
     andi,r3 0feh
 
-    ;結果を保存
-    stra,r0 FStack+0
-    stra,r3 FStack+1
+    stra,r3 FStack+1        ;仮数部を保存
 
+    strz r3
+    loda,r0 FStack+0,r2
+    stra,r3 FStack+0
+    
     ;オーバーフローチェック
-    eora,r0 FStack,r2
+    eorz r3
     bsta,lt fexception      ;符号ビットが変化した,オーバフロー発生
 
-    andi,r0 7fh
+    andi,r3 7fh
     retc,gt
     bsta,un fexception      ;指数部が0になった
     
@@ -336,15 +338,17 @@ _fa_diff_sub_r1_normalized:
     bcfr,eq _fa_diff_sub_r1_normalized
     andi,r3 0feh
 
-    ;結果を保存
-    stra,r0 FStack+0
-    stra,r3 FStack+1
+    stra,r3 FStack+1        ;仮数部を保存
+
+    strz r3 
+    loda,r0 FStack+0,r1
+    stra,r3 FStack+0
 
     ;オーバーフローチェック
-    eora,r0 FStack,r1
+    eorz r3 
     bsta,lt fexception      ;符号ビットが変化した,オーバフロー発生
     
-    andi,r0 7fh
+    andi,r3 7fh
     retc,gt
     bsta,un fexception      ;指数部が0になった
 
@@ -663,15 +667,17 @@ _fs_diff_sub_r2_normalized:
     bcfr,eq _fs_diff_sub_r2_normalized
     andi,r3 0feh
 
-    ;結果を保存
-    stra,r0 FStack+0
-    stra,r3 FStack+1
+    stra,r3 FStack+1        ;仮数部を保存
+
+    strz r3
+    loda,r0 FStack+0,r2
+    stra,r3 FStack+0
 
     ;オーバーフローチェック
-    eora,r0 FStack,r2
+    eorz r3
     bsfa,lt fexception      ;符号ビットが変化した,オーバフロー発生
 
-    andi,r0 7fh
+    andi,r3 7fh
     retc,gt
     bsta,un fexception      ;指数部が0になった
     
@@ -686,15 +692,17 @@ _fs_diff_sub_r1_normalized:
     bcfr,eq _fs_diff_sub_r1_normalized
     andi,r3 0feh
 
-    ;結果を保存
-    stra,r0 FStack+0
-    stra,r3 FStack+1
+    stra,r3 FStack+1        ;仮数部を保存
 
+    strz r3
+    loda,r0 FStack+0,r1
+    stra,r3 FStack+0
+    
     ;オーバーフローチェック
-    eora,r0 FStack,r1
+    eorz r3
     bsta,lt fexception      ;符号ビットが変化した,オーバフロー発生
     
-    andi,r0 7fh
+    andi,r3 7fh
     retc,gt
     bsta,un fexception      ;指数部が0になった
 
