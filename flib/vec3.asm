@@ -71,7 +71,7 @@ vnorm2:
     ;vsum3
     ;[FStack+0][FStack+1] = [FStack+r1+0][FStack+r1+1] + [FStack+r1+2][FStack+r1+3] + [FStack+r1+4][FStack+r1+5]
     ;情報落ち緩和のために値の小さいものから加算する. 
-    ;r0,r1,r2,r3を使用.  r1は変化しない.
+    ;r0,r1,r2,r3を使用.
     ;r1に0~1が含まれていると正しく動かないので注意
     ;
     ;MEMO:カハンの加算アルゴとかの方がいいか？
