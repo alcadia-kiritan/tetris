@@ -83,6 +83,11 @@ _vadd3_test_:
     lodi,r2 14
     bsta,un vadd3
 
+    comi,r1 8+4
+    bcfa,eq failed_unit_test
+    comi,r2 14+4
+    bcfa,eq failed_unit_test
+
     lodi,r0 0D1h            ;マーカー
     stra,r0 SCRUPDATA
 
@@ -134,6 +139,11 @@ _vsub3_test_:
     lodi,r1 8
     lodi,r2 14
     bsta,un vsub3
+    
+    comi,r1 8+4
+    bcfa,eq failed_unit_test
+    comi,r2 14+4
+    bcfa,eq failed_unit_test
 
     lodi,r0 0D3h            ;マーカー
     stra,r0 SCRUPDATA
@@ -386,6 +396,11 @@ _fsq_test:
     lodi,r1 2
     lodi,r2 4
     bsta,un fsq
+    
+    comi,r1 2
+    bcfa,eq failed_unit_test
+    comi,r2 4
+    bcfa,eq failed_unit_test
 
     lodi,r0 0D7h            ;マーカー
     stra,r0 SCRUPDATA
@@ -403,7 +418,7 @@ _fsq_test:
 
     addi,r3 4
     comi,r3 _fsq_data_end-_fsq_data
-    bcfr,eq _fsq_test
+    bcfa,eq _fsq_test
 
 
     ;-------
@@ -492,6 +507,1227 @@ _vdot_test_:
     coma,r0 FStack+1-PAGE1
     bsfa,eq failed_unit_test
 
+    ;-------
+    ;fminmaxのテスト
+    bcta,un _fminmax_test
+_fminmax_data:
+    ;-18410715276690587648.000000 -18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    ;-18410715276690587648.000000 -9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    ;-1.996094 -18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    ;-1.003906 -18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    ;-18410715276690587648.000000 -0.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-0.000000 -18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -18410715276690587648.000000
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;0.000000 -18410715276690587648.000000
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -18410715276690587648.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;1.000000 -18410715276690587648.000000
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;-18410715276690587648.000000 1.003906
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;-18410715276690587648.000000 1.996094
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;-18410715276690587648.000000 9223372036854775808.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;-18410715276690587648.000000 9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;-18410715276690587648.000000 18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;-9259400833873739776.000000 -9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    ;-9259400833873739776.000000 -1.996094
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    ;-1.003906 -9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    ;-9259400833873739776.000000 -0.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-0.000000 -9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    ;-9259400833873739776.000000 0.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;0.000000 -9259400833873739776.000000
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -9259400833873739776.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-9259400833873739776.000000 1.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.003906 -9259400833873739776.000000
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;1.996094 -9259400833873739776.000000
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;-9259400833873739776.000000 9223372036854775808.000000
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 -9259400833873739776.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 -9259400833873739776.000000
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;-1.996094 -1.996094
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    ;-1.996094 -1.003906
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    ;-0.000000 -1.996094
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-1.996094 -0.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -1.996094
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;-1.996094 0.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -1.996094
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-1.996094 1.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;-1.996094 1.003906
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;-1.996094 1.996094
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 -1.996094
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;-1.996094 9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;-1.996094 18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;-1.003906 -1.003906
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    ;-1.003906 -0.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-1.003906 -0.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -1.003906
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;-1.003906 0.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;-1.003906 0.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-1.003906 1.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.003906 -1.003906
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;-1.003906 1.996094
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 -1.003906
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 -1.003906
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;-1.003906 18410715276690587648.000000
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;-0.000000 -0.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    ;-0.000000 -0.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    ;-0.000000 0.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;-0.000000 0.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;-0.000000 0.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;1.000000 -0.000000
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.003906 -0.000000
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;-0.000000 1.996094
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 -0.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 -0.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 -0.000000
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;-0.000000 -0.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -0.000000
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;0.000000 -0.000000
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 -0.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;1.000000 -0.000000
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.003906 -0.000000
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;-0.000000 1.996094
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 -0.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;-0.000000 9259400833873739776.000000
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 -0.000000
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db 80h + EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;0.000000 0.000000
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    ;0.000000 0.000000
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 0.000000
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;0.000000 1.000000
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.003906 0.000000
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;0.000000 1.996094
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;0.000000 9223372036854775808.000000
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 0.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 0.000000
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;0.000000 0.000000
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    ;0.000000 0.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;1.000000 0.000000
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.003906 0.000000
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;0.000000 1.996094
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 0.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 0.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;0.000000 18410715276690587648.000000
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;0.000000 0.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    ;0.000000 1.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;0.000000 1.003906
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;1.996094 0.000000
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 0.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 0.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;0.000000 18410715276690587648.000000
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + -63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;1.000000 1.000000
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    ;1.000000 1.003906
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;1.000000 1.996094
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;1.000000 9223372036854775808.000000
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 1.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 1.000000
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;1.003906 1.003906
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    ;1.003906 1.996094
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;9223372036854775808.000000 1.003906
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;1.003906 9259400833873739776.000000
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 1.003906
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;1.996094 1.996094
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    ;1.996094 9223372036854775808.000000
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9259400833873739776.000000 1.996094
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;18410715276690587648.000000 1.996094
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 0
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;9223372036854775808.000000 9223372036854775808.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    ;9223372036854775808.000000 9259400833873739776.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;9223372036854775808.000000 18410715276690587648.000000
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 000h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;9259400833873739776.000000 9259400833873739776.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 001h
+    ;9259400833873739776.000000 18410715276690587648.000000
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 001h
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    ;18410715276690587648.000000 18410715276690587648.000000
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+    db EXPONENT_OFFSET + 63
+    db 0FFh
+_fminmax_data_end:
+_fminmax_test:
+
+    lodi,r0 _fminmax_data >> 8
+    stra,r0 DataOffset0
+    lodi,r0 _fminmax_data & 255
+    stra,r0 DataOffset1
+
+    lodi,r0 0DDh            ;マーカー
+    stra,r0 SCRUPDATA
+
+_fminmax_test_:
+    
+
+    lodi,r0 0DEh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 8
+_fminmax_test_copy:
+    loda,r0 *DataOffset0,r1-
+    stra,r0 FStack+2-PAGE1,r1
+    brnr,r1 _fminmax_test_copy
+
+    lodi,r0 0DFh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    ;FStack+10 = min(FStack+2,FStack+4)
+    lodi,r1 2
+    lodi,r2 4
+    lodi,r3 10
+    bsta,un fmin        
+
+    comi,r1 2
+    bcfa,eq failed_unit_test
+    comi,r2 4
+    bcfa,eq failed_unit_test
+    comi,r3 10
+    bcfa,eq failed_unit_test
+
+    lodi,r1 10      
+    lodi,r2 6       ;correct min 
+    bsta,un fcom
+    bcfa,eq failed_unit_test
+    
+    comi,r1 10
+    bcfa,eq failed_unit_test
+    comi,r2 6
+    bcfa,eq failed_unit_test
+    
+    ;FStack+12 = min(FStack+4,FStack+2)
+    lodi,r1 4
+    lodi,r2 2
+    lodi,r3 12
+    bsta,un fmin        
+
+    comi,r1 4
+    bcfa,eq failed_unit_test
+    comi,r2 2
+    bcfa,eq failed_unit_test
+    comi,r3 12
+    bcfa,eq failed_unit_test
+
+    lodi,r1 6       ;correct min 
+    lodi,r2 12      
+    bsta,un fcom
+    bcfa,eq failed_unit_test
+
+    comi,r1 6
+    bcfa,eq failed_unit_test
+    comi,r2 12
+    bcfa,eq failed_unit_test
+
+    ;FStack+14 = max(FStack+2,FStack+4)
+    lodi,r1 2
+    lodi,r2 4
+    lodi,r3 14
+    bsta,un fmax
+
+    comi,r1 2
+    bcfa,eq failed_unit_test
+    comi,r2 4
+    bcfa,eq failed_unit_test
+    comi,r3 14
+    bcfa,eq failed_unit_test
+
+    lodi,r1 8    ;correct max
+    lodi,r2 14       
+    bsta,un fcom
+    bcfa,eq failed_unit_test
+    
+    comi,r1 8
+    bcfa,eq failed_unit_test
+    comi,r2 14
+    bcfa,eq failed_unit_test
+    
+    ;FStack+16 = max(FStack+4,FStack+2)
+    lodi,r1 4
+    lodi,r2 2
+    lodi,r3 16
+    bsta,un fmax
+
+    comi,r1 4
+    bcfa,eq failed_unit_test
+    comi,r2 2
+    bcfa,eq failed_unit_test
+    comi,r3 16
+    bcfa,eq failed_unit_test
+
+    lodi,r1 16      
+    lodi,r2 8       ;correct max
+    bsta,un fcom
+    bcfa,eq failed_unit_test
+
+    comi,r1 16
+    bcfa,eq failed_unit_test
+    comi,r2 8
+    bcfa,eq failed_unit_test
+
+
+    loda,r0 DataOffset1
+    addi,r0 8
+    stra,r0 DataOffset1
+    tpsl C
+    bcfr,eq _fminmax_test_not_ovf
+    loda,r0 DataOffset0
+    addi,r0 1
+    stra,r0 DataOffset0
+_fminmax_test_not_ovf:
+
+    lodi,r0 _fminmax_data_end & 255
+    coma,r0 DataOffset1
+    bcfa,eq _fminmax_test_
+
+    lodi,r0 _fminmax_data_end >> 8
+    coma,r0 DataOffset0
+    bcfa,eq _fminmax_test_
+
 
     ;--------
     ;テストOK
@@ -522,6 +1758,8 @@ failed_unit_test:
     include "flib\vec3.asm"
     include "flib\fsq.asm"
     include "flib\fmul.asm"
+    include "flib\fminmax.asm"
+    include "flib\fcom.asm"
 
 
 end ; End of assembly
