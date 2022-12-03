@@ -517,6 +517,47 @@ _fsqrt_test_not_carry:
     bcta,un fadd_test
 
 fadd_test_data:
+
+    ;0.5 + -1.0 = -0.5
+    ;0.5 - -1.0 = 1.5
+    ;0.5 * -1.0 = -0.5
+    ;0.500000 / -1.000000 = -0.500000
+    ;-1.000000 / 0.500000 = -2.000000
+    db EXPONENT_OFFSET-1
+    db 00h
+    db EXPONENT_OFFSET+80h
+    db 00h
+    db EXPONENT_OFFSET-1+80h
+    db 00h
+    db EXPONENT_OFFSET
+    db 80h
+    db EXPONENT_OFFSET-1+80h
+    db 00h
+    db EXPONENT_OFFSET + -1+80h
+    db 000h
+    db EXPONENT_OFFSET + 1+80h
+    db 000h
+
+    ;1.0 + -0.5 = 0.5
+    ;1.0 - -0.5 = 1.5
+    ;1.0 * -0.5 = -0.5
+    ;1.000000 / -0.500000 = -2.000000
+    ;-0.500000 / 1.000000 = -0.500000
+    db EXPONENT_OFFSET
+    db 00h
+    db EXPONENT_OFFSET-1+80h
+    db 00h
+    db EXPONENT_OFFSET-1
+    db 00h
+    db EXPONENT_OFFSET
+    db 80h
+    db EXPONENT_OFFSET-1+80h
+    db 00h
+    db EXPONENT_OFFSET + 1+80h
+    db 000h
+    db EXPONENT_OFFSET + -1+80h
+    db 000h
+
     ;77.000000 + 25.312500 = 102.312500
     ;77.000000 - 25.312500 = 51.687500
     ;77.000000 * 25.312500 = 1949.062500(1948.000000)
@@ -2593,6 +2634,101 @@ _fadd_zero_test:
 
 _fadd_next_test:
 
+    loda,r0 FStack+2-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+3-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 0
+    lodi,r2 4
+    bsta,un fadd
+
+    comi,r1 0
+    bcfa,eq failed_unit_test
+    comi,r2 4
+    bcfa,eq failed_unit_test
+
+    lodi,r0 041h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 4
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fadd_zero_test3
+    comi,r0 80h
+    bctr,eq _fadd_zero_test3
+
+    eora,r0 Sign
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 042h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 5
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fadd_next_test3
+
+_fadd_zero_test3:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fadd_next_test3:
+
+    loda,r0 FStack+4-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+5-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 2
+    lodi,r2 0
+    bsta,un fadd
+
+    comi,r1 2
+    bcfa,eq failed_unit_test
+    comi,r2 0
+    bcfa,eq failed_unit_test
+
+    lodi,r0 041h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 4
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fadd_zero_test4
+    comi,r0 80h
+    bctr,eq _fadd_zero_test4
+
+    eora,r0 Sign
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 042h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 5
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fadd_next_test4
+
+_fadd_zero_test4:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fadd_next_test4:
+
+    lodi,r1 2
+    lodi,r2 4
+
     lodi,r0 0D3h            ;マーカー
     stra,r0 SCRUPDATA
 
@@ -2712,6 +2848,100 @@ _fsub_zero_test2:
     
 _fsub_next_test2:
 
+    lodi,r0 0D7h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 FStack+4-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+5-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 0
+    lodi,r2 2
+
+    bsta,un fsub
+    comi,r1 0
+    bcfa,eq failed_unit_test
+    comi,r2 2
+    bcfa,eq failed_unit_test
+
+    lodi,r3 6
+    loda,r0 *DataOffset0,r3
+    
+    comi,r0 00h
+    bctr,eq _fsub_zero_test3
+    comi,r0 80h
+    bctr,eq _fsub_zero_test3
+
+    eora,r0 Sign
+    eori,r0 80h
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+    
+    lodi,r0 0D8h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 7
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+
+    bctr,un _fsub_next_test3
+
+_fsub_zero_test3:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+    
+_fsub_next_test3:
+
+    lodi,r0 0D7h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 FStack+2-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+3-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 4
+    lodi,r2 0
+
+    bsta,un fsub
+    comi,r1 4
+    bcfa,eq failed_unit_test
+    comi,r2 0
+    bcfa,eq failed_unit_test
+
+    lodi,r3 6
+    loda,r0 *DataOffset0,r3
+    
+    comi,r0 00h
+    bctr,eq _fsub_zero_test4
+    comi,r0 80h
+    bctr,eq _fsub_zero_test4
+
+    eora,r0 Sign
+    eori,r0 80h
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+    
+    lodi,r0 0D8h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 7
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+
+    bctr,un _fsub_next_test4
+
+_fsub_zero_test4:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+    
+_fsub_next_test4:
+
     lodi,r0 0D9h            ;マーカー
     stra,r0 SCRUPDATA
 
@@ -2782,6 +3012,86 @@ _fmul_zero_test2:
     bcfa,eq failed_unit_test
 
 _fmul_next_test2:
+
+    lodi,r0 0DBh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 FStack+4-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+5-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 0
+    lodi,r2 2
+    bsta,un fmul
+
+    lodi,r3 8
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fmul_zero_test3
+    comi,r0 80h
+    bctr,eq _fmul_zero_test3
+
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0DCh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 9
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fmul_next_test3
+
+_fmul_zero_test3:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fmul_next_test3:
+
+    lodi,r0 0DBh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    loda,r0 FStack+2-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+3-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 4
+    lodi,r2 0
+    bsta,un fmul
+
+    lodi,r3 8
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fmul_zero_test4
+    comi,r0 80h
+    bctr,eq _fmul_zero_test4
+
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0DCh            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r3 9
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fmul_next_test4
+
+_fmul_zero_test4:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fmul_next_test4:
 
     lodi,r0 0DDh            ;マーカー
     stra,r0 SCRUPDATA
@@ -2861,6 +3171,93 @@ _fdiv_zero_test2:
 
 _fdiv_next_test2:
 
+    lodi,r0 0DFh            ;マーカーF
+    stra,r0 SCRUPDATA
+
+    lodi,r1 2
+    bsta,un fcom0
+    bcta,eq _fdiv_next_test3     ;除数が０ならテストしない
+
+    loda,r0 FStack+4-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+5-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 0
+    lodi,r2 2
+    bsta,un fdiv
+
+    lodi,r3 12
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fdiv_zero_test3
+    comi,r0 80h
+    bctr,eq _fdiv_zero_test3
+
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0E0h            ;マーカーG
+    stra,r0 SCRUPDATA
+
+    lodi,r3 13
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fdiv_next_test3
+
+_fdiv_zero_test3:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fdiv_next_test3:
+
+    lodi,r0 0DFh            ;マーカーF
+    stra,r0 SCRUPDATA
+
+    lodi,r1 2
+    bsta,un fcom0
+    bcta,eq _fdiv_next_test4     ;除数が０ならテストしない
+
+    loda,r0 FStack+2-PAGE1
+    stra,r0 FStack+0-PAGE1
+    loda,r0 FStack+3-PAGE1
+    stra,r0 FStack+1-PAGE1
+
+    lodi,r1 4
+    lodi,r2 0
+    bsta,un fdiv
+
+    lodi,r3 12
+    loda,r0 *DataOffset0,r3
+
+    comi,r0 00h
+    bctr,eq _fdiv_zero_test4
+    comi,r0 80h
+    bctr,eq _fdiv_zero_test4
+
+    coma,r0 FStack+0-PAGE1
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0E0h            ;マーカーG
+    stra,r0 SCRUPDATA
+
+    lodi,r3 13
+    loda,r0 *DataOffset0,r3
+    coma,r0 FStack+1-PAGE1
+    bcfa,eq failed_unit_test
+ 
+    bctr,un _fdiv_next_test4
+
+_fdiv_zero_test4:
+    loda,r0 FStack+0-PAGE1
+    andi,r0 7fh
+    bcfa,eq failed_unit_test
+
+_fdiv_next_test4:
 
     ;Signを切り替えてもう一回
     loda,r0 Sign
