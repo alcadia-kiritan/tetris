@@ -35,8 +35,12 @@ programstart:
     ;RAM2            equ 18F8h   ;$18F8..$18FB are user RAM2 -  4 Byte
     Temporary0      equ 18F8h
     Temporary1      equ 18F9h
+    Temporary2      equ 18FAh
+    Temporary3      equ 18FBh
     Temporary0P1    equ 18F8h + 8*1024
     Temporary1P1    equ 18F9h + 8*1024
+    Temporary2P1    equ 18FAh + 8*1024
+    Temporary3P1    equ 18FBh + 8*1024
 
     FStack equ 1AD0h + PAGE1        ;$1AD0..$1AFF are user RAM3 - 48 Byte
 
@@ -196,6 +200,53 @@ _vsum3_test2_:
     brnr,r1 _vsum3_test2_
 
     
+    ;-------
+    ;vmul3のテスト
+    bcta,un _vmul3_test
+_vmul3_data:
+    ;(1,2,3,4)
+    db EXPONENT_OFFSET+0
+    db 000h
+    db EXPONENT_OFFSET+1
+    db 000h
+    db EXPONENT_OFFSET+1
+    db 080h
+    db EXPONENT_OFFSET+2
+    db 000h
+    ;(4,8,12)
+    db EXPONENT_OFFSET+2
+    db 000h
+    db EXPONENT_OFFSET+3
+    db 000h
+    db EXPONENT_OFFSET+3
+    db 080h
+
+_vmul3_test:
+
+    lodi,r0 0D4h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 8
+_vmul3_test_:
+    loda,r0 _vmul3_data,r1-
+    stra,r0 FStack+2-PAGE1,r1
+    brnr,r1 _vmul3_test_
+
+    lodi,r0 10
+    lodi,r1 8
+    lodi,r2 2
+    bsta,un vmul3
+
+    lodi,r0 0D5h            ;マーカー
+    stra,r0 SCRUPDATA
+
+    lodi,r1 6
+_vmul3_test2_:
+    loda,r0 _vmul3_data+8,r1-
+    coma,r0 FStack+10-PAGE1,r1
+    bsfa,eq failed_unit_test
+    brnr,r1 _vmul3_test2_
+
     ;-------
     ;fsqのテスト
     bcta,un _fsq_data_end

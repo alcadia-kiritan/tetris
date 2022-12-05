@@ -1,5 +1,46 @@
     name fmul          ; module name
 
+
+    ;-------------------
+    ;vmul3
+    ;[FStack+r0+0~4][FStack+r0+1~5] = [FStack+r1+0][FStack+r1+1] * [FStack+r2+0~4][FStack+r2+1~5]
+    ;r2(３次元ベクトル）のr1（スカラー）倍をr3（３次元ベクトル）へ書き込む
+    ;r0,r1,r2,r3,Temporary0,Temporary1,Temporary2,FStack+0~1を使用
+vmul3:
+    stra,r1 Temporary0P1
+    stra,r2 Temporary1P1
+    stra,r0 Temporary2P1
+
+    bsta,un fmul
+    loda,r3 Temporary2P1
+    loda,r0 FStack+0
+    stra,r0 FStack+0,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+1,r3
+
+    loda,r1 Temporary0P1
+    loda,r2 Temporary1P1
+    addi,r2 2
+    bstr,un fmul
+    loda,r3 Temporary2P1
+    loda,r0 FStack+0
+    stra,r0 FStack+2,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+3,r3
+
+    loda,r1 Temporary0P1
+    loda,r2 Temporary1P1
+    addi,r2 4
+    bstr,un fmul
+    loda,r3 Temporary2P1
+    loda,r0 FStack+0
+    stra,r0 FStack+4,r3
+    loda,r0 FStack+1
+    stra,r0 FStack+5,r3
+
+    retc,un
+
+
     ;-----
     ;[FStack+0][FStack+1]へ0を書き込んで返す
 _fmul_zero:
