@@ -1779,6 +1779,134 @@ _fminmax_test_not_ovf:
     coma,r0 DataOffset0
     bcfa,eq _fminmax_test_
 
+    ;-------
+    ;fadd_mantissaのテスト
+    bcta,un _fadd_mantissa_test
+_fadd_mantissa_test_data:
+    ;1.0, +1, 1.0+eps
+    db EXPONENT_OFFSET
+    db 0
+    db 1
+    db EXPONENT_OFFSET
+    db 1
+    ;1.0, +0, 1.0+eps
+    db EXPONENT_OFFSET
+    db 0
+    db 0
+    db EXPONENT_OFFSET
+    db 0
+    ;2.0, +255, 2.99
+    db EXPONENT_OFFSET+1
+    db 0
+    db 255
+    db EXPONENT_OFFSET+1
+    db 255
+    ;1.00390625, +254, 1.996
+    db EXPONENT_OFFSET
+    db 1
+    db 254
+    db EXPONENT_OFFSET
+    db 255
+    ;1.00390625, +255, 2.0
+    db EXPONENT_OFFSET
+    db 1
+    db 255
+    db EXPONENT_OFFSET+1
+    db 0
+    ;1.996, +1, 2.0
+    db EXPONENT_OFFSET
+    db 255
+    db 1
+    db EXPONENT_OFFSET+1
+    db 0
+    ;1.996, +0, 1.996
+    db EXPONENT_OFFSET
+    db 255
+    db 0
+    db EXPONENT_OFFSET
+    db 255
+_fadd_mantissa_test_data_end:
+
+_fadd_mantissa_test:
+
+    lodi,r0 0E0h            ;マーカーG
+    stra,r0 SCRUPDATA
+
+    lodi,r0 _fadd_mantissa_test_data>>8
+    stra,r0 DataOffset0
+    lodi,r0 _fadd_mantissa_test_data&0ffh
+    stra,r0 DataOffset1
+
+    eorz r0
+    stra,r0 Sign
+
+_fadd_mantissa_test_:
+    lodi,r0 0E1h            ;マーカーH
+    stra,r0 SCRUPDATA
+
+    lodi,r2 -1
+    loda,r0 *DataOffset0,r2+
+    eora,r0 Sign
+    stra,r0 FStack+2-PAGE1
+    loda,r0 *DataOffset0,r2+
+    stra,r0 FStack+3-PAGE1
+    loda,r0 *DataOffset0,r2+
+    strz r1 
+    loda,r0 *DataOffset0,r2+
+    eora,r0 Sign
+    stra,r0 FStack+4-PAGE1
+    loda,r0 *DataOffset0,r2+
+    stra,r0 FStack+5-PAGE1
+
+    lodi,r3 0cch
+
+    lodz r1
+    lodi,r1 2
+    bsta,un fadd_mantissa
+
+    lodi,r0 0E2h            ;マーカーI
+    stra,r0 SCRUPDATA
+
+    comi,r1 2
+    bcfa,eq failed_unit_test
+    comi,r2 4
+    bcfa,eq failed_unit_test
+    comi,r3 0CCh
+    bcfa,eq failed_unit_test
+
+    lodi,r0 0E3h            ;マーカーJ
+    stra,r0 SCRUPDATA
+
+    lodi,r1 2
+    lodi,r2 4
+    bsta,un fcom
+    bsfa,eq failed_unit_test
+
+
+    ;符号反転
+    loda,r0 Sign
+    eori,r0 80h
+    stra,r0 Sign
+    bcfa,eq _fadd_mantissa_test_
+
+    loda,r0 DataOffset1
+    addi,r0 5
+    stra,r0 DataOffset1
+    tpsl C
+    bcfr,eq _fadd_mantissa_test_not_ovf
+    loda,r0 DataOffset0
+    addi,r0 1
+    stra,r0 DataOffset0
+_fadd_mantissa_test_not_ovf:
+
+    loda,r0 DataOffset0
+    comi,r0 _fadd_mantissa_test_data_end>>8
+    bcfa,eq _fadd_mantissa_test_
+
+    loda,r0 DataOffset1
+    comi,r0 _fadd_mantissa_test_data_end&0ffh
+    bcfa,eq _fadd_mantissa_test_
+
 
     ;--------
     ;テストOK
@@ -1811,6 +1939,7 @@ failed_unit_test:
     include "flib\fmul.asm"
     include "flib\fminmax.asm"
     include "flib\fcom.asm"
+    include "flib\futil.asm"
 
 
 end ; End of assembly
