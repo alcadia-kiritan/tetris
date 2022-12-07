@@ -10,6 +10,14 @@
     ;指数部の下駄
     EXPONENT_OFFSET       equ     64
 
+    ;最大値
+    MAX_FLOAT0  equ     127
+    MAX_FLOAT1  equ     255
+
+    ;最小値(有効な数のうちマイナスかつ絶対値が最も大きい数値)
+    MIN_FLOAT0  equ     80h + MAX_FLOAT0
+    MIN_FLOAT1  equ     MAX_FLOAT1
+
     ;-------------------
     ;浮動小数点例外（もとい対応したくないケース）で呼ばれる関数
 fexception:
