@@ -35,8 +35,10 @@ programstart:
     ;RAM2            equ 18F8h   ;$18F8..$18FB are user RAM2 -  4 Byte
     Temporary0      equ 18F8h
     Temporary1      equ 18F9h
+    Temporary2      equ 18FAh
     Temporary0P1    equ 18F8h + 8*1024
     Temporary1P1    equ 18F9h + 8*1024
+    Temporary2P1    equ 18FAh + 8*1024
 
     FStack equ 1AD0h + PAGE1        ;$1AD0..$1AFF are user RAM3 - 48 Byte
 
