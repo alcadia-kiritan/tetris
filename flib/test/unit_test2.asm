@@ -1789,13 +1789,13 @@ _fadd_mantissa_test_data:
     db 1
     db EXPONENT_OFFSET
     db 1
-    ;1.0, +0, 1.0+eps
+    ;1.0, +0, 1.0
     db EXPONENT_OFFSET
     db 0
     db 0
     db EXPONENT_OFFSET
     db 0
-    ;2.0, +255, 2.99
+    ;2.0, +255, 3.99
     db EXPONENT_OFFSET+1
     db 0
     db 255
