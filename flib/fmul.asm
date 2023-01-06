@@ -1,5 +1,36 @@
     name fmul          ; module name
 
+    ;-------------------
+    ;fdouble
+    ;[FStack+r1+0][FStack+r1+1] = [FStack+r1+0][FStack+r1+1] * 2.0
+    ;r0,r1を使用, r1は変化しない
+fdouble:
+
+    loda,r0 FStack+0,r1
+    retc,eq             ;0なら終了
+
+    comi,r0 80h
+    retc,eq             ;0なら終了
+
+    addi,r0 1
+    stra,r0 FStack+0,r1
+    retc,un
+
+    ;-------------------
+    ;fquadruple
+    ;[FStack+r1+0][FStack+r1+1] = [FStack+r1+0][FStack+r1+1] * 4.0
+    ;r0,r1を使用, r1は変化しない
+fquadruple:
+
+    loda,r0 FStack+0,r1
+    retc,eq             ;0なら終了
+
+    comi,r0 80h
+    retc,eq             ;0なら終了
+
+    addi,r0 2
+    stra,r0 FStack+0,r1
+    retc,un
 
     ;-------------------
     ;vmul3
