@@ -54,6 +54,9 @@ programstart:
     ;mul8以外の部分のクロック数を測るためのダミーモード
     DUMMY_MODE equ 0
 
+    ;答えがr0:r1なら1, r1:r0なら0になる定数
+    R0_R1_MODE equ 0
+
 test_loop:
     
     loda,r0 LOOP0
@@ -71,7 +74,11 @@ test_loop:
     ENDIF
 
     IF DUMMY_MODE = 0
-        coma,r0 ANS0
+        IF R0_R1_MODE = 1
+            coma,r0 ANS1
+        ELSE
+            coma,r1 ANS1
+        ENDIF
         bcfa,eq failed
     ELSE
         comr,r0 LOOP0
@@ -79,7 +86,11 @@ test_loop:
     ENDIF
 
     IF DUMMY_MODE = 0
-        coma,r1 ANS1
+        IF R0_R1_MODE = 1
+            coma,r1 ANS0
+        ELSE
+            coma,r0 ANS0
+        ENDIF
         bcfa,eq failed
     ELSE
         comr,r1 LOOP1
@@ -259,11 +270,12 @@ _wait_vsync:
 
         ;mul8を定義しているファイルを切り替えることでテスト対象を切り替える
 
-        include "mul/mul.asm"
+        ;include "mul/mul.asm"
         ;include "mul/mul_table.asm"
         ;include "mul/mul_net.asm"
         ;include "mul/mul_simple.asm"
         ;include "mul/mul2.asm"
+        include "mul/mul3.asm"
 
     ELSE
 
