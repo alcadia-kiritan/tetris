@@ -10,13 +10,13 @@ mul8:
     strz r2 
     eorz r0     ;r1 = r0 = 0
     strz r1
+
+    comi,r2 0
+    retc,eq     ;r2が0なら終了
+    
     addz r0     ;C=0
     
-    ppsl 1000b  ;WCをセット. キャリーをありにする
-
-    ;r2が0なら終了
-    comi,r2 0
-    bctr,eq _end
+    ppsl WC  ;WCをセット. キャリーをありにする
 
     ;r1:r0 にr3をr2回足していく
 _m8_loop:
@@ -25,7 +25,7 @@ _m8_loop:
     bdrr,r2 _m8_loop
 
 _end:
-    cpsl 1000b  ;WCをリセット
+    cpsl WC+C  ;WCをリセット
     retc,un
 
 end ; End of assembly

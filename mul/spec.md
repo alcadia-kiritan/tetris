@@ -7,7 +7,7 @@
 |mul3.asm	    |   397.5 |	24|
 |mul_table.asm  |	379.4 |	348|
 |mul_net.asm    |	152.3 |	1082|
-|mul_simple.asm |	2,746.5 |	18|
+|mul_simple.asm |	2,746.4 |	17|
 
 クロックは全パターン(0x00～0xFF x 0x00～0xFF)での平均値. 
 
@@ -21,7 +21,7 @@
 |mul3.asm	    |   53986797 |	351|
 |mul_table.asm  |	52797465 |	675|
 |mul_net.asm    |	37918161 |	1409|
-|mul_simple.asm |	207929325 |	345|
+|mul_simple.asm |	207920877 |	344|
 
 ### メモ
 ここでのmul8 は,符号なし8bit x 符号なし8bit = 符号なし16bit.  
