@@ -81,12 +81,12 @@ programstart:
     lodi,r0 EXPONENT_OFFSET + 0
     ;stra,r0 FStack+Plane1FStackOffset+0 - PAGE1
 
-    lodi,r0 0h
+    eorz r0
     stra,r0 FStack+Plane0FStackOffset+1 - PAGE1
     ;stra,r0 FStack+Plane1FStackOffset+1 - PAGE1
 
     
-    lodi,r0 0
+    eorz r0
     stra,r0 FStack + Sphere0FStackOffset+0 - PAGE1
     stra,r0 FStack + Sphere0FStackOffset+4 - PAGE1
 
@@ -303,7 +303,7 @@ rendering_upscr:
     addi,r3 1
     stra,r3 ScreenOffset
     comi,r3 16*13
-    bcfa,eq rendering_upscr
+    bcfr,eq rendering_upscr
 
     ;bcta,un rendering_end  ;低解像度
 
@@ -328,7 +328,7 @@ rendering_loscr:
     addi,r3 1
     stra,r3 ScreenOffset
     comi,r3 16*13
-    bcfa,eq rendering_loscr
+    bcfr,eq rendering_loscr
 
 rendering_end: 
 
@@ -354,7 +354,7 @@ mainloop:
     ;キー操作での移動量をFStack+2~3へ書き込み
     lodi,r0 EXPONENT_OFFSET-3
     stra,r0 FStack+2 - PAGE1
-    lodi,r0 0
+    eorz r0
     stra,r0 FStack+3 - PAGE1
 
     ;1,q,a,zキー判定をr0へ

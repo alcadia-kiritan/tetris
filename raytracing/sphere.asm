@@ -211,12 +211,12 @@ simple_intersection_ray_and_sphere_without_normalized:
     bsta,un fsub
 
     lodi,r1 0
-    bsta,un fcom0   ;t1を0と比較
+    bstr,un fcom0   ;t1を0と比較
     retc,lt         ;t1もマイナスだった
 
     lodi,r1 16
     lodi,r2 0      
-    bcta,un fcom    ;a ope t1 を比較, 0 <= t <= 1ならgt,eqになる。直return
+    bctr,un fcom    ;a ope t1 を比較, 0 <= t <= 1ならgt,eqになる。直return
 
 _siras_plus:
 
@@ -231,23 +231,23 @@ _siras_plus:
     bsta,un fsub
 
     lodi,r1 0
-    bsta,un fcom0       ;t1を0と比較
+    bstr,un fcom0       ;t1を0と比較
     bctr,lt _siras_t0    ;t1がマイナスならt0をaと比較
 
     ;t0,t1ともに0以上なので小さい方を選択
 
     lodi,r2 4
-    bsta,un fcom        ;t1とt0を比較
+    bstr,un fcom        ;t1とt0を比較
     bctr,gt _siras_t0
 
     ;t1の方が小さいか同じ. 
     lodi,r1 16
     lodi,r2 0      
-    bcta,un fcom    ;a ope t1 を比較, 0 <= t <= 1ならgt,eqになる。直return
+    bctr,un fcom    ;a ope t1 を比較, 0 <= t <= 1ならgt,eqになる。直return
 
 _siras_t0:
     lodi,r1 16
     lodi,r2 4     
-    bcta,un fcom    ;a ope t0 を比較, 0 <= t <= 1ならgt,eqになる。直return
+    bctr,un fcom    ;a ope t0 を比較, 0 <= t <= 1ならgt,eqになる。直return
 
 end ; End of assembly
