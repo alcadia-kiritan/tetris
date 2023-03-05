@@ -477,6 +477,9 @@ _iraa_check_tmax_z:
 _iraa_skip_z:
 
     lodi,r1 2
+    lodi,r0 10h
+    bsta,un fadd_mantissa   ;角付近でゴミが出ることがあるので対策
+    
     lodi,r2 4
     bstr,un fcom
     bcfa,lt _iraa_not_hit
