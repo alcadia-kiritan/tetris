@@ -381,7 +381,7 @@ set_ray_position:
 
     lodi,r0 EXPONENT_OFFSET+80h+1
     stra,r0 FStack+4+RayDirFStackOffset - PAGE1
-    lodi,r0 40h
+    lodi,r0 38h
     stra,r0 FStack+5+RayDirFStackOffset - PAGE1
 
     bsta,un rotate_ray_x_axis
