@@ -32,7 +32,7 @@ intersection_ray_and_aabb:
     ;D_i <  0 なら B_i > min_i
     ;D_i == 0 なら min_i < B_i < max_i
 
-    bsta,un fcom0
+    bsta,un f_is_eps
     bctr,eq _iraa_eq_dx_simple
     bctr,lt _iraa_lt_dx_simple
 
@@ -66,7 +66,7 @@ _iraa_simple_y:
     addi,r1 -6+2
     loda,r2 Temporary1P1
 
-    bsta,un fcom0
+    bsta,un f_is_eps
     bctr,eq _iraa_eq_dy_simple
     bctr,lt _iraa_lt_dy_simple
 
@@ -102,7 +102,7 @@ _iraa_simple_z:
     addi,r1 -6+2
     loda,r2 Temporary1P1
 
-    bsta,un fcom0
+    bsta,un f_is_eps
     bctr,eq _iraa_eq_dz_simple
     bctr,lt _iraa_lt_dz_simple
 
@@ -162,7 +162,7 @@ _iraa_simple_end:
     loda,r2 Temporary1P1
 
     ;Dxを0と比較
-    bsta,un fcom0
+    bsta,un f_is_eps
     bcta,eq _iraa_skip_x_end    ;Dx == 0ならxの判定をスキップ
     bcta,gt _iraa_gt_dx     ;Dx > 0
 
@@ -263,7 +263,7 @@ _iraa_skip_x_end:
 
     ;Dyを0と比較
     addi,r1 2
-    bsta,un fcom0
+    bsta,un f_is_eps
     bcta,eq _iraa_skip_y_end    ;Dy == 0ならyの判定をスキップ
     bcta,gt _iraa_gt_dy     ;Dy > 0
 
@@ -354,7 +354,7 @@ _iraa_check_tmax:
     lodi,r1 0
     lodi,r2 4
     bsta,un fcom
-    bcfr,lt _iraa_skip_y
+    bcfr,lt _iraa_skip_y_end
 
     ;tmaxを更新
     loda,r0 FStack+0
@@ -367,15 +367,14 @@ _iraa_check_tmax:
     bsta,un fcom
     bcfa,lt _iraa_not_hit
 
-_iraa_skip_y:
+_iraa_skip_y_end:
+
     loda,r1 Temporary0P1
     loda,r2 Temporary1P1
 
-_iraa_skip_y_end:
-
     ;Dzを0と比較
     addi,r1 4
-    bsta,un fcom0
+    bsta,un f_is_eps
     bcta,eq _iraa_skip_z_end    ;Dz == 0ならzの判定をスキップ
     bcta,gt _iraa_gt_dz     ;Dz > 0
 
@@ -466,7 +465,7 @@ _iraa_check_tmax_z:
     lodi,r1 0
     lodi,r2 4
     bstr,un fcom
-    bcfr,lt _iraa_skip_z
+    bcfr,lt _iraa_skip_z_end
 
     ;tmaxを更新
     loda,r0 FStack+0
@@ -474,18 +473,16 @@ _iraa_check_tmax_z:
     loda,r0 FStack+1
     stra,r0 FStack+5
 
-_iraa_skip_z:
+_iraa_skip_z_end:
 
     lodi,r1 2
     lodi,r0 10h
-    bsta,un fadd_mantissa   ;角付近でゴミが出ることがあるので対策
+    bsta,un fadd_mantissa   ;ゴミが出ることがあるので対策
     
     lodi,r2 4
     bstr,un fcom
     bcfa,lt _iraa_not_hit
     
-_iraa_skip_z_end:
-
     lodi,r0 MAX_FLOAT0
     coma,r0 FStack+4
     retc,gt

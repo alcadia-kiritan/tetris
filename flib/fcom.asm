@@ -92,4 +92,39 @@ _fcom_zero_r1:
     comi,r0 80h
     retc,un
 
+    ;-------------------
+    ;f_is_eps
+    ;[FStack+r1+0][FStack+r1+1]の絶対値が極小(1.996/512)ならCCにeq, それ以外で０より大きいならgt, ０より小さいならltを返す
+    ;極小値を計算に使うと誤差が出て困るところでfcom0の代替に使う
+    ;1.966/512は特に根拠なく設定した適当な数値.
+    ;r0,r1を使用.  r1は変化しない.
+f_is_eps:
+
+    loda,r0 FStack+0,r1
+    bctr,gt _fie_gt
+    
+    andi,r0 7fh
+    retc,eq                 ; == 0
+
+    ; x < 0
+    comi,r0 EXPONENT_OFFSET-9
+    bctr,lt _fie_is_eps
+
+    lodi,r0 80h   ;lt確定
+    retc,un
+
+_fie_is_eps:
+    eorz r0 ;CC=eq
+    retc,un
+
+_fie_gt:
+    ; x > 0    
+
+    comi,r0 EXPONENT_OFFSET-9
+    bctr,lt _fie_is_eps
+
+    iorz r0   ;gt確定
+    retc,un
+
+
 end ; End of assembly
