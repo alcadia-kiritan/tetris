@@ -40,10 +40,9 @@ programstart:
     LightPosition   equ 18D2h
     RayRotateY      equ 18D3h
     RayRotateX      equ 18D4h
-    RayPositionRotateX       equ 18D5h
 
     ;キー関係
-    KeyData                     equ RayPositionRotateX+1
+    KeyData                     equ RayRotateX+1
     PrevP1LeftKeys              equ KeyData+0           ;1フレーム前のP1LEFTKEYSの値
     CountRepeatedP1LeftKeys     equ KeyData+1           ;押し続けた時のリピート処理用カウンタ, 前フレームと同じ値が来ると減算されて０になると押してる扱いになる
     PrevP1MiddleKeys            equ KeyData+2           ;1フレーム前のP1MIDDLEKEYSの値
@@ -98,9 +97,6 @@ programstart:
     stra,r0 FStack+AabbFStackOffset+11 - PAGE1
 
     ;レイの原点の初期化
-    eorz r0
-    stra,r0 RayPositionRotateX
-
     bsta,un set_ray_position
 
     bcta,un mainloop
@@ -218,18 +214,6 @@ mainloop:
 
 _skip_a_key:
 
-    ;qキー, 視点を上に移動
-    loda,r0 Temporary0
-    tmi,r0 0100b
-    bcfr,eq _skip_q_key
-
-    loda,r0 RayPositionRotateX
-    addi,r0 1
-    stra,r0 RayPositionRotateX
-
-_skip_q_key:
-
-
     ;3,e,d,cキー判定をr0へ
     loda,r0 P1RIGHTKEYS
     lodi,r1 PrevP1RightKeys - KeyData
@@ -245,17 +229,6 @@ _skip_q_key:
     stra,r0 RayRotateY
 
 _skip_d_key:
-
-    ;eキー, 視点を下に移動
-    loda,r0 Temporary0
-    tmi,r0 0100b
-    bcfr,eq _skip_e_key
-
-    loda,r0 RayPositionRotateX
-    subi,r0 1
-    stra,r0 RayPositionRotateX
-
-_skip_e_key:
 
     ;2,w,s,xキー判定をr0へ
     loda,r0 P1MIDDLEKEYS
@@ -395,7 +368,7 @@ load_ray_root_position:
 
     ;-------------------
     ;set_ray_position
-    ;RayRotateY,RayPositionRotateXからレイの原点を設定する
+    ;RayRotateY,RayRotateXからレイの原点を設定する
     ;r0,r1,r2,r3,Temporary0,Temporary1,Temporary2,Temporary3,FStack+0~7を使用
 set_ray_position:
 
@@ -411,22 +384,12 @@ set_ray_position:
     lodi,r0 40h
     stra,r0 FStack+5+RayDirFStackOffset - PAGE1
 
-    loda,r0 RayRotateX
-    stra,r0 Temporary0
-
-    loda,r0 RayPositionRotateX
-    stra,r0 RayRotateX
-
     bsta,un rotate_ray_x_axis
     bstr,un rotate_ray_y_axis
 
     loda,r0 RayRotateY
     addi,r0 64*3            ;-Zの位置がレイのデフォなのでRayRotateY=0のときに-Zになるようにずらす
     stra,r0 RayRotateY
-
-    ;ルーチン使いまわしのためにずらした数値を戻す
-    loda,r0 Temporary0
-    stra,r0 RayRotateX
 
     loda,r0 RayRotateY
     subi,r0 64*3
