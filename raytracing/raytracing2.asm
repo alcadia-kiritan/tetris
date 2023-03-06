@@ -40,9 +40,11 @@ programstart:
     LightPosition   equ 18D2h
     RayRotateY      equ 18D3h
     RayRotateX      equ 18D4h
+    RayRootDistance equ 18D5h
+    ShowAabb2        equ 18D6h
 
     ;キー関係
-    KeyData                     equ RayRotateX+1
+    KeyData                     equ ShowAabb2+1
     PrevP1LeftKeys              equ KeyData+0           ;1フレーム前のP1LEFTKEYSの値
     CountRepeatedP1LeftKeys     equ KeyData+1           ;押し続けた時のリピート処理用カウンタ, 前フレームと同じ値が来ると減算されて０になると押してる扱いになる
     PrevP1MiddleKeys            equ KeyData+2           ;1フレーム前のP1MIDDLEKEYSの値
@@ -96,6 +98,31 @@ programstart:
     stra,r0 FStack+AabbFStackOffset+9 - PAGE1
     stra,r0 FStack+AabbFStackOffset+11 - PAGE1
 
+    ;AABB2のmin,max
+    eorz r0 ; 0
+    stra,r0 FStack+Aabb2FStackOffset+0 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+4 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+8 - PAGE1
+
+    lodi,r0 EXPONENT_OFFSET+1       ; +1
+    stra,r0 FStack+Aabb2FStackOffset+2 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+6 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+10 - PAGE1
+
+    eorz r0
+    stra,r0 FStack+Aabb2FStackOffset+1 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+5 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+9 - PAGE1
+
+    ;lodi,r0 80h
+    stra,r0 FStack+Aabb2FStackOffset+3 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+7 - PAGE1
+    stra,r0 FStack+Aabb2FStackOffset+11 - PAGE1
+    
+
+    lodi,r0 38h
+    stra,r0 RayRootDistance
+
     ;レイの原点の初期化
     bsta,un set_ray_position
 
@@ -113,8 +140,35 @@ get_pixel_color:
     lodi,r1 RayDirFStackOffset
     lodi,r2 AabbFStackOffset
     bsta,un intersection_ray_and_aabb
+    
+    bctr,lt _gpc_next_object
+
+    loda,r0 Temporary2
+    rrr,r0
+    rrr,r0
+    addi,r0 3h
+    stra,r0 Pixel
+
+    loda,r0 FStack+2 - PAGE1
+    stra,r0 FStack+RayTFStackOffset+0 - PAGE1
+    loda,r0 FStack+3 - PAGE1
+    stra,r0 FStack+RayTFStackOffset+1 - PAGE1
+
+_gpc_next_object:
+
+    loda,r0 ShowAabb2
+    retc,eq 
+
+    lodi,r1 RayDirFStackOffset
+    lodi,r2 Aabb2FStackOffset
+    bsta,un intersection_ray_and_aabb
     retc,lt
 
+    lodi,r1 2
+    lodi,r2 RayTFStackOffset
+    bsta,un fcom
+    retc,gt
+    
     loda,r0 Temporary2
     rrr,r0
     rrr,r0
@@ -139,7 +193,7 @@ rendering_upscr:
     bsta,un rotate_ray_x_axis
     bsta,un rotate_ray_y_axis
 
-    bstr,un get_pixel_color
+    bsta,un get_pixel_color
 
     loda,r0 Pixel
     loda,r3 ScreenOffset
@@ -213,6 +267,28 @@ mainloop:
     stra,r0 RayRotateY
 
 _skip_a_key:
+    
+    ;qキー, 視点を手前に移動
+    loda,r0 Temporary0
+    tmi,r0 0100b
+    bcfr,eq _skip_q_key
+    
+    loda,r0 RayRootDistance
+    addi,r0 3
+    stra,r0 RayRootDistance
+
+_skip_q_key:
+
+    ;1キー, ２個目のAABBの可視を切り替え
+    loda,r0 Temporary0
+    tmi,r0 1000b
+    bcfr,eq _skip_1_key
+    
+    loda,r0 ShowAabb2
+    eori,r0 1
+    stra,r0 ShowAabb2
+
+_skip_1_key:
 
     ;3,e,d,cキー判定をr0へ
     loda,r0 P1RIGHTKEYS
@@ -225,10 +301,21 @@ _skip_a_key:
     bcfr,eq _skip_d_key
 
     loda,r0 RayRotateY
-    subi,r0 1
+    subi,r0 3
     stra,r0 RayRotateY
 
 _skip_d_key:
+
+    ;eキー, 視点を手前に移動
+    loda,r0 Temporary0
+    tmi,r0 0100b
+    bcfr,eq _skip_e_key
+    
+    loda,r0 RayRootDistance
+    subi,r0 1
+    stra,r0 RayRootDistance
+
+_skip_e_key:
 
     ;2,w,s,xキー判定をr0へ
     loda,r0 P1MIDDLEKEYS
@@ -265,12 +352,13 @@ _skip_s_key:
     ;------------------------
 
     ;FStack上のオフセット
-    RayDirFStackOffset      equ 18
+    RayDirFStackOffset      equ 8
     RayPosFStackOffset      equ RayDirFStackOffset+6
     RayTFStackOffset        equ RayPosFStackOffset+6
     AabbFStackOffset        equ RayTFStackOffset+2
+    Aabb2FStackOffset       equ AabbFStackOffset+12
 
-    EndDefinedFStack        equ AabbFStackOffset+12
+    EndDefinedFStack        equ Aabb2FStackOffset+12
 
     IF EndDefinedFStack > 48
         warning "FStackの端っこ超えてる"
@@ -381,19 +469,11 @@ set_ray_position:
 
     lodi,r0 EXPONENT_OFFSET+80h+1
     stra,r0 FStack+4+RayDirFStackOffset - PAGE1
-    lodi,r0 38h
+    loda,r0 RayRootDistance
     stra,r0 FStack+5+RayDirFStackOffset - PAGE1
 
     bsta,un rotate_ray_x_axis
     bstr,un rotate_ray_y_axis
-
-    loda,r0 RayRotateY
-    addi,r0 64*3            ;-Zの位置がレイのデフォなのでRayRotateY=0のときに-Zになるようにずらす
-    stra,r0 RayRotateY
-
-    loda,r0 RayRotateY
-    subi,r0 64*3
-    stra,r0 RayRotateY
         
     loda,r0 FStack+0+RayDirFStackOffset - PAGE1
     stra,r0 RayRootPositionX0

@@ -4,14 +4,14 @@
 _iraa_not_hit:
     ;FStack+0へ-1を格納, CCへltを格納してreturn
     eorz r0 
-    stra,r0 FStack+1
+    stra,r0 FStack+3
     lodi,r0 80h + EXPONENT_OFFSET
-    stra,r0 FStack+0
+    stra,r0 FStack+2
     retc,un
 
     ;-------------------
     ;intersection_ray_and_aabb
-    ;AABBとレイ(B+Dt)の交差判定を行い衝突位置のtを[FStack+0~1]へ格納, t>=0で衝突しない場合はマイナス値を格納
+    ;AABBとレイ(B+Dt)の交差判定を行い衝突位置のtを[FStack+2~3]へ格納, t>=0で衝突しない場合はマイナス値を格納
     ;t>=0で衝突する場合はgtかeq, t<0の場合はltをCCへ返す
     ;当たった場合,X,Y,Zのいずれの面で当たったか(0~2)をTemporary2へ格納する
     ;
