@@ -11,17 +11,17 @@ mul8:
     
     stra,r0 Temporary0
     stra,r1 Temporary1
-    andi,r0 0f0h
-    andi,r1 00fh
-    addz r1
+    andi,r0 0f0h            ;r0=a<<4
+    andi,r1 00fh            ;r1=d
+    addz r1                 ;r0=(a<<4)+d  テーブル参照のインデックス
     loda,r0 mul_4x4,r0
     strz r2                 ;r2 = a*d
 
     loda,r0 Temporary0
     loda,r1 Temporary1
-    andi,r0 00fh
-    andi,r1 0f0h
-    addz r1
+    andi,r0 00fh            ;r0=b
+    andi,r1 0f0h            ;r1=c<<4
+    addz r1                 ;r0=(c<<4)+b
     loda,r0 mul_4x4,r0
     addz r2                 ;r0 = a*d + b*c    C = a*d+b*c > 255
     rrr,r0 

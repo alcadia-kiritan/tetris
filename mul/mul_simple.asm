@@ -14,7 +14,7 @@ mul8:
     comi,r2 0
     retc,eq     ;r2が0なら終了
     
-    addz r0     ;C=0
+    addz r0     ;C=0, cpslより小さいし速い
     
     ppsl WC  ;WCをセット. キャリーをありにする
 
@@ -24,7 +24,6 @@ _m8_loop:
     addi,r1 0
     bdrr,r2 _m8_loop
 
-_end:
     cpsl WC+C  ;WCをリセット
     retc,un
 
