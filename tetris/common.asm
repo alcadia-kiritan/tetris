@@ -192,15 +192,17 @@ get_next_tetromino_data_offset:
 
     ;-------------------
     ;scroll_to_bottom
-    ;CRTCVPRが0になるまで１フレームr2ずつ下げ続ける
+    ;CRTCVPRが2になるまで１フレームr2ずつ下げ続ける
     ;r0,r1,r2を使用
 scroll_to_bottom:
     bsta,un wait_vsync
     bsta,un sound_process
 
     loda,r0 CRTCVPR
+    addi,r2 BOTTOM_SCROLL_Y
     comz r2 
     bctr,lt _stb_end
+    subi,r2 BOTTOM_SCROLL_Y
 
     subz r2
     stra,r0 CRTCVPR
@@ -222,7 +224,7 @@ scroll_to_bottom:
     bctr,un scroll_to_bottom
 
 _stb_end:
-    eorz r0
+    lodi,r0 BOTTOM_SCROLL_Y
     stra,r0 CRTCVPR
     retc,un
 

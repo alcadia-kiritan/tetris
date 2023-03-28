@@ -216,6 +216,7 @@
     ;ここから下画面関係
 
     SCROLL_Y            equ 238                             ;スクロール位置
+    BOTTOM_SCROLL_Y     equ 2                               ;スクロールの最下位位置
     SPRITE_OFFSET_Y     equ (SCROLL_Y*3+42-624+24-39)/3     ;描画領域の一番下の行に合う位置
     SPRITE_OFFSET_X     equ (156+102)/6                     ;描画領域の一番左の列に合う位置
 

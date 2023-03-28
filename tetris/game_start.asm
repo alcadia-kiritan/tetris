@@ -20,7 +20,7 @@ ENDIF
 IF DEBUG_MODE = 0
     GAME_START_SCROLL equ 4
 ELSE
-    GAME_START_SCROLL equ 10
+    GAME_START_SCROLL equ 16
 ENDIF
     ;現画面を下にスクロール
     lodi,r2 GAME_START_SCROLL
@@ -31,7 +31,7 @@ ENDIF
     ;画面が下がり切ってるのでVRAMもタイミングを考えずアクセスする
 _gss_start:
 
-    eorz r0
+    lodi,r0 BOTTOM_SCROLL_Y
     stra,r0 CRTCVPR
 
     ;スプライトを非表示
@@ -132,22 +132,26 @@ _gss_end_set_param:
     lodi,r0 SCENE_GAME_NEW_TETROMINO
     stra,r0 NextSceneIndex
 
-    ;r0に0入れてついでに０デフォの変数をリセット
+    ;０デフォの変数をリセット
     eorz r0 
     stra,r0 LastOperationIsRotated
 
+    lodi,r0 BOTTOM_SCROLL_Y
     lodi,r1 SCROLL_Y
 
     ;上画面にスクロール
 _gss_scroll_up:
     addi,r0 GAME_START_SCROLL
+    comz r1
+    bcfr,lt _gss_scroll_end
+    
     bsta,un wait_vsync
     stra,r0 CRTCVPR
-    comz r1
-    bctr,lt _gss_scroll_up
+    bctr,un _gss_scroll_up
 
 _gss_scroll_end:
     stra,r1 CRTCVPR
+    bsta,un wait_vsync
 
     loda,r0 GameMode
     retc,gt             ;スプリント以外なら終了
